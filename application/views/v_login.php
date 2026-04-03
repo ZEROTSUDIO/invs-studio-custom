@@ -2,120 +2,63 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Halaman Log In</title>
-    <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="<?php echo base_url() . 'assets/plugins/fontawesome-free/css/all.min.css' ?>">
-    <!-- icheck bootstrap -->
-    <link rel="stylesheet" href="<?php echo base_url() . 'assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css' ?>">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="<?php echo base_url() . 'assets/dist/css/adminlte.min.css' ?>">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Invs Studio — Production System</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="<?php echo base_url() . 'assets/css/style.css' ?>">
 </head>
 
 <body class="hold-transition login-page">
-    <div class="login-box">
-        <div class="login-logo">
-            <a href="<?php echo base_url(); ?>"><b>Website</b>Saya</a>
-        </div>
-        <!-- /.login-logo -->
-        <?php
-        if (isset($_GET['alert'])) {
-            if ($_GET['alert'] == 'gagal') {
-                echo "
+	<div id="login-overlay" style="display:none; position:fixed; inset:0; background:rgba(20,18,16,0.96); z-index:200; display:flex; align-items:center; justify-content:center;">
+		<div style="width:380px; background: var(--coal); border:1px solid var(--ghost);">
+			<div style="padding:28px 28px 20px; border-bottom:1px solid var(--ghost);">
+				<div style="font-family:'Bebas Neue'; font-size:30px; color: var(--ember); letter-spacing:0.08em;">INVS STUDIO</div>
+				<div style="font-size:10px; color: var(--smoke); letter-spacing:0.18em; text-transform:uppercase; margin-top:2px;">Production System</div>
+			</div>
+			<form action="<?php echo base_url() . 'login/aksi' ?>" method="post" style="padding:24px 28px;">
+				<?php
+				if (isset($_GET['alert'])) {
+					if ($_GET['alert'] == 'gagal') {
+						echo "
                 <div class='alert alert-danger font-weight-bold text-center'>
                     Maaf! Username & Password Salah.
                 </div>
                 ";
-            } elseif ($_GET['alert'] == "belum_login") {
-                echo "
+					} elseif ($_GET['alert'] == "belum_login") {
+						echo "
                 <div class='alert alert-danger font-weight-bold text-center'>
                     Anda Harus Login Terlebih Dulu!
                 </div>
                 ";
-            } elseif ($_GET['alert'] == "logout") {
-                echo "
+					} elseif ($_GET['alert'] == "logout") {
+						echo "
                 <div class='alert alert-success font-weight-bold text-center'>
                     Anda Telah Logout!
                 </div>
                 ";
-            }
-        }
-        ?>
-        <div class="card">
-            <div class="card-body login-card-body">
-                <p class="login-box-msg">Sign in to start mywebsite</p>
-                <form action="<?php echo base_url('login/aksi'); ?>" method="post">
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Username" name="username" required>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-user"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <?php echo form_error('username'); ?>
-                    <div class="input-group mb-3">
-                        <input type="password" class="form-control" placeholder="Password" name="password" required>
-                        <div class="input-group-append">
-                            <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <?php echo form_error('password'); ?>
-
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="icheck-primary">
-                                <input type="checkbox" id="remember">
-                                <label for="remember">
-                                    Remember Me
-                                </label>
-                            </div>
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                </form>
-                <!--
-                <div class="social-auth-links text-center mb-3">
-                    <p>- OR -</p>
-                    <a href="#" class="btn btn-block btn-primary">
-                        <i class="fab fa-facebook mr-2"></i> Sign in using Facebook
-                    </a>
-                    <a href="#" class="btn btn-block btn-danger">
-                        <i class="fab fa-google-plus mr-2"></i> Sign in using Google+
-                    </a>
-                </div>
-    -->
-                <div class="text-center">
-                    <p class="mb-1">
-                        <a href="forgot-password.html">I forgot my password</a>
-                    </p>
-                    <p class="mb-0">
-
-                        <a href="<?php echo base_url('login/register'); ?>" class="text-center">Register a new membership</a>
-
-                    </p>
-                </div>
-            </div>
-        </div>
-        <!-- /.login-card-body -->
-    </div>
-    </div>
-    <!-- /.login-box -->
-    <!-- jQuery -->
-    <script src="<?php echo base_url('assets/plugins/jquery/jquery.min.js'); ?>"></script>
-    <!-- Bootstrap 4 -->
-    <script src="<?php echo base_url('assets/plugins/bootstrap/js/bootstrap.bundle.min.js'); ?>"></script>
-    <!-- AdminLTE App -->
-    <script src="<?php echo base_url('assets/dist/js/adminlte.min.js'); ?>"></script>
+					}
+				}
+				?>
+				<div class="form-group">
+					<label class="form-label">Email Address</label>
+					<input name="email" class="form-input" type="email" placeholder="you@example.com">
+				</div>
+				<?php echo form_error('email'); ?>
+				<div class="form-group">
+					<label class="form-label">Password</label>
+					<input name="password" class="form-input" type="password" placeholder="••••••••">
+				</div>
+				<?php echo form_error('password'); ?>
+				<div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+					<span style="font-size:10px; color: var(--smoke);">Forgot password?</span>
+					<a href="<?php echo base_url() . 'register' ?>" style="font-size:10px; color: var(--smoke);">Register →</a>
+				</div>
+				<button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; margin-top:20px;">Sign In →</button>
+			</form>
+		</div>
+	</div>
 </body>
 
 </html>
