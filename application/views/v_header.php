@@ -27,22 +27,22 @@
 		<!-- Admin Nav -->
 		<div class="nav-section" id="nav-admin">
 			<div class="nav-label">Admin Panel</div>
-			<div class="nav-item active">
+			<a href="<?php echo base_url() . 'dashboard' ?>" class="nav-item active">
 				<span class="icon">▦</span> Dashboard
-			</div>
-			<div class="nav-item">
+			</a>
+			<a href="<?php echo base_url() . 'dashboard/orders' ?>" class="nav-item">
 				<span class="icon">≡</span> Orders
-			</div>
-			<div class="nav-item">
+			</a>
+			<a href="<?php echo base_url() . 'dashboard/schedule' ?>" class="nav-item">
 				<span class="icon">◫</span> Schedule
-			</div>
+			</a>
 			<div class="nav-label" style="margin-top:12px;">Reports</div>
-			<div class="nav-item">
+			<a href="<?php echo base_url() . 'dashboard/analytics' ?>" class="nav-item">
 				<span class="icon">↗</span> Analytics
-			</div>
+			</a>
 		</div>
 
-		<!-- Customer Nav -->
+		<!-- Customer Nav
 		<div class="nav-section" id="nav-customer" style="display:none;">
 			<div class="nav-label">My Account</div>
 			<div class="nav-item" onclick="showPage('cust-dashboard', this)">
@@ -54,7 +54,7 @@
 			<div class="nav-item" onclick="showPage('cust-track', this)">
 				<span class="icon">◎</span> Track Orders
 			</div>
-		</div>
+		</div> -->
 
 		<div class="sidebar-footer">
 			<div style="font-size:9px; color: var(--smoke); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:8px;">SJF Algorithm</div>
