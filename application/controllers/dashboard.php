@@ -36,50 +36,115 @@ class Dashboard extends CI_Controller
 		$this->load->view('v_footer');
 	}
 
+	public function save_order()
+	{
+		// Collect customer data
+		$customer = array(
+			'name'  => $this->input->post('customer_name'),
+			'phone' => $this->input->post('phone'),
+			'notes' => $this->input->post('notes'),
+		);
+
+		// Generate a unique order code: ORD-YYYYMMDD-RANDOM
+		$order_code = 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
+
+		// Collect size[] and qty[] arrays from POST
+		$sizes = $this->input->post('size');
+		$qtys  = $this->input->post('qty');
+
+		// Calculate total qty
+		$total_qty = array_sum($qtys);
+
+		// Build order items array
+		$items = array();
+		foreach ($sizes as $i => $size) {
+			if (!empty($qtys[$i])) {
+				$items[] = array(
+					'size' => $size,
+					'qty'  => (int) $qtys[$i],
+				);
+			}
+		}
+
+		// Handle design file upload
+		$design_file = null;
+		if (!empty($_FILES['design_file']['name'])) {
+			$config['upload_path']   = './gambar/orders/';
+			$config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|ai|psd|zip';
+			$config['max_size']      = 10240; // 10MB
+			$new_filename            = uniqid() . '.' . pathinfo($_FILES['design_file']['name'], PATHINFO_EXTENSION);
+			$config['file_name']     = $new_filename;
+			$this->load->library('upload', $config);
+
+			if ($this->upload->do_upload('design_file')) {
+				$design_file = $this->upload->data('file_name');
+			}
+		}
+
+		// Build order data
+		$order = array(
+			'order_code'   => $order_code,
+			'qty'          => $total_qty,
+			'design_file'  => $design_file,
+			'status'       => 'waiting',
+			'est_duration' => (int) $this->input->post('est_duration'),
+			'deadline'     => $this->input->post('deadline'),
+		);
+
+		// Save to all 3 tables via model
+		$result = $this->m_data->save_order($customer, $order, $items);
+
+		if ($result) {
+			redirect(base_url() . 'dashboard?alert=order_saved');
+		} else {
+			redirect(base_url() . 'dashboard/new_order?alert=gagal');
+		}
+	}
+
 
 	function keluar()
 	{
 		$this->session->sess_destroy();
 		redirect('login');
 	}
-	function ganti_password()
-	{
-		$this->load->view('dashboard/v_header');
-		$this->load->view('dashboard/v_ganti_password');
-		$this->load->view('dashboard/v_footer');
-	}
-	function ganti_password_aksi()
-	{
-		$this->form_validation->set_rules('password_lama', 'last password', 'required');
-		$this->form_validation->set_rules('password_baru', 'new password', 'required|min_length[8]');
-		$this->form_validation->set_rules('konfirmasi_password', 'password confirmation', 'required|matches[password_baru]');
-		if ($this->form_validation->run() != false) {
-			$password_lama = $this->input->post('password_lama');
-			$password_baru = $this->input->post('password_baru');
-			$konfirmasi_password = $this->input->post('konfirmasi_password');
-			$where = array(
-				'pengguna_id' => $this->session->userdata('id'),
-				'pengguna_password' => md5($password_lama)
-			);
-			$cek = $this->m_login->cek_login('pengguna', $where);
-			if ($cek->num_rows() > 0) {
-				$w = array(
-					'pengguna_id' => $this->session->userdata('id')
-				);
-				$data = array(
-					'pengguna_password' => md5($password_baru)
-				);
-				$this->m_data->update_data('pengguna', $data, $where);
-				redirect('dashboard/ganti_password?alert=sukses');
-			} else {
-				redirect('dashboard/ganti_password?alert=gagal');
-			}
-		} else {
-			$this->load->view('dashboard/v_header');
-			$this->load->view('dashboard/v_ganti_password');
-			$this->load->view('dashboard/v_footer');
-		}
-	}
+	// function ganti_password()
+	// {
+	// 	$this->load->view('dashboard/v_header');
+	// 	$this->load->view('dashboard/v_ganti_password');
+	// 	$this->load->view('dashboard/v_footer');
+	// }
+	// function ganti_password_aksi()
+	// {
+	// 	$this->form_validation->set_rules('password_lama', 'last password', 'required');
+	// 	$this->form_validation->set_rules('password_baru', 'new password', 'required|min_length[8]');
+	// 	$this->form_validation->set_rules('konfirmasi_password', 'password confirmation', 'required|matches[password_baru]');
+	// 	if ($this->form_validation->run() != false) {
+	// 		$password_lama = $this->input->post('password_lama');
+	// 		$password_baru = $this->input->post('password_baru');
+	// 		$konfirmasi_password = $this->input->post('konfirmasi_password');
+	// 		$where = array(
+	// 			'pengguna_id' => $this->session->userdata('id'),
+	// 			'pengguna_password' => md5($password_lama)
+	// 		);
+	// 		$cek = $this->m_login->cek_login('pengguna', $where);
+	// 		if ($cek->num_rows() > 0) {
+	// 			$w = array(
+	// 				'pengguna_id' => $this->session->userdata('id')
+	// 			);
+	// 			$data = array(
+	// 				'pengguna_password' => md5($password_baru)
+	// 			);
+	// 			$this->m_data->update_data('pengguna', $data, $where);
+	// 			redirect('dashboard/ganti_password?alert=sukses');
+	// 		} else {
+	// 			redirect('dashboard/ganti_password?alert=gagal');
+	// 		}
+	// 	} else {
+	// 		$this->load->view('dashboard/v_header');
+	// 		$this->load->view('dashboard/v_ganti_password');
+	// 		$this->load->view('dashboard/v_footer');
+	// 	}
+	// }
 	//
 
 	public function portofolio()

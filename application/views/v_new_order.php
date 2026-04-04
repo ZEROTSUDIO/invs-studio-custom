@@ -10,7 +10,7 @@
 			</div>
 		</div>
 
-		<form method="post" action="/orders/store" enctype="multipart/form-data">
+		<form method="post" action="<?php echo base_url() . 'dashboard/save_order' ?>" enctype="multipart/form-data">
 
 			<div class="panel">
 				<div class="panel-header">

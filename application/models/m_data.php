@@ -23,4 +23,28 @@ class M_data extends CI_Model
     {
         return $this->db->delete($table, $where);
     }
+
+    function save_order($customer, $order, $items)
+    {
+        $this->db->trans_start();
+
+        // 1. Insert customer
+        $this->db->insert('customers', $customer);
+        $customer_id = $this->db->insert_id();
+
+        // 2. Insert order (linked to customer)
+        $order['customer_id'] = $customer_id;
+        $this->db->insert('orders', $order);
+        $order_id = $this->db->insert_id();
+
+        // 3. Insert each order item (linked to order)
+        foreach ($items as $item) {
+            $item['order_id'] = $order_id;
+            $this->db->insert('order_items', $item);
+        }
+
+        $this->db->trans_complete();
+
+        return $this->db->trans_status();
+    }
 }
