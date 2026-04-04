@@ -83,6 +83,7 @@ class Dashboard extends CI_Controller
 		// Build order data
 		$order = array(
 			'order_code'   => $order_code,
+			'product_type' => $this->input->post('product_type'),
 			'qty'          => $total_qty,
 			'design_file'  => $design_file,
 			'notes' => $this->input->post('notes'),

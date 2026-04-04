@@ -1734,12 +1734,12 @@
 								margin-top: 20px;
 							">
 						<button
-							type="button"
+							type="reset"
 							class="btn-outline-gold"
 							onclick="clearForm()">
 							Reset
 						</button>
-						<button type="button" class="btn-gold" onclick="submitForm()">
+						<button type="submit" class="btn-gold" onclick="submitForm()">
 							Kirim Pesanan
 							<svg
 								width="14"

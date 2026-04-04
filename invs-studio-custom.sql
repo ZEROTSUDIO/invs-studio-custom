@@ -46,6 +46,7 @@ CREATE TABLE `orders` (
   `customer_id` int NOT NULL,
   `order_code` varchar(50) NOT NULL,
   `qty` int NOT NULL,
+  `product_type` varchar(50) DEFAULT NULL,
   `design_file` varchar(255) DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `status` enum('waiting','scheduled','in_progress','done') DEFAULT 'waiting',
