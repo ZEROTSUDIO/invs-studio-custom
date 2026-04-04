@@ -47,6 +47,7 @@ CREATE TABLE `orders` (
   `order_code` varchar(50) NOT NULL,
   `qty` int NOT NULL,
   `design_file` varchar(255) DEFAULT NULL,
+  `notes` text DEFAULT NULL,
   `status` enum('waiting','scheduled','in_progress','done') DEFAULT 'waiting',
   `est_duration` int NOT NULL,
   `deadline` date DEFAULT NULL,

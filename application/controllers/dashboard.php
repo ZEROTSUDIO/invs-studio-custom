@@ -41,8 +41,7 @@ class Dashboard extends CI_Controller
 		// Collect customer data
 		$customer = array(
 			'name'  => $this->input->post('customer_name'),
-			'phone' => $this->input->post('phone'),
-			'notes' => $this->input->post('notes'),
+			'phone' => $this->input->post('phone')
 		);
 
 		// Generate a unique order code: ORD-YYYYMMDD-RANDOM
@@ -86,6 +85,7 @@ class Dashboard extends CI_Controller
 			'order_code'   => $order_code,
 			'qty'          => $total_qty,
 			'design_file'  => $design_file,
+			'notes' => $this->input->post('notes'),
 			'status'       => 'waiting',
 			'est_duration' => (int) $this->input->post('est_duration'),
 			'deadline'     => $this->input->post('deadline'),

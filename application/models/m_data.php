@@ -28,9 +28,14 @@ class M_data extends CI_Model
     {
         $this->db->trans_start();
 
-        // 1. Insert customer
-        $this->db->insert('customers', $customer);
-        $customer_id = $this->db->insert_id();
+        // 1. Find or create customer by phone number
+        $existing = $this->db->get_where('customers', array('phone' => $customer['phone']))->row();
+        if ($existing) {
+            $customer_id = $existing->id;
+        } else {
+            $this->db->insert('customers', $customer);
+            $customer_id = $this->db->insert_id();
+        }
 
         // 2. Insert order (linked to customer)
         $order['customer_id'] = $customer_id;
