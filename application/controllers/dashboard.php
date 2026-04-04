@@ -22,18 +22,21 @@ class Dashboard extends CI_Controller
 
 	function index()
 	{
-		//     //hitung jumlah artikel
-		//     $data['jumlah_artikel'] = $this->m_data->get_data('artikel')->num_rows();
-		//     //hitung jumlah kategori
-		//     $data['jumlah_kategori'] = $this->m_data->get_data('portofolio')->num_rows();
-		//     //hitung jumlah pengguna
-		//     $data['jumlah_pengguna'] = $this->m_data->get_data('pengguna')->num_rows();
-		//     //hitung jumlah halaman
-		//    // $data['jumlah_halaman'] = $this->m_data->get_data('halaman')->num_rows();
-		$this->load->view('v_header');
+		$data['page_title'] = 'Admin Dashboard';
+		$this->load->view('v_header', $data);
 		$this->load->view('v_index');
 		$this->load->view('v_footer');
 	}
+
+	public function new_order()
+	{
+		$data['page_title'] = 'New Order';
+		$this->load->view('v_header', $data);
+		$this->load->view('v_new_order');
+		$this->load->view('v_footer');
+	}
+
+
 	function keluar()
 	{
 		$this->session->sess_destroy();

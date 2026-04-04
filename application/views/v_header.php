@@ -27,8 +27,11 @@
 		<!-- Admin Nav -->
 		<div class="nav-section" id="nav-admin">
 			<div class="nav-label">Admin Panel</div>
-			<a href="<?php echo base_url() . 'dashboard' ?>" class="nav-item active">
+			<a href="<?php echo base_url() . 'dashboard' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "" || $this->uri->segment(2) == "index") ? 'active' : ''; ?>">
 				<span class="icon">▦</span> Dashboard
+			</a>
+			<a href="<?php echo base_url() . 'dashboard/new_order' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "new_order") ? 'active' : ''; ?>">
+				<span class="icon">+</span> New Order
 			</a>
 			<a href="<?php echo base_url() . 'dashboard/orders' ?>" class="nav-item">
 				<span class="icon">≡</span> Orders
@@ -68,7 +71,7 @@
 
 		<!-- TOPBAR -->
 		<div class="topbar">
-			<div class="page-title" id="topbar-title">Admin Dashboard</div>
+			<div class="page-title" id="topbar-title"><?php echo isset($page_title) ? $page_title : 'Admin Dashboard'; ?></div>
 			<div style="display:flex; align-items:center; gap:16px;">
 				<div style="font-size:11px; color: var(--smoke);">
 					<span style="color: var(--ember);">●</span> &nbsp;Thu, 3 Apr 2025 &nbsp;|&nbsp; 09:41 WIB
