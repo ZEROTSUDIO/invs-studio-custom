@@ -672,7 +672,7 @@
 	</section>
 
 	<!-- ===================== MARQUEE ===================== -->
-	<div
+	<!-- <div
 		class="overflow-hidden py-4 border-y border-gold"
 		style="
 				border-color: rgba(212, 160, 23, 0.12);
@@ -703,7 +703,7 @@
 				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Screen Print</span>
 			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
-			<!-- Duplicate -->
+			
 			<span
 				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">T-Shirt Custom</span>
@@ -729,7 +729,7 @@
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Screen Print</span>
 			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
 		</div>
-	</div>
+	</div> -->
 
 	<!-- ===================== CATALOG ===================== -->
 	<section id="catalog" class="py-24 px-6">
@@ -1687,6 +1687,8 @@
 							style="font-size: 11px; color: #666; margin-top: 4px"></div>
 					</div>
 
+					<input type="hidden" name="est_duration" id="est-duration-hidden">
+
 					<!-- Additional -->
 					<div class="mb-2">
 						<div
@@ -1981,25 +1983,23 @@
 		}
 
 		function calcDuration() {
-			const productType = document.getElementById("product-type");
-			const daysPer = parseInt(productType.value) || 10;
-			const qtyInputs = document.querySelectorAll(".qty-input");
-			let totalQty = 0;
-			qtyInputs.forEach((i) => {
-				totalQty += parseInt(i.value) || 0;
+			let qtyInputs = document.querySelectorAll(".qty-input");
+			let total = 0;
+
+			qtyInputs.forEach(input => {
+				total += parseInt(input.value) || 0;
 			});
 
-			const box = document.getElementById("duration-box");
-			const valEl = document.getElementById("duration-val");
-			const noteEl = document.getElementById("duration-note");
+			let base = parseInt(document.getElementById("product-type").value);
+			let duration = (total * base) + 20;
 
-			if (totalQty > 0) {
-				const days = Math.ceil((totalQty / 12) * daysPer);
-				box.style.display = "block";
-				valEl.textContent = days + " Hari Kerja";
-				noteEl.textContent = `Untuk ${totalQty} pcs — dapat selesai lebih cepat tergantung antrian.`;
+			if (total > 0) {
+				document.getElementById("duration-box").style.display = "block";
+				document.getElementById("duration-val").innerText = duration + " Menit";
+				document.getElementById("duration-note").innerText = `Waktu pengerjaan ${duration} menit (Termasuk setup 20 menit)`;
+				document.getElementById("est-duration-hidden").value = duration;
 			} else {
-				box.style.display = "none";
+				document.getElementById("duration-box").style.display = "none";
 			}
 		}
 
