@@ -35,16 +35,6 @@ class Dashboard extends CI_Controller
 		$this->load->view('v_new_order');
 		$this->load->view('v_footer');
 	}
-
-	public function orders()
-	{
-		$data['page_title'] = 'Orders';
-		$data['orders'] = $this->m_data->get_all_orders()->result();
-		$this->load->view('v_header', $data);
-		$this->load->view('v_orders', $data);
-		$this->load->view('v_footer');
-	}
-
 	public function save_order()
 	{
 		// Collect customer data
@@ -820,5 +810,72 @@ class Dashboard extends CI_Controller
 		$this->m_data->update_data('artikel', $d, $w);
 		$this->m_data->delete_data('pengguna', $where);
 		redirect(base_url() . 'dashboard/pengguna');
+	}
+
+	public function schedule()
+	{
+		$this->load->model('m_schedule');
+		$data['page_title'] = 'Production Schedule';
+
+		// Fetch schedules
+		$data['schedules'] = $this->m_schedule->get_full_schedule();
+
+		$this->load->view('v_header', $data);
+		$this->load->view('dashboard/v_schedule', $data);
+	}
+
+	public function generate_schedule()
+	{
+		$this->load->model('m_schedule');
+		$success = $this->m_schedule->generate();
+
+		redirect(base_url() . 'dashboard/schedule?alert=schedule_updated');
+	}
+
+	public function orders()
+	{
+		$data['page_title'] = 'Orders list';
+
+		// Fetch all orders joined with customers and schedule
+		$this->db->select('o.*, c.name as customer_name, ps.queue_position, ps.start_date, ps.end_date');
+		$this->db->from('orders o');
+		$this->db->join('customers c', 'o.customer_id = c.id');
+		$this->db->join('production_schedule ps', 'o.id = ps.order_id', 'left');
+		$this->db->order_by('o.id', 'DESC');
+		$data['orders'] = $this->db->get()->result();
+
+		$this->load->view('v_header', $data);
+		$this->load->view('dashboard/v_orders', $data);
+	}
+
+	public function update_status($order_id, $new_status)
+	{
+	    // Allowed transitions explicitly listed
+	    $allowed_orders_statuses = ['waiting', 'scheduled', 'in_progress', 'done'];
+	    
+	    if (!in_array($new_status, $allowed_orders_statuses)) {
+	        redirect(base_url() . 'dashboard/orders');
+	        return;
+	    }
+	    
+	    $this->db->trans_start();
+
+		// Update orders table
+		$this->db->where('id', $order_id)->update('orders', ['status' => $new_status]);
+
+		// Map order statuses to production schedule statuses safely
+		$schedule_status_map = [
+		    'scheduled' => 'scheduled',
+		    'in_progress' => 'in_progress',
+		    'done' => 'completed'
+		];
+		
+		if (isset($schedule_status_map[$new_status])) {
+		    $this->db->where('order_id', $order_id)->update('production_schedule', ['status' => $schedule_status_map[$new_status]]);
+		}
+
+        $this->db->trans_complete();
+
+		redirect(base_url() . 'dashboard/orders?alert=status_updated');
 	}
 }
