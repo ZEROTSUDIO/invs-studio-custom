@@ -5,12 +5,17 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Invs Studio — Production System</title>
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo base_url(); ?>assets/img/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="<?php echo base_url(); ?>assets/img/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="<?php echo base_url(); ?>assets/img/favicon/favicon-16x16.png">
+	<link rel="manifest" href="<?php echo base_url(); ?>assets/img/favicon/site.webmanifest">
 	<script src="https://cdn.tailwindcss.com"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="<?php echo base_url() . 'assets/css/style.css' ?>">
 	<!-- SIDEBAR -->
 	<div class="sidebar">
 		<div class="sidebar-logo">
+			<img src="<?php echo base_url(); ?>assets/img/favicon/android-chrome-192x192.png" width="40" height="40" alt="Logo" style="margin-bottom:8px;">
 			<div class="brand">INVS STUDIO</div>
 			<div class="sub">Production System v1.0</div>
 		</div>

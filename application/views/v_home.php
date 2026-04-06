@@ -5,6 +5,10 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>INVS STUDIO CUSTOM</title>
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo base_url(); ?>assets/img/favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="<?php echo base_url(); ?>assets/img/favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="<?php echo base_url(); ?>assets/img/favicon/favicon-16x16.png">
+	<link rel="manifest" href="<?php echo base_url(); ?>assets/img/favicon/site.webmanifest">
 	<script src="https://cdn.tailwindcss.com"></script>
 	<link
 		href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
@@ -20,18 +24,7 @@
 	<nav
 		class="fixed top-0 left-0 right-0 z-50 px-6 py-4 flex items-center justify-between">
 		<div class="flex items-center gap-3">
-			<svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-				<polygon
-					points="14,2 26,9 26,19 14,26 2,19 2,9"
-					stroke="#d4a017"
-					stroke-width="1.5"
-					fill="none" />
-				<polygon
-					points="14,6 22,11 22,17 14,22 6,17 6,11"
-					stroke="#d4a017"
-					stroke-width="0.5"
-					fill="rgba(212,160,23,0.05)" />
-			</svg>
+			<img src="<?php echo base_url(); ?>assets/img/favicon/android-chrome-192x192.png" width="32" height="32" alt="Logo" style="border-radius:6px;">
 			<span
 				class="font-title font-800 text-base tracking-widest text-gold-400 uppercase"
 				style="
