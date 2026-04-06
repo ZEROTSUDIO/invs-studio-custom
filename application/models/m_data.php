@@ -52,4 +52,13 @@ class M_data extends CI_Model
 
         return $this->db->trans_status();
     }
+
+    function get_all_orders()
+    {
+        $this->db->select('orders.*, customers.name as customer_name');
+        $this->db->from('orders');
+        $this->db->join('customers', 'customers.id = orders.customer_id');
+        $this->db->order_by('orders.id', 'DESC');
+        return $this->db->get();
+    }
 }

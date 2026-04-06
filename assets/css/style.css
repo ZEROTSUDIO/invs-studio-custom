@@ -515,3 +515,15 @@ select.form-input option {
 .file-drop:hover {
 	border-color: var(--ember);
 }
+
+/* Stat card nth-child colors */
+.stat-card:nth-child(2)::before {
+	background: #4ade80;
+}
+.stat-card:nth-child(3)::before {
+	background: #60a5fa;
+}
+.stat-card:nth-child(4)::before {
+	background: #c084fc;
+}
+

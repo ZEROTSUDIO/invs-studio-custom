@@ -36,6 +36,15 @@ class Dashboard extends CI_Controller
 		$this->load->view('v_footer');
 	}
 
+	public function orders()
+	{
+		$data['page_title'] = 'Orders';
+		$data['orders'] = $this->m_data->get_all_orders()->result();
+		$this->load->view('v_header', $data);
+		$this->load->view('v_orders', $data);
+		$this->load->view('v_footer');
+	}
+
 	public function save_order()
 	{
 		// Collect customer data

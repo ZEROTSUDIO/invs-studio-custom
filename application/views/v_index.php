@@ -9,31 +9,19 @@
 			<div class="stat-sub">↑ 8 this week</div>
 		</div>
 		<div class="stat-card" style="--before-color: #4ade80;">
-			<style>
-				.stat-card:nth-child(2)::before {
-					background: #4ade80;
-				}
-			</style>
+
 			<div class="stat-val">5</div>
 			<div class="stat-label">In Production</div>
 			<div class="stat-sub" style="color:#4ade80;">Running now</div>
 		</div>
 		<div class="stat-card">
-			<style>
-				.stat-card:nth-child(3)::before {
-					background: #60a5fa;
-				}
-			</style>
+
 			<div class="stat-val">14</div>
 			<div class="stat-label">Queued (SJF)</div>
 			<div class="stat-sub" style="color:#60a5fa;">Avg 2.4 days</div>
 		</div>
 		<div class="stat-card">
-			<style>
-				.stat-card:nth-child(4)::before {
-					background: #c084fc;
-				}
-			</style>
+
 			<div class="stat-val">28</div>
 			<div class="stat-label">Completed</div>
 			<div class="stat-sub" style="color:#c084fc;">This month</div>
