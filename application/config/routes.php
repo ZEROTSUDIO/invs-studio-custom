@@ -72,6 +72,7 @@ $route['search/(:any)/(:num)'] = 'welcome/search/$1/$2';
 //route untuk halaman page
 $route['page/(:any)'] = 'welcome/page/$1';
 //route untuk URL SEO artikel
+$route['migrate'] = 'migrate';
 $route['(:any)'] = 'welcome/single/$1';
 $route['404_override'] = 'welcome/notfound';
 $route['translate_uri_dashes'] = FALSE;
