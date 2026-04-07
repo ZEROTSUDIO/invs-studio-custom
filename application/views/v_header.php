@@ -79,7 +79,7 @@
 			<div class="page-title" id="topbar-title"><?php echo isset($page_title) ? $page_title : 'Admin Dashboard'; ?></div>
 			<div style="display:flex; align-items:center; gap:16px;">
 				<div style="font-size:11px; color: var(--smoke);">
-					<span style="color: var(--ember);">●</span> &nbsp;Thu, 3 Apr 2025 &nbsp;|&nbsp; 09:41 WIB
+					<span style="color: var(--ember);">●</span> &nbsp; <?php echo date('d-F-Y'); ?> &nbsp;|&nbsp; <?php echo date('H:i'); ?> WIB
 				</div>
 				<div style="display:flex; align-items:center; gap:8px;">
 					<div style="width:30px; height:30px; background: var(--ember); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:15px; color: var(--ink);">A</div>
