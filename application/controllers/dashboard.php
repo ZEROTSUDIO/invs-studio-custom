@@ -260,6 +260,9 @@ class Dashboard extends CI_Controller
 
 		// Fetch schedules
 		$data['schedules'] = $this->m_schedule->get_full_schedule();
+		
+		// Calculate stats
+		$data['stats'] = $this->m_schedule->get_queue_stats($data['schedules']);
 
 		$this->load->view('v_header', $data);
 		$this->load->view('dashboard/v_schedule', $data);

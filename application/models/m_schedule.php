@@ -114,6 +114,33 @@ class M_schedule extends CI_Model
         return $this->db->get()->result();
     }
 
+    public function get_queue_stats($schedules)
+    {
+        $shortest = null;
+        $longest = null;
+        $total_dur = 0;
+        $count = count($schedules);
+
+        foreach ($schedules as $s) {
+            if ($shortest === null || $s->est_duration < $shortest) $shortest = $s->est_duration;
+            if ($longest === null || $s->est_duration > $longest) $longest = $s->est_duration;
+            $total_dur += $s->est_duration;
+        }
+
+        $avg = $count > 0 ? round($total_dur / $count, 1) : 0;
+        $load = $count > 10 ? 'High' : ($count > 5 ? 'Moderate' : 'Low');
+        $load_color = $count > 10 ? '#f87171' : ($count > 5 ? '#e8a020' : '#4ade80');
+
+        return (object)[
+            'count' => $count,
+            'shortest' => $shortest,
+            'longest' => $longest,
+            'avg' => $avg,
+            'load' => $load,
+            'load_color' => $load_color
+        ];
+    }
+
     private function force_business_hours($datetime_str)
     {
         return $this->advance_time($datetime_str, 0);

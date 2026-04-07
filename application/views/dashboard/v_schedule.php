@@ -40,53 +40,6 @@
 						$date_label = date('j M', strtotime("$today +$i days"));
 						echo '<div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">' . $date_label . '</div>';
 					}
-					
-					if (!function_exists('format_duration')) {
-					    function format_duration($mins) {
-					        if ($mins <= 0) return "0 mins";
-					        $d = floor($mins / 510);
-					        $rem = $mins % 510;
-					        $h = floor($rem / 60);
-					        $m = $rem % 60;
-					        $parts = [];
-					        if ($d > 0) $parts[] = $d . "d";
-					        if ($h > 0) $parts[] = $h . "h";
-					        if ($m > 0) $parts[] = $m . "m";
-					        return implode(" ", $parts);
-					    }
-					    
-					    function get_operational_minutes($start_txt, $end_txt) {
-					        $start = new DateTime($start_txt);
-					        $end = new DateTime($end_txt);
-					        if ($start >= $end) return 0;
-					        
-					        $minutes = 0;
-					        while ($start < $end) {
-					            if ($start->format('w') == 0) { // skip sunday
-					                $start->modify('+1 day')->setTime(8,30,0);
-					                continue;
-					            }
-					            $curr_mins = (int)$start->format('G') * 60 + (int)$start->format('i');
-					            
-					            // cap start bounds
-					            if ($curr_mins < 510) { $start->setTime(8,30,0); $curr_mins = 510; }
-					            if ($curr_mins >= 1020) { $start->modify('+1 day')->setTime(8,30,0); continue; }
-					            
-					            if ($start->format('Y-m-d') == $end->format('Y-m-d')) {
-					                $eh = (int)$end->format('G');
-					                $em = (int)$end->format('i');
-					                $end_mins = $eh * 60 + $em;
-					                if ($end_mins > 1020) $end_mins = 1020;
-					                $minutes += max(0, $end_mins - $curr_mins);
-					                break;
-					            } else {
-					                $minutes += max(0, 1020 - $curr_mins);
-					                $start->modify('+1 day')->setTime(8,30,0);
-					            }
-					        }
-					        return $minutes;
-					    }
-					}
 					?>
 				</div>
 
@@ -181,41 +134,25 @@
 					<div class="panel-title">Queue Stats</div>
 				</div>
 				<div style="padding:16px; display:flex; flex-direction:column; gap:10px;">
-					<?php
-					$shortest = null;
-					$longest = null;
-					$total_dur = 0;
-					$count = count($schedules);
-
-					foreach ($schedules as $s) {
-						if ($shortest === null || $s->est_duration < $shortest) $shortest = $s->est_duration;
-						if ($longest === null || $s->est_duration > $longest) $longest = $s->est_duration;
-						$total_dur += $s->est_duration;
-					}
-
-					$avg = $count > 0 ? round($total_dur / $count, 1) : 0;
-					$load = $count > 10 ? 'High' : ($count > 5 ? 'Moderate' : 'Low');
-					$load_color = $count > 10 ? '#f87171' : ($count > 5 ? '#e8a020' : '#4ade80');
-					?>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Active Queue</span>
-						<span style="font-size:11px; color: var(--ember); font-weight:600;"><?php echo $count; ?> jobs</span>
+						<span style="font-size:11px; color: var(--ember); font-weight:600;"><?php echo $stats->count; ?> jobs</span>
 					</div>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Shortest wait</span>
-						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($shortest ?? 0); ?></span>
+						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($stats->shortest ?? 0); ?></span>
 					</div>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Longest wait</span>
-						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($longest ?? 0); ?></span>
+						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($stats->longest ?? 0); ?></span>
 					</div>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Avg wait time</span>
-						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($avg); ?></span>
+						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($stats->avg); ?></span>
 					</div>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Capacity load</span>
-						<span style="font-size:11px; color: <?php echo $load_color; ?>;"><?php echo $load; ?></span>
+						<span style="font-size:11px; color: <?php echo $stats->load_color; ?>;"><?php echo $stats->load; ?></span>
 					</div>
 				</div>
 			</div>
