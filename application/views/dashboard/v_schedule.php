@@ -54,6 +54,38 @@
 					        if ($m > 0) $parts[] = $m . "m";
 					        return implode(" ", $parts);
 					    }
+					    
+					    function get_operational_minutes($start_txt, $end_txt) {
+					        $start = new DateTime($start_txt);
+					        $end = new DateTime($end_txt);
+					        if ($start >= $end) return 0;
+					        
+					        $minutes = 0;
+					        while ($start < $end) {
+					            if ($start->format('w') == 0) { // skip sunday
+					                $start->modify('+1 day')->setTime(8,30,0);
+					                continue;
+					            }
+					            $curr_mins = (int)$start->format('G') * 60 + (int)$start->format('i');
+					            
+					            // cap start bounds
+					            if ($curr_mins < 510) { $start->setTime(8,30,0); $curr_mins = 510; }
+					            if ($curr_mins >= 1020) { $start->modify('+1 day')->setTime(8,30,0); continue; }
+					            
+					            if ($start->format('Y-m-d') == $end->format('Y-m-d')) {
+					                $eh = (int)$end->format('G');
+					                $em = (int)$end->format('i');
+					                $end_mins = $eh * 60 + $em;
+					                if ($end_mins > 1020) $end_mins = 1020;
+					                $minutes += max(0, $end_mins - $curr_mins);
+					                break;
+					            } else {
+					                $minutes += max(0, 1020 - $curr_mins);
+					                $start->modify('+1 day')->setTime(8,30,0);
+					            }
+					        }
+					        return $minutes;
+					    }
 					}
 					?>
 				</div>
@@ -62,29 +94,27 @@
 				<div style="display:flex; flex-direction:column; gap:6px;">
 					<?php foreach ($schedules as $s) : ?>
 						<?php
-						// Calculate grid column positions base 1
-						// Col 1 = Label
-						// Col 2 = Today
-						// Col 3 = Tomorrow, etc.
-						$start_dt = new DateTime(date('Y-m-d', strtotime($s->start_date)));
-						$end_dt = new DateTime(date('Y-m-d', strtotime($s->end_date)));
-						$base_dt = new DateTime($today);
-
-						$diff_start = $base_dt->diff($start_dt)->days;
-						$is_start_past = (clone $start_dt)->setTime(0, 0) < (clone $base_dt)->setTime(0, 0);
-						if ($is_start_past) {
-							$diff_start = 0; // cap at today visually
+						$today_start = date('Y-m-d') . ' 08:30:00';
+						
+						$actual_start = $s->start_date;
+						if (new DateTime($actual_start) < new DateTime($today_start)) {
+						    $actual_start = $today_start;
 						}
-
-						$duration = $start_dt->diff($end_dt)->days;
-						// if duration is 0 (same day), minimum 1 day block
-						if ($duration == 0) $duration = 1;
-
-						$grid_start = 2 + $diff_start;
-						$grid_end = $grid_start + $duration;
-
-						// Cap to 10 days max (col 12)
-						if ($grid_end > 12) $grid_end = 12;
+						
+						$offset_mins = get_operational_minutes($today_start, $actual_start);
+						$duration_mins = get_operational_minutes($actual_start, $s->end_date);
+						
+						// Total visible timeline = 10 days * 510 mins = 5100 mins
+						$left_pct = ($offset_mins / 5100) * 100;
+						$width_pct = ($duration_mins / 5100) * 100;
+						
+						// Skip if task starts completely outside the 10-day block
+						if ($left_pct >= 100) continue;
+						
+						// Clamp width if it bleeds over
+						if (($left_pct + $width_pct) > 100) {
+						    $width_pct = 100 - $left_pct;
+						}
 
 						// Determine color based on status
 						if ($s->status == 'in_progress') {
@@ -97,29 +127,21 @@
 							$bg = 'var(--ghost)';
 							$col = 'var(--cream)';
 						}
-						
-						// Skip if task starts way past 10 days
-						if ($grid_start > 11) continue;
 						?>
 
-						<div style="display:grid; grid-template-columns: 160px repeat(10, 1fr); gap:0; align-items:center;">
-							<div style="font-size:11px; color: var(--cream); padding-right:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+						<div style="display:flex; align-items:center; height:28px;">
+							<div style="font-size:11px; color:var(--cream); width:160px; min-width:160px; padding-right:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
 								<?php echo htmlspecialchars($s->order_code); ?> <?php echo htmlspecialchars($s->customer_name); ?>
 							</div>
 
-							<?php if ($grid_start > 2) : ?>
-								<div style="grid-column: 2 / <?php echo $grid_start; ?>; background: rgba(255,255,255,0.02); height:28px;"></div>
-							<?php endif; ?>
-
-							<div style="grid-column: <?php echo $grid_start; ?> / <?php echo $grid_end; ?>;">
-								<div class="gantt-bar" style="background:<?php echo $bg; ?>; color:<?php echo $col; ?>;">
-									<?php echo $s->qty; ?> pcs · <?php echo format_duration($s->est_duration); ?>
+							<div style="flex:1; position:relative; height:100%; background:rgba(255,255,255,0.02); display:grid; grid-template-columns: repeat(10, 1fr);">
+							    <?php for ($i=0; $i<10; $i++): ?>
+							        <div style="border-left:1px solid var(--ghost);"></div>
+							    <?php endfor; ?>
+								<div class="gantt-bar flex justify-center items-center" style="position:absolute; top:0; bottom:0; left:<?php echo $left_pct; ?>%; width:<?php echo $width_pct; ?>%; height:100%; background:<?php echo $bg; ?>; color:<?php echo $col; ?>; min-width:20px; overflow:hidden; white-space:nowrap; text-align:center;">
+									<?php echo $s->qty; ?>p · <?php echo format_duration($s->est_duration); ?>
 								</div>
 							</div>
-
-							<?php if ($grid_end <= 11) : ?>
-								<div style="grid-column: <?php echo $grid_end; ?> / 12; background: rgba(255,255,255,0.02); height:28px;"></div>
-							<?php endif; ?>
 						</div>
 					<?php endforeach; ?>
 					
