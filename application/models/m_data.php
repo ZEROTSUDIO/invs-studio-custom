@@ -24,18 +24,9 @@ class M_data extends CI_Model
         return $this->db->delete($table, $where);
     }
 
-    function save_order($customer, $order, $items)
+    function save_order($customer_id, $order, $items)
     {
         $this->db->trans_start();
-
-        // 1. Find or create customer by phone number
-        $existing = $this->db->get_where('customers', array('phone' => $customer['phone']))->row();
-        if ($existing) {
-            $customer_id = $existing->id;
-        } else {
-            $this->db->insert('customers', $customer);
-            $customer_id = $this->db->insert_id();
-        }
 
         // 2. Insert order (linked to customer)
         $order['customer_id'] = $customer_id;
@@ -51,6 +42,33 @@ class M_data extends CI_Model
         $this->db->trans_complete();
 
         return $this->db->trans_status();
+    }
+
+    function create_customer($data)
+    {
+        $this->db->insert('customers', $data);
+        return $this->db->insert_id();
+    }
+
+    function search_customers($query)
+    {
+        $this->db->select('id, name, phone');
+        $this->db->group_start();
+        $this->db->like('name', $query);
+        $this->db->or_like('phone', $query);
+        $this->db->group_end();
+        $this->db->limit(8);
+        return $this->db->get('customers')->result();
+    }
+
+    function get_all_customers()
+    {
+        $this->db->select('c.id, c.name, c.phone, COUNT(o.id) as total_orders');
+        $this->db->from('customers c');
+        $this->db->join('orders o', 'o.customer_id = c.id', 'left');
+        $this->db->group_by('c.id');
+        $this->db->order_by('c.name', 'ASC');
+        return $this->db->get()->result();
     }
 
     function get_all_orders()

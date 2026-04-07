@@ -41,7 +41,10 @@
 			<a href="<?php echo base_url() . 'dashboard/orders' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "orders") ? 'active' : ''; ?>">
 				<span class="icon">≡</span> Orders
 			</a>
-			<a href="<?php echo base_url() . 'dashboard/schedule' ?>" class="nav-item">
+			<a href="<?php echo base_url() . 'dashboard/customers' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "customers") ? 'active' : ''; ?>">
+				<span class="icon">◎</span> Customers
+			</a>
+			<a href="<?php echo base_url() . 'dashboard/schedule' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "schedule") ? 'active' : ''; ?>">
 				<span class="icon">◫</span> Schedule
 			</a>
 			<div class="nav-label" style="margin-top:12px;">Reports</div>

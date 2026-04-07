@@ -37,11 +37,12 @@ class Dashboard extends CI_Controller
 	}
 	public function save_order()
 	{
-		// Collect customer data
-		$customer = array(
-			'name'  => $this->input->post('customer_name'),
-			'phone' => $this->input->post('phone')
-		);
+		$customer_id = (int) $this->input->post('customer_id');
+
+		if (!$customer_id) {
+			redirect(base_url() . 'dashboard/new_order?alert=no_customer');
+			return;
+		}
 
 		// Generate a unique order code: ORD-YYYYMMDD-RANDOM
 		$order_code = 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
@@ -85,20 +86,57 @@ class Dashboard extends CI_Controller
 			'product_type' => $this->input->post('product_type'),
 			'qty'          => $total_qty,
 			'design_file'  => $design_file,
-			'notes' => $this->input->post('notes'),
+			'notes'        => $this->input->post('notes'),
 			'status'       => 'waiting',
 			'est_duration' => (int) $this->input->post('est_duration'),
 			'deadline'     => $this->input->post('deadline'),
 		);
 
-		// Save to all 3 tables via model
-		$result = $this->m_data->save_order($customer, $order, $items);
+		// Save via model (customer_id already resolved by picker)
+		$result = $this->m_data->save_order($customer_id, $order, $items);
 
 		if ($result) {
 			redirect(base_url() . 'dashboard?alert=order_saved');
 		} else {
 			redirect(base_url() . 'dashboard/new_order?alert=gagal');
 		}
+	}
+
+	// AJAX: live customer search
+	public function customer_search()
+	{
+		$q = $this->input->get('q');
+		if (strlen($q) < 1) {
+			echo json_encode([]);
+			return;
+		}
+		$results = $this->m_data->search_customers($q);
+		echo json_encode($results);
+	}
+
+	// AJAX: create new customer inline
+	public function customer_create()
+	{
+		$name  = trim($this->input->post('name'));
+		$phone = trim($this->input->post('phone'));
+
+		if (!$name || !$phone) {
+			echo json_encode(['success' => false, 'message' => 'Name and phone required']);
+			return;
+		}
+
+		$id = $this->m_data->create_customer(['name' => $name, 'phone' => $phone]);
+		echo json_encode(['success' => true, 'id' => $id, 'name' => $name, 'phone' => $phone]);
+	}
+
+	// Customers management page
+	public function customers()
+	{
+		$data['page_title'] = 'Customers';
+		$data['customers']  = $this->m_data->get_all_customers();
+		$this->load->view('v_header', $data);
+		$this->load->view('dashboard/v_customers', $data);
+		$this->load->view('v_footer');
 	}
 
 
