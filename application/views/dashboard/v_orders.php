@@ -15,6 +15,24 @@
 		<?php endif; ?>
 	<?php endif; ?>
 
+	<?php
+	// Helper function for minutes format
+	if (!function_exists('format_duration')) {
+	    function format_duration($mins) {
+	        if ($mins <= 0) return "0 mins";
+	        $d = floor($mins / 510);
+	        $rem = $mins % 510;
+	        $h = floor($rem / 60);
+	        $m = $rem % 60;
+	        $parts = [];
+	        if ($d > 0) $parts[] = $d . "d";
+	        if ($h > 0) $parts[] = $h . "h";
+	        if ($m > 0) $parts[] = $m . "m";
+	        return implode(" ", $parts);
+	    }
+	}
+	?>
+
 	<div class="panel">
 		<div class="panel-header">
 			<div class="panel-title">All Orders <span style="font-size:10px; color: var(--smoke); font-weight:400; margin-left:8px;"><?php echo count($orders); ?> total</span></div>
@@ -76,7 +94,7 @@
 							<td><?php echo htmlspecialchars($o->customer_name); ?></td>
 							<td><?php echo $file_link; ?></td>
 							<td><?php echo $o->qty; ?> pcs</td>
-							<td><?php echo $o->est_duration; ?> days</td>
+							<td><?php echo format_duration($o->est_duration); ?></td>
 							<td><?php echo $start; ?></td>
 							<td><?php echo $end; ?></td>
 							<td><span class="badge <?php echo $badge_class; ?>"><?php echo $badge_text; ?></span></td>

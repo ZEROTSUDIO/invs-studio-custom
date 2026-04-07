@@ -40,6 +40,21 @@
 						$date_label = date('j M', strtotime("$today +$i days"));
 						echo '<div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">' . $date_label . '</div>';
 					}
+					
+					if (!function_exists('format_duration')) {
+					    function format_duration($mins) {
+					        if ($mins <= 0) return "0 mins";
+					        $d = floor($mins / 510);
+					        $rem = $mins % 510;
+					        $h = floor($rem / 60);
+					        $m = $rem % 60;
+					        $parts = [];
+					        if ($d > 0) $parts[] = $d . "d";
+					        if ($h > 0) $parts[] = $h . "h";
+					        if ($m > 0) $parts[] = $m . "m";
+					        return implode(" ", $parts);
+					    }
+					}
 					?>
 				</div>
 
@@ -98,7 +113,7 @@
 
 							<div style="grid-column: <?php echo $grid_start; ?> / <?php echo $grid_end; ?>;">
 								<div class="gantt-bar" style="background:<?php echo $bg; ?>; color:<?php echo $col; ?>;">
-									<?php echo $s->qty; ?> pcs · <?php echo $s->est_duration; ?> mins
+									<?php echo $s->qty; ?> pcs · <?php echo format_duration($s->est_duration); ?>
 								</div>
 							</div>
 
@@ -166,15 +181,15 @@
 					</div>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Shortest wait</span>
-						<span style="font-size:11px; color: var(--cream);"><?php echo $shortest ?? 0; ?> mins</span>
+						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($shortest ?? 0); ?></span>
 					</div>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Longest wait</span>
-						<span style="font-size:11px; color: var(--cream);"><?php echo $longest ?? 0; ?> mins</span>
+						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($longest ?? 0); ?></span>
 					</div>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Avg wait time</span>
-						<span style="font-size:11px; color: var(--cream);"><?php echo $avg; ?> mins</span>
+						<span style="font-size:11px; color: var(--cream);"><?php echo format_duration($avg); ?></span>
 					</div>
 					<div style="display:flex; justify-content:space-between;">
 						<span style="font-size:11px; color: var(--smoke);">Capacity load</span>

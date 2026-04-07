@@ -15,7 +15,7 @@ class M_schedule extends CI_Model
     {
         // 1. ambil order yang bisa dijadwalkan
         $orders = $this->db
-            ->where('status', 'waiting')
+            ->where_in('status', ['waiting', 'scheduled'])
             ->get('orders')
             ->result();
 
@@ -59,11 +59,10 @@ class M_schedule extends CI_Model
             ->row();
 
         if ($current) {
-            $current_time = $current->end_date;
+            $current_time = $this->force_business_hours($current->end_date);
             $queue = $current->queue_position + 1;
         } else {
-            $current_time = date('Y-m-d H:i:s');
-            // get max queue of completed today to continue queue numbering, or start at 1
+            $current_time = $this->force_business_hours(date('Y-m-d H:i:s'));
             $queue = 1;
         }
 
@@ -79,10 +78,8 @@ class M_schedule extends CI_Model
             // WAIT, looking at line 55 of original user code: "start +{$o->est_duration} minutes". If I change it to days, I need to adjust it to days!
             // If it's days, in step 2: `$remaining <= ($o->est_duration * 24 * 60)`. Let's assume it is in Days.
             
-            // I'll leave user's exact logic but convert it to "days", because `est_duration` input label is "Est. Duration (Days)".
-            $start_dt = new DateTime($current_time);
-            $start_dt->modify("+{$o->est_duration} minutes");
-            $end = $start_dt->format('Y-m-d H:i:s');
+            // Calculate end time conforming to 08:30-17:00 and skipping Sundays
+            $end = $this->advance_time($start, $o->est_duration);
 
             // save
             $this->db->insert('production_schedule', [
@@ -115,5 +112,55 @@ class M_schedule extends CI_Model
         $this->db->where_in('ps.status', ['scheduled', 'in_progress']);
         $this->db->order_by('ps.queue_position', 'ASC');
         return $this->db->get()->result();
+    }
+
+    private function force_business_hours($datetime_str)
+    {
+        return $this->advance_time($datetime_str, 0);
+    }
+
+    private function advance_time($current_time_str, $add_minutes)
+    {
+        $dt = new DateTime($current_time_str);
+        
+        while ($add_minutes > 0 || $this->needs_shift($dt)) {
+            if ($dt->format('w') == 0) { // Sunday
+                $dt->modify('+1 day')->setTime(8, 30, 0);
+                continue;
+            }
+
+            $current_total_min = (int)$dt->format('G') * 60 + (int)$dt->format('i');
+            $start_min = 8 * 60 + 30; // 510 = 08:30
+            $end_min = 17 * 60;       // 1020 = 17:00
+
+            if ($current_total_min < $start_min) {
+                $dt->setTime(8, 30, 0);
+                $current_total_min = $start_min;
+            } elseif ($current_total_min >= $end_min) {
+                $dt->modify('+1 day')->setTime(8, 30, 0);
+                continue;
+            }
+
+            if ($add_minutes == 0) break;
+
+            $available_today = $end_min - $current_total_min;
+
+            if ($add_minutes <= $available_today) {
+                $dt->modify("+{$add_minutes} minutes");
+                $add_minutes = 0;
+            } else {
+                $add_minutes -= $available_today;
+                $dt->modify('+1 day')->setTime(8, 30, 0);
+            }
+        }
+        return $dt->format('Y-m-d H:i:s');
+    }
+
+    private function needs_shift($dt)
+    {
+        if ($dt->format('w') == 0) return true;
+        $total_min = (int)$dt->format('G') * 60 + (int)$dt->format('i');
+        if ($total_min < (8*60+30) || $total_min >= (17*60)) return true;
+        return false;
     }
 }
