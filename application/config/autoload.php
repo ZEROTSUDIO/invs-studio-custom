@@ -103,7 +103,7 @@ $autoload['helper'] = array('url', 'form', 'file', 'app');
 | config files.  Otherwise, leave it blank.
 |
 */
-$autoload['config'] = array();
+$autoload['config'] = array('schedule');
 
 /*
 | -------------------------------------------------------------------

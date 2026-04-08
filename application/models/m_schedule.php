@@ -13,7 +13,10 @@ class M_schedule extends CI_Model
 
     public function generate()
     {
-        // 1. ambil order yang bisa dijadwalkan
+        // Load slack buffer config
+        $slack_buffer = $this->config->item('urgency_slack_buffer') ?: 0.25;
+
+        // 1. Fetch all schedulable orders (waiting or previously scheduled)
         $orders = $this->db
             ->where_in('status', ['waiting', 'scheduled'])
             ->get('orders')
@@ -21,86 +24,146 @@ class M_schedule extends CI_Model
 
         if (!$orders) return;
 
-        // 2. pisahkan urgent vs normal
-        $now = date('Y-m-d H:i:s');
+        // 5. Get anchor time: latest end_date across ALL in_progress jobs
+        //    (parallel support — multiple orders may be running simultaneously)
+        $in_progress = $this->db
+            ->where('status', 'in_progress')
+            ->order_by('end_date', 'DESC')
+            ->limit(1)
+            ->get('production_schedule')
+            ->row();
+
+        if ($in_progress) {
+            $anchor     = $this->force_business_hours($in_progress->end_date);
+            $queue      = $in_progress->queue_position + 1;
+        } else {
+            $anchor = $this->force_business_hours(date('Y-m-d H:i:s'));
+            $queue  = 1;
+        }
+
+        // 2. Queue-aware urgency classification
+        //
+        //    Worst-case scenario: this job runs LAST after all other pending jobs.
+        //    If even in this worst case, the slack between its projected finish and
+        //    its deadline is less than (slack_buffer × its own duration) → urgent.
+        //
+        //    This prevents SHORT jobs from being incorrectly marked urgent just
+        //    because their deadline is soon — they'll still fit before long jobs.
+        //
+        $total_mins = array_sum(array_column(
+            array_map(fn($o) => (array)$o, $orders),
+            'est_duration'
+        ));
 
         $urgent = [];
         $normal = [];
 
         foreach ($orders as $o) {
-            $remaining = (strtotime($o->deadline) - strtotime($now)) / 60; // in minutes
+            // Simulate: all OTHER jobs run first, then this one
+            $others_mins = $total_mins - $o->est_duration;
+            $worst_start = $this->advance_time($anchor, $others_mins);
+            $worst_end   = $this->advance_time($worst_start, $o->est_duration);
 
-            if ($remaining <= ($o->est_duration * 1.5)) {
+            $slack_mins   = (strtotime($o->deadline) - strtotime($worst_end)) / 60;
+            $buffer_needed = $o->est_duration * $slack_buffer;
+
+            if ($slack_mins < $buffer_needed) {
                 $urgent[] = $o;
             } else {
                 $normal[] = $o;
             }
         }
 
-        // 3. sorting
-        usort($urgent, function ($a, $b) {
-            return strtotime($a->deadline) - strtotime($b->deadline);
-        });
+        // 3. Sort each bucket
+        //    Urgent → Earliest Deadline First (protect hard deadlines)
+        usort($urgent, fn($a, $b) => strtotime($a->deadline) - strtotime($b->deadline));
 
-        usort($normal, function ($a, $b) {
-            return $a->est_duration - $b->est_duration;
-        });
+        //    Normal → Shortest Job First (pure SJF throughput)
+        usort($normal, fn($a, $b) => $a->est_duration - $b->est_duration);
 
         $final = array_merge($urgent, $normal);
 
-        // 4. HAPUS schedule lama (hanya yang belum jalan)
+        // 4. Delete old unstarted scheduled entries
         $this->db->where('status', 'scheduled')->delete('production_schedule');
 
-        // 5. ambil job yang sedang jalan (kalau ada)
-        $current = $this->db
-            ->where('status', 'in_progress')
-            ->order_by('start_date', 'DESC')
-            ->get('production_schedule')
-            ->row();
-
-        if ($current) {
-            $current_time = $this->force_business_hours($current->end_date);
-            $queue = $current->queue_position + 1;
-        } else {
-            $current_time = $this->force_business_hours(date('Y-m-d H:i:s'));
-            $queue = 1;
-        }
-
-        // 6. generate schedule baru
+        // 6. Generate new schedule sequentially from anchor
         $this->db->trans_start();
 
+        $current_time = $anchor;
         foreach ($final as $o) {
             $start = $current_time;
-            // est_duration is presumably in days in dashboard, but in minutes here? Wait, let's look at est_duration in DB.
-            // Oh, user wrote "$start +{$o->est_duration} minutes", but order form uses Days. Wait!
-            // Dashboard new_order says "est_duration" is from option values "1", "2", "5" etc (meaning days).
-            // Let me adjust the generation to use "days" or if user meant minutes... "est_duration" previously was just raw int. I'll use "+{$o->est_duration} days".
-            // WAIT, looking at line 55 of original user code: "start +{$o->est_duration} minutes". If I change it to days, I need to adjust it to days!
-            // If it's days, in step 2: `$remaining <= ($o->est_duration * 24 * 60)`. Let's assume it is in Days.
-            
-            // Calculate end time conforming to 08:30-17:00 and skipping Sundays
-            $end = $this->advance_time($start, $o->est_duration);
+            $end   = $this->advance_time($start, $o->est_duration);
 
-            // save
             $this->db->insert('production_schedule', [
-                'order_id' => $o->id,
+                'order_id'       => $o->id,
                 'queue_position' => $queue,
-                'start_date' => $start,
-                'end_date' => $end,
-                'status' => 'scheduled'
+                'start_date'     => $start,
+                'end_date'       => $end,
+                'status'         => 'scheduled',
             ]);
 
-            // update order status to scheduled
-            $this->db->where('id', $o->id)->update('orders', [
-                'status' => 'scheduled'
-            ]);
+            $this->db->where('id', $o->id)->update('orders', ['status' => 'scheduled']);
 
             $current_time = $end;
             $queue++;
         }
-        
+
         $this->db->trans_complete();
         return $this->db->trans_status();
+    }
+
+    /**
+     * Returns the earliest SAFE deadline date for a new order.
+     *
+     * Logic:
+     *  1. Find the current queue tail (latest end_date of any scheduled/in_progress job)
+     *  2. Project when the NEW job would finish if added to the end of the queue
+     *  3. Add a safety buffer (urgency_slack_buffer × est_duration) on top
+     *
+     * The result is the earliest date the customer can realistically be promised.
+     */
+    public function get_earliest_deadline($est_duration_mins)
+    {
+        $slack_buffer = $this->config->item('urgency_slack_buffer') ?: 0.25;
+
+        // 1. Find the anchor (the end of the currently generated schedule)
+        $latest = $this->db
+            ->select_max('end_date')
+            ->where_in('status', ['scheduled', 'in_progress'])
+            ->get('production_schedule')
+            ->row();
+
+        if ($latest && $latest->end_date) {
+            $anchor = $this->force_business_hours($latest->end_date);
+        } else {
+            $anchor = $this->force_business_hours(date('Y-m-d H:i:s'));
+        }
+
+        // 2. Account for 'waiting' orders that are not yet in production_schedule
+        $waiting_orders = $this->db
+            ->select_sum('est_duration')
+            ->where('status', 'waiting')
+            ->get('orders')
+            ->row();
+
+        $waiting_mins = $waiting_orders ? (int) $waiting_orders->est_duration : 0;
+        
+        // Push the anchor past all waiting orders
+        $queue_tail = $this->advance_time($anchor, $waiting_mins);
+
+        // 3. Project when THIS new job would finish
+        $projected_end = $this->advance_time($queue_tail, $est_duration_mins);
+
+        // 4. Add safety buffer
+        $buffer_mins  = (int) ceil($est_duration_mins * $slack_buffer);
+        $safe_deadline = $this->advance_time($projected_end, $buffer_mins);
+
+        return [
+            'earliest_date'    => date('Y-m-d', strtotime($safe_deadline)),
+            'queue_tail'       => $queue_tail,
+            'projected_finish' => $projected_end,
+            'waiting_mins'     => $waiting_mins
+        ];
     }
 
     public function get_full_schedule()

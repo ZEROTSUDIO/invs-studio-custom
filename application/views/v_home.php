@@ -15,6 +15,10 @@
 		rel="stylesheet" />
 
 	<script src="<?php echo base_url(); ?>assets/js/v_home.js"></script>
+	<script>
+		var BASE_URL = '<?php echo base_url(); ?>';
+		var DEADLINE_URL = '<?php echo base_url("home/earliest_deadline"); ?>';
+	</script>
 
 	<link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/v_home.css">
 </head>
@@ -1125,9 +1129,13 @@
 							<input
 								name="deadline"
 								type="date"
-								id="deadline"
+								id="deadline-input"
 								class="form-input"
-								onchange="calcDuration()" />
+								onchange="checkDeadline()" />
+							<div id="deadline-warning" style="display:none; margin-top:6px; padding:8px 12px; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3); font-size:11px; color:#f87171;">
+							</div>
+							<div id="deadline-hint" style="display:none; margin-top:5px; font-size:11px; color:var(--smoke);">
+							</div>
 						</div>
 					</div>
 
@@ -1316,7 +1324,7 @@
 							onclick="clearForm()">
 							Reset
 						</button>
-						<button type="submit" class="btn-gold" onclick="submitForm()">
+						<button type="submit" class="btn-gold" id="submit-btn" onclick="submitForm()">
 							Kirim Pesanan
 							<svg
 								width="14"

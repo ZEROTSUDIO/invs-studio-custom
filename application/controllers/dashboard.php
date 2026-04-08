@@ -81,6 +81,18 @@ class Dashboard extends CI_Controller
 		}
 
 		// Build order data
+		$est_duration = (int) $this->input->post('est_duration');
+		$deadline_date = $this->input->post('deadline');
+
+		// Deadline safety check (Backend)
+		$this->load->model('m_schedule');
+		$safe_deadline_data = $this->m_schedule->get_earliest_deadline($est_duration);
+		
+		if ($deadline_date && $safe_deadline_data['earliest_date'] && $deadline_date < $safe_deadline_data['earliest_date']) {
+			redirect(base_url() . 'dashboard/new_order?alert=gagal'); // Should probably pass a specific error message, but this handles the bypass
+			return;
+		}
+
 		$order = array(
 			'order_code'   => $order_code,
 			'product_type' => $this->input->post('product_type'),
@@ -88,8 +100,8 @@ class Dashboard extends CI_Controller
 			'design_file'  => $design_file,
 			'notes'        => $this->input->post('notes'),
 			'status'       => 'waiting',
-			'est_duration' => (int) $this->input->post('est_duration'),
-			'deadline'     => $this->input->post('deadline'),
+			'est_duration' => $est_duration,
+			'deadline'     => $deadline_date,
 		);
 
 		// Save via model (customer_id already resolved by picker)
@@ -137,6 +149,22 @@ class Dashboard extends CI_Controller
 		$this->load->view('v_header', $data);
 		$this->load->view('dashboard/v_customers', $data);
 		$this->load->view('v_footer');
+	}
+
+	// AJAX: returns the earliest safe deadline date for a given est_duration (minutes)
+	public function earliest_deadline()
+	{
+		$this->load->model('m_schedule');
+		$est_duration = (int) $this->input->get('est_duration');
+
+		if ($est_duration <= 0) {
+			echo json_encode(['earliest_date' => '', 'error' => 'Invalid duration']);
+			return;
+		}
+
+		$result = $this->m_schedule->get_earliest_deadline($est_duration);
+		header('Content-Type: application/json');
+		echo json_encode($result);
 	}
 
 

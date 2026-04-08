@@ -92,10 +92,14 @@
 					</div>
 
 					<!-- DEADLINE -->
-					<div class="form-group">
-						<label class="form-label">Deadline</label>
-						<input name="deadline" class="form-input" type="date" required>
+				<div class="form-group">
+					<label class="form-label">Deadline</label>
+					<input name="deadline" id="deadline-input" class="form-input" type="date" required onchange="checkDeadline()">
+					<div id="deadline-warning" style="display:none; margin-top:6px; padding:8px 12px; background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.3); font-size:11px; color:#f87171;">
 					</div>
+					<div id="deadline-hint" style="display:none; margin-top:5px; font-size:11px; color:var(--smoke);">
+					</div>
+				</div>
 
 					<!-- ORDER ITEMS -->
 					<div class="form-group">
@@ -192,7 +196,9 @@
 <script>
 const SEARCH_URL = '<?php echo base_url("dashboard/customer_search"); ?>';
 const CREATE_URL = '<?php echo base_url("dashboard/customer_create"); ?>';
+const DEADLINE_URL = '<?php echo base_url("dashboard/earliest_deadline"); ?>';
 
+// --- CUSTOMER PICKER LOGIC ---
 let searchTimeout = null;
 
 document.getElementById('customer-search-input').addEventListener('input', function() {
@@ -203,7 +209,6 @@ document.getElementById('customer-search-input').addEventListener('input', funct
 });
 
 document.getElementById('customer-search-input').addEventListener('blur', function() {
-	// Small delay so click on dropdown registers first
 	setTimeout(hideDropdown, 200);
 });
 
@@ -242,12 +247,7 @@ function selectCustomer(id, name, phone) {
 	document.getElementById('chip-phone').textContent = phone;
 	chip.style.display = 'flex';
 	hideDropdown();
-
-	// Enable submit
-	const btn = document.getElementById('submit-btn');
-	btn.disabled = false;
-	btn.style.opacity = '1';
-	btn.style.cursor = 'pointer';
+	checkFormValidity();
 }
 
 function clearCustomer() {
@@ -256,12 +256,7 @@ function clearCustomer() {
 	document.getElementById('customer-search-input').style.display = '';
 	document.getElementById('new-customer-trigger').style.display = '';
 	document.getElementById('customer-chip').style.display = 'none';
-
-	// Disable submit again
-	const btn = document.getElementById('submit-btn');
-	btn.disabled = true;
-	btn.style.opacity = '0.4';
-	btn.style.cursor = 'not-allowed';
+	checkFormValidity();
 }
 
 function toggleNewCustomerForm(show) {
@@ -297,5 +292,152 @@ function submitNewCustomer() {
 				errEl.style.display = 'block';
 			}
 		});
+}
+
+
+// --- FORM DYNAMICS ---
+function addRow() {
+	const tr = document.createElement('tr');
+	tr.innerHTML = `
+		<td>
+			<select name="size[]" class="form-input">
+				<option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
+			</select>
+		</td>
+		<td>
+			<input type="number" name="qty[]" class="form-input qty-input" oninput="calcDuration()" required>
+		</td>
+		<td>
+			<button type="button" onclick="removeRow(this)">X</button>
+		</td>
+	`;
+	document.getElementById('items').appendChild(tr);
+}
+
+function removeRow(btn) {
+	const tr = btn.closest('tr');
+	if (document.querySelectorAll('.qty-input').length > 1) {
+		tr.remove();
+		calcDuration();
+	}
+}
+
+function formatDuration(mins) {
+	if (mins <= 0) return "0 mins";
+	const d = Math.floor(mins / 510);
+	const rem = mins % 510;
+	const h = Math.floor(rem / 60);
+	const m = rem % 60;
+	let parts = [];
+	if (d > 0) parts.push(d + "d");
+	if (h > 0) parts.push(h + "h");
+	if (m > 0) parts.push(m + "m");
+	return parts.join(" ");
+}
+
+let lastEstDuration = 0;
+let earliestSafeDate = '';
+let isCalculatingSafeDate = false;
+
+function calcDuration() {
+	const qts = document.querySelectorAll('.qty-input');
+	let total = 0;
+	qts.forEach(q => { total += parseInt(q.value) || 0; });
+
+	const base = parseInt(document.getElementById('product-type').value) || 10;
+	const setupTime = 30; 
+	
+	let est = (total > 0) ? (total * base) + setupTime : 0;
+	
+	if (est > 0) {
+		document.getElementById('duration-val').textContent = formatDuration(est);
+		document.getElementById('est-duration-hidden').value = est;
+		document.getElementById('duration-box').style.display = 'block';
+	} else {
+		document.getElementById('duration-box').style.display = 'none';
+        document.getElementById('est-duration-hidden').value = 0;
+	}
+	
+	if (Math.abs(est - lastEstDuration) > 1 || (est > 0 && !earliestSafeDate)) {
+	    lastEstDuration = est;
+	    fetchSafeDeadline(est);
+	} else if (est === 0) {
+        earliestSafeDate = '';
+        document.getElementById('deadline-hint').style.display = 'none';
+        document.getElementById('deadline-warning').style.display = 'none';
+        checkFormValidity();
+    }
+}
+
+function fetchSafeDeadline(mins) {
+    if (mins <= 0) return;
+    
+    isCalculatingSafeDate = true;
+    checkFormValidity();
+
+    const hint = document.getElementById('deadline-hint');
+    hint.textContent = 'Calculating earliest safe deadline...';
+    hint.style.display = 'block';
+    hint.style.color = 'var(--ember)';
+
+    fetch(DEADLINE_URL + '?est_duration=' + mins)
+        .then(r => r.json())
+        .then(data => {
+            isCalculatingSafeDate = false;
+            if (data.earliest_date) {
+                earliestSafeDate = data.earliest_date;
+                const input = document.getElementById('deadline-input');
+                input.min = earliestSafeDate; 
+                
+                hint.textContent = 'Based on queue, earliest safe deadline is ' + earliestSafeDate;
+                hint.style.color = 'var(--smoke)';
+                hint.style.display = 'block';
+                
+                checkDeadline(); 
+            } else {
+                hint.style.display = 'none';
+                checkFormValidity();
+            }
+        })
+        .catch(() => {
+            isCalculatingSafeDate = false;
+            hint.style.display = 'none';
+            checkFormValidity();
+        });
+}
+
+function checkDeadline() {
+    const input = document.getElementById('deadline-input').value;
+    const warn = document.getElementById('deadline-warning');
+    
+    if (input && earliestSafeDate && input < earliestSafeDate) {
+        warn.innerHTML = `<b>Too Early!</b> The system projects a finish date around ${earliestSafeDate}. Using this date risks missing the deadline.`;
+        warn.style.display = 'block';
+    } else {
+        warn.style.display = 'none';
+    }
+    checkFormValidity();
+}
+
+function checkFormValidity() {
+    const cid = document.getElementById('customer-id-val').value;
+    const input = document.getElementById('deadline-input').value;
+    const est = parseInt(document.getElementById('est-duration-hidden').value) || 0;
+    
+    const isDeadlineInvalid = (input && earliestSafeDate && input < earliestSafeDate);
+    const isWaitingForDate = (est > 0 && isCalculatingSafeDate);
+    const hasNoDate = (est > 0 && !input);
+    
+    const btn = document.getElementById('submit-btn');
+    
+    if (cid && input && !isDeadlineInvalid && !isWaitingForDate && !hasNoDate) {
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        btn.style.cursor = 'pointer';
+    } else {
+        btn.disabled = true;
+        btn.style.opacity = '0.4';
+        btn.style.cursor = 'not-allowed';
+    }
 }
 </script>

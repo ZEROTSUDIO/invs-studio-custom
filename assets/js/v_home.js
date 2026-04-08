@@ -61,6 +61,23 @@ function removeRow(btn) {
 }
 
 // Calculate Production Duration
+let lastEstDuration = 0;
+let earliestSafeDate = "";
+let isCalculatingSafeDate = false;
+
+function formatDuration(mins) {
+	if (mins <= 0) return "0 mins";
+	const d = Math.floor(mins / 510);
+	const rem = mins % 510;
+	const h = Math.floor(rem / 60);
+	const m = rem % 60;
+	let parts = [];
+	if (d > 0) parts.push(d + "d");
+	if (h > 0) parts.push(h + "h");
+	if (m > 0) parts.push(m + "m");
+	return parts.join(" ");
+}
+
 function calcDuration() {
 	let qtyInputs = document.querySelectorAll(".qty-input");
 	let total = 0;
@@ -69,22 +86,114 @@ function calcDuration() {
 		total += parseInt(input.value) || 0;
 	});
 
-	let base = parseInt(document.getElementById("product-type").value);
-	let duration = total * base + 20;
+	let base = parseInt(document.getElementById("product-type").value) || 10;
+	let setupTime = 30;
+	let est = total > 0 ? total * base + setupTime : 0;
 
 	if (total > 0) {
 		document.getElementById("duration-box").style.display = "block";
-		document.getElementById("duration-val").innerText = duration + " Menit";
-		document.getElementById("duration-note").innerText = `Waktu pengerjaan ${duration} menit (Termasuk setup 20 menit)`;
-		document.getElementById("est-duration-hidden").value = duration;
+		document.getElementById("duration-val").innerText = formatDuration(est);
+		document.getElementById(
+			"duration-note"
+		).innerText = `Waktu pengerjaan ${formatDuration(
+			est
+		)} (Termasuk setup ${setupTime} menit)`;
+		document.getElementById("est-duration-hidden").value = est;
 	} else {
 		document.getElementById("duration-box").style.display = "none";
+		document.getElementById("est-duration-hidden").value = 0;
+	}
+
+	if (Math.abs(est - lastEstDuration) > 1 || (est > 0 && !earliestSafeDate)) {
+		lastEstDuration = est;
+		fetchSafeDeadline(est);
+	} else if (est === 0) {
+		earliestSafeDate = "";
+		document.getElementById("deadline-hint").style.display = "none";
+		document.getElementById("deadline-warning").style.display = "none";
+		checkFormValidity();
+	}
+}
+
+function fetchSafeDeadline(mins) {
+	if (mins <= 0) return;
+
+	isCalculatingSafeDate = true;
+	checkFormValidity();
+
+	const hint = document.getElementById("deadline-hint");
+	hint.textContent = "Calculating earliest safe deadline...";
+	hint.style.display = "block";
+	hint.style.color = "#e8b84b"; // gold-400
+
+	fetch(DEADLINE_URL + "?est_duration=" + mins)
+		.then((r) => r.json())
+		.then((data) => {
+			isCalculatingSafeDate = false;
+			if (data.earliest_date) {
+				earliestSafeDate = data.earliest_date;
+				const input = document.getElementById("deadline-input");
+				input.min = earliestSafeDate;
+
+				hint.textContent = "Based on queue, earliest safe deadline is " + earliestSafeDate;
+				hint.style.color = "#888"; // smoke
+				hint.style.display = "block";
+
+				checkDeadline();
+			} else {
+				hint.style.display = "none";
+				checkFormValidity();
+			}
+		})
+		.catch(() => {
+			isCalculatingSafeDate = false;
+			hint.style.display = "none";
+			checkFormValidity();
+		});
+}
+
+function checkDeadline() {
+	const input = document.getElementById("deadline-input").value;
+	const warn = document.getElementById("deadline-warning");
+
+	if (input && earliestSafeDate && input < earliestSafeDate) {
+		warn.innerHTML = `<b>Terlalu Cepat!</b> Sistem memperkirakan waktu selesai sekitar ${earliestSafeDate}. Menggunakan tanggal ini berisiko keterlambatan.`;
+		warn.style.display = "block";
+	} else {
+		warn.style.display = "none";
+	}
+	checkFormValidity();
+}
+
+function checkFormValidity() {
+	const name = document.getElementsByName("customer_name")[0].value.trim();
+	const phone = document.getElementsByName("phone")[0].value.trim();
+	const input = document.getElementById("deadline-input").value;
+	const est = parseInt(document.getElementById("est-duration-hidden").value) || 0;
+
+	const isDeadlineInvalid = input && earliestSafeDate && input < earliestSafeDate;
+	const isWaitingForDate = est > 0 && isCalculatingSafeDate;
+	const hasNoDate = est > 0 && !input;
+	const hasNoContact = !name || !phone;
+
+	const btn = document.getElementById("submit-btn");
+
+	if (input && !isDeadlineInvalid && !isWaitingForDate && !hasNoDate && !hasNoContact) {
+		btn.disabled = false;
+		btn.style.opacity = "1";
+		btn.style.cursor = "pointer";
+	} else {
+		btn.disabled = true;
+		btn.style.opacity = "0.4";
+		btn.style.cursor = "not-allowed";
 	}
 }
 
 // Submit Form
 function submitForm() {
-	document.getElementById("success-modal").style.display = "flex";
+	// Let the form submit normally, modal can be shown after redirect or via AJAX success
+	// For now, removing the direct modal show to allow backend processing
+	// document.getElementById("success-modal").style.display = "flex";
 }
 
 // Close Modal
@@ -94,17 +203,26 @@ function closeModal() {
 
 // Clear Form
 function clearForm() {
-	// Reset qty inputs
 	document.querySelectorAll(".qty-input").forEach((i) => (i.value = ""));
 	document.getElementById("duration-box").style.display = "none";
+	earliestSafeDate = "";
+    document.getElementById("deadline-hint").style.display = "none";
+    document.getElementById("deadline-warning").style.display = "none";
+    checkFormValidity();
 }
 
 // Initialize Deadline
 document.addEventListener("DOMContentLoaded", function () {
-	const deadlineInput = document.getElementById("deadline");
-	if (deadlineInput) {
-		const today = new Date();
-		today.setDate(today.getDate() + 7);
-		deadlineInput.min = today.toISOString().split("T")[0];
-	}
+    // Add event listeners for contact info to trigger validity check
+    document.getElementsByName("customer_name")[0].addEventListener("input", checkFormValidity);
+    document.getElementsByName("phone")[0].addEventListener("input", checkFormValidity);
+
+    // Handle alert parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('alert') === 'success') {
+        document.getElementById("success-modal").style.display = "flex";
+    } else if (urlParams.get('alert') === 'gagal' || urlParams.get('alert') === 'error') {
+        alert("Gagal mengirim pesanan. Silakan periksa detail order Anda dan coba lagi.");
+    }
 });
+
