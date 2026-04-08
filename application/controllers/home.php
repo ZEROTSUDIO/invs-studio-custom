@@ -17,10 +17,16 @@ class Home extends CI_Controller
 	public function save_order()
 	{
 		// Collect customer data
-		$customer = array(
-			'name'  => $this->input->post('customer_name'),
-			'phone' => $this->input->post('phone')
-		);
+		$name = trim($this->input->post('customer_name'));
+		$phone = trim($this->input->post('phone'));
+
+		// Check if customer already exists by phone
+		$existing_customer = $this->m_data->get_customer_by_phone($phone);
+		if ($existing_customer) {
+			$customer_id = $existing_customer->id;
+		} else {
+			$customer_id = $this->m_data->create_customer(array('name' => $name, 'phone' => $phone));
+		}
 
 		// Generate a unique order code: ORD-YYYYMMDD-RANDOM
 		$order_code = 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -5));
@@ -75,7 +81,7 @@ class Home extends CI_Controller
 			'deadline'     => $this->input->post('deadline'),
 		);
 
-		if ($this->m_data->save_order($customer, $order, $items)) {
+		if ($this->m_data->save_order($customer_id, $order, $items)) {
 			redirect('home/success');
 		} else {
 			redirect('home/error');

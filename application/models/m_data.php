@@ -50,6 +50,12 @@ class M_data extends CI_Model
         return $this->db->insert_id();
     }
 
+    function get_customer_by_phone($phone)
+    {
+        $this->db->where('phone', $phone);
+        return $this->db->get('customers')->row();
+    }
+
     function search_customers($query)
     {
         $this->db->select('id, name, phone');

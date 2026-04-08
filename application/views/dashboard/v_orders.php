@@ -29,6 +29,7 @@
 						<th>Design File</th>
 						<th>Qty</th>
 						<th>Est. Duration</th>
+						<th>Deadline</th>
 						<th>Start Date</th>
 						<th>End Date</th>
 						<th>Status</th>
@@ -48,6 +49,7 @@
 							<td><?php echo render_design_link($o->design_file); ?></td>
 							<td><?php echo $o->qty; ?> pcs</td>
 							<td><?php echo format_duration($o->est_duration); ?></td>
+							<td><?php echo format_order_date($o->deadline); ?></td>
 							<td><?php echo format_order_date($o->start_date); ?></td>
 							<td><?php echo format_order_date($o->end_date); ?></td>
 							<td><?php echo render_status_badge($o->status); ?></td>
@@ -68,7 +70,7 @@
 							</td>
 						</tr>
 					<?php endforeach; ?>
-					
+
 					<?php if (count($orders) == 0): ?>
 						<tr>
 							<td colspan="10" style="text-align:center; padding: 24px; color: var(--smoke);">No orders found.</td>
