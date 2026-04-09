@@ -13,8 +13,10 @@ class M_schedule extends CI_Model
 
     public function generate()
     {
-        // Load slack buffer config
-        $slack_buffer = $this->config->item('urgency_slack_buffer') ?: 0.25;
+        // Load config
+        $slack_buffer        = $this->config->item('urgency_slack_buffer')      ?: 0.25;
+        $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 240;
+        $quick_deadline_days = $this->config->item('quick_insert_deadline_days') ?: 2;
 
         // 1. Fetch all schedulable orders (waiting or previously scheduled)
         $orders = $this->db
@@ -24,8 +26,7 @@ class M_schedule extends CI_Model
 
         if (!$orders) return;
 
-        // 5. Get anchor time: latest end_date across ALL in_progress jobs
-        //    (parallel support — multiple orders may be running simultaneously)
+        // Get anchor time: end of the latest in_progress job
         $in_progress = $this->db
             ->where('status', 'in_progress')
             ->order_by('end_date', 'DESC')
@@ -34,37 +35,63 @@ class M_schedule extends CI_Model
             ->row();
 
         if ($in_progress) {
-            $anchor     = $this->force_business_hours($in_progress->end_date);
-            $queue      = $in_progress->queue_position + 1;
+            $anchor = $this->force_business_hours($in_progress->end_date);
+            $queue  = $in_progress->queue_position + 1;
         } else {
             $anchor = $this->force_business_hours(date('Y-m-d H:i:s'));
             $queue  = 1;
         }
 
-        // 2. Queue-aware urgency classification
+        // 2. Three-tier classification
         //
-        //    Worst-case scenario: this job runs LAST after all other pending jobs.
-        //    If even in this worst case, the slack between its projected finish and
-        //    its deadline is less than (slack_buffer × its own duration) → urgent.
+        //    Tier 1 — URGENT (EDF)
+        //      Worst-case finish exceeds deadline slack. Must run first.
         //
-        //    This prevents SHORT jobs from being incorrectly marked urgent just
-        //    because their deadline is soon — they'll still fit before long jobs.
+        //    Tier 2 — QUICK-INSERT (pause-slot)
+        //      Small job (≤ threshold) with a near deadline that fits in
+        //      today's remaining business hours. Workers pause the long
+        //      in-progress batch, knock out the quick job, then resume.
+        //      Runs right after urgent jobs, before the normal SJF pile.
+        //
+        //    Tier 3 — NORMAL (SJF)
+        //      Everything else — sorted shortest-first for throughput.
         //
         $total_mins = array_sum(array_column(
             array_map(fn($o) => (array)$o, $orders),
             'est_duration'
         ));
 
-        $urgent = [];
-        $normal = [];
+        $remaining_today       = $this->remaining_today_minutes();
+        $quick_deadline_cutoff = date('Y-m-d', strtotime("+{$quick_deadline_days} days"));
+
+        $urgent       = [];
+        $quick_insert = [];
+        $normal       = [];
+
+        $today = date('Y-m-d');
 
         foreach ($orders as $o) {
-            // Simulate: all OTHER jobs run first, then this one
-            $others_mins = $total_mins - $o->est_duration;
-            $worst_start = $this->advance_time($anchor, $others_mins);
-            $worst_end   = $this->advance_time($worst_start, $o->est_duration);
+            // --- Tier 2: Quick-Insert check (evaluated BEFORE urgency) ---
+            // Must be: small enough, due soon (but NOT overdue), and fits in today.
+            // Overdue jobs skip this and fall through to the urgency check below.
+            $is_small   = ($o->est_duration <= $quick_threshold);
+            $is_near    = (
+                !empty($o->deadline) &&
+                $o->deadline >= $today &&               // not already overdue
+                $o->deadline <= $quick_deadline_cutoff  // due within N days
+            );
+            $fits_today = ($remaining_today >= $o->est_duration);
 
-            $slack_mins   = (strtotime($o->deadline) - strtotime($worst_end)) / 60;
+            if ($is_small && $is_near && $fits_today) {
+                $quick_insert[] = $o;
+                continue;
+            }
+
+            // --- Tier 1 & 3: Queue-aware urgency check (existing logic) ---
+            $others_mins   = $total_mins - $o->est_duration;
+            $worst_start   = $this->advance_time($anchor, $others_mins);
+            $worst_end     = $this->advance_time($worst_start, $o->est_duration);
+            $slack_mins    = (strtotime($o->deadline) - strtotime($worst_end)) / 60;
             $buffer_needed = $o->est_duration * $slack_buffer;
 
             if ($slack_mins < $buffer_needed) {
@@ -74,23 +101,46 @@ class M_schedule extends CI_Model
             }
         }
 
-        // 3. Sort each bucket
-        //    Urgent → Earliest Deadline First (protect hard deadlines)
-        usort($urgent, fn($a, $b) => strtotime($a->deadline) - strtotime($b->deadline));
-
-        //    Normal → Shortest Job First (pure SJF throughput)
-        usort($normal, fn($a, $b) => $a->est_duration - $b->est_duration);
-
-        $final = array_merge($urgent, $normal);
+        // 3. Sort each tier
+        //    Urgent       → Earliest Deadline First (protect hard deadlines)
+        usort($urgent,       fn($a, $b) => strtotime($a->deadline) - strtotime($b->deadline));
+        //    Quick-Insert  → Shortest First (maximise throughput in the pause slot)
+        usort($quick_insert, fn($a, $b) => $a->est_duration - $b->est_duration);
+        //    Normal        → Shortest Job First (classic SJF throughput)
+        usort($normal,       fn($a, $b) => $a->est_duration - $b->est_duration);
 
         // 4. Delete old unstarted scheduled entries
         $this->db->where('status', 'scheduled')->delete('production_schedule');
 
-        // 6. Generate new schedule sequentially from anchor
         $this->db->trans_start();
 
+        // 5a. QUICK-INSERT jobs start from NOW (pause-slot model).
+        //     Workers pause the in_progress batch, handle these today, then resume.
+        //     These get the LOWEST queue positions because they run FIRST, today.
+        if (!empty($quick_insert)) {
+            $quick_time = $this->force_business_hours(date('Y-m-d H:i:s'));
+            foreach ($quick_insert as $o) {
+                $start = $quick_time;
+                $end   = $this->advance_time($start, $o->est_duration);
+
+                $this->db->insert('production_schedule', [
+                    'order_id'       => $o->id,
+                    'queue_position' => $queue,
+                    'start_date'     => $start,
+                    'end_date'       => $end,
+                    'status'         => 'scheduled',
+                ]);
+
+                $this->db->where('id', $o->id)->update('orders', ['status' => 'scheduled']);
+
+                $quick_time = $end;
+                $queue++;
+            }
+        }
+
+        // 5b. URGENT + NORMAL jobs start from the anchor (after in_progress ends).
         $current_time = $anchor;
-        foreach ($final as $o) {
+        foreach (array_merge($urgent, $normal) as $o) {
             $start = $current_time;
             $end   = $this->advance_time($start, $o->est_duration);
 
@@ -115,18 +165,42 @@ class M_schedule extends CI_Model
     /**
      * Returns the earliest SAFE deadline date for a new order.
      *
-     * Logic:
-     *  1. Find the current queue tail (latest end_date of any scheduled/in_progress job)
-     *  2. Project when the NEW job would finish if added to the end of the queue
-     *  3. Add a safety buffer (urgency_slack_buffer × est_duration) on top
+     * Quick-Insert fast path:
+     *   If the job is small (≤ quick_insert_threshold) AND fits in today's
+     *   remaining business hours, it will be slotted into the pause-slot tier
+     *   on the next generate(). We calculate its finish from NOW instead of
+     *   the far queue tail — giving the customer an accurate, near-term promise.
+     *   The normal safety buffer still applies (Q3: no bypass of the deadline check).
      *
-     * The result is the earliest date the customer can realistically be promised.
+     * Standard path:
+     *   Queue-tail projection + safety buffer (original logic, unchanged).
      */
     public function get_earliest_deadline($est_duration_mins)
     {
-        $slack_buffer = $this->config->item('urgency_slack_buffer') ?: 0.25;
+        $slack_buffer        = $this->config->item('urgency_slack_buffer')      ?: 0.25;
+        $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 240;
 
-        // 1. Find the anchor (the end of the currently generated schedule)
+        // --- Quick-Insert fast path ---
+        $remaining_today = $this->remaining_today_minutes();
+        if ($est_duration_mins <= $quick_threshold && $remaining_today >= $est_duration_mins) {
+            // Start from NOW (clamped to business hours) — not from the queue tail
+            $now           = $this->force_business_hours(date('Y-m-d H:i:s'));
+            $projected_end = $this->advance_time($now, $est_duration_mins);
+            $buffer_mins   = (int)ceil($est_duration_mins * $slack_buffer);
+            $safe_deadline = $this->advance_time($projected_end, $buffer_mins);
+
+            return [
+                'earliest_date'    => date('Y-m-d', strtotime($safe_deadline)),
+                'queue_tail'       => $now,
+                'projected_finish' => $projected_end,
+                'waiting_mins'     => 0,
+                'is_quick_insert'  => true,
+            ];
+        }
+
+        // --- Standard queue-tail path ---
+
+        // 1. Find the anchor (end of the currently generated schedule)
         $latest = $this->db
             ->select_max('end_date')
             ->where_in('status', ['scheduled', 'in_progress'])
@@ -139,30 +213,29 @@ class M_schedule extends CI_Model
             $anchor = $this->force_business_hours(date('Y-m-d H:i:s'));
         }
 
-        // 2. Account for 'waiting' orders that are not yet in production_schedule
+        // 2. Account for 'waiting' orders not yet in production_schedule
         $waiting_orders = $this->db
             ->select_sum('est_duration')
             ->where('status', 'waiting')
             ->get('orders')
             ->row();
 
-        $waiting_mins = $waiting_orders ? (int) $waiting_orders->est_duration : 0;
-        
-        // Push the anchor past all waiting orders
-        $queue_tail = $this->advance_time($anchor, $waiting_mins);
+        $waiting_mins = $waiting_orders ? (int)$waiting_orders->est_duration : 0;
 
         // 3. Project when THIS new job would finish
+        $queue_tail    = $this->advance_time($anchor, $waiting_mins);
         $projected_end = $this->advance_time($queue_tail, $est_duration_mins);
 
         // 4. Add safety buffer
-        $buffer_mins  = (int) ceil($est_duration_mins * $slack_buffer);
+        $buffer_mins   = (int)ceil($est_duration_mins * $slack_buffer);
         $safe_deadline = $this->advance_time($projected_end, $buffer_mins);
 
         return [
             'earliest_date'    => date('Y-m-d', strtotime($safe_deadline)),
             'queue_tail'       => $queue_tail,
             'projected_finish' => $projected_end,
-            'waiting_mins'     => $waiting_mins
+            'waiting_mins'     => $waiting_mins,
+            'is_quick_insert'  => false,
         ];
     }
 
@@ -202,6 +275,26 @@ class M_schedule extends CI_Model
             'load' => $load,
             'load_color' => $load_color
         ];
+    }
+
+    /**
+     * Returns remaining operational minutes in today's business hours (08:30–17:00).
+     * Returns 0 on Sundays or after closing time.
+     * Mirrors the get_remaining_today_minutes() helper in app_helper.php.
+     */
+    private function remaining_today_minutes()
+    {
+        $now = new DateTime();
+        if ($now->format('w') == 0) return 0;
+
+        $now_mins   = (int)$now->format('G') * 60 + (int)$now->format('i');
+        $start_mins = 8 * 60 + 30;  // 510
+        $end_mins   = 17 * 60;       // 1020
+
+        if ($now_mins >= $end_mins)  return 0;
+        if ($now_mins < $start_mins) return $end_mins - $start_mins;
+
+        return $end_mins - $now_mins;
     }
 
     private function force_business_hours($datetime_str)

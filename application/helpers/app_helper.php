@@ -111,3 +111,24 @@ if (!function_exists('format_order_date')) {
         return $date ? date('j M', strtotime($date)) : '<span style="color:var(--smoke)">TBD</span>';
     }
 }
+
+if (!function_exists('get_remaining_today_minutes')) {
+    /**
+     * Returns the number of operational minutes remaining in today's business hours.
+     * Business hours: 08:30 – 17:00. Returns 0 on Sundays or after closing time.
+     * Used to check if a quick-insert job can still be squeezed into today.
+     */
+    function get_remaining_today_minutes() {
+        $now = new DateTime();
+        if ($now->format('w') == 0) return 0; // Sunday — no business
+
+        $now_mins   = (int)$now->format('G') * 60 + (int)$now->format('i');
+        $start_mins = 8 * 60 + 30;  // 08:30 = 510
+        $end_mins   = 17 * 60;      // 17:00 = 1020
+
+        if ($now_mins >= $end_mins)   return 0;                      // past closing
+        if ($now_mins < $start_mins)  return $end_mins - $start_mins; // before opening — full day available
+
+        return $end_mins - $now_mins;
+    }
+}
