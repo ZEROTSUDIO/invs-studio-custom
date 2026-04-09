@@ -196,9 +196,13 @@ function submitForm() {
 	// document.getElementById("success-modal").style.display = "flex";
 }
 
-// Close Modal
+// Close Modals
 function closeModal() {
 	document.getElementById("success-modal").style.display = "none";
+}
+
+function closeErrorModal() {
+	document.getElementById("error-modal").style.display = "none";
 }
 
 // Clear Form
@@ -219,10 +223,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Handle alert parameters
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('alert') === 'success') {
+    const alertType = urlParams.get('alert');
+    
+    if (alertType === 'success') {
         document.getElementById("success-modal").style.display = "flex";
-    } else if (urlParams.get('alert') === 'gagal' || urlParams.get('alert') === 'error') {
-        alert("Gagal mengirim pesanan. Silakan periksa detail order Anda dan coba lagi.");
+    } else if (alertType === 'deadline_conflict' || alertType === 'save_failed' || alertType === 'gagal' || alertType === 'error') {
+        let title = "Gagal Mengirim!";
+        let msg = "Terjadi kesalahan saat memproses pesanan Anda. Silakan coba lagi.";
+        
+        if (alertType === 'deadline_conflict') {
+            title = "Waktu Tidak Mencukupi";
+            msg = "Sistem memperkirakan waktu pengerjaan tidak cukup untuk deadline yang Anda pilih. Silakan pilih tanggal yang lebih lambat.";
+        } else if (alertType === 'save_failed') {
+            title = "Kesalahan Sistem";
+            msg = "Gagal menyimpan data pesanan Anda ke database. Silakan hubungi admin via WhatsApp.";
+        }
+        
+        document.getElementById("error-modal-title").innerText = title;
+        document.getElementById("error-modal-msg").innerText = msg;
+        document.getElementById("error-modal").style.display = "flex";
     }
 });
 

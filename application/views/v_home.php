@@ -1531,6 +1531,77 @@
 		</div>
 	</div>
 
+	<!-- ===================== ERROR MODAL ===================== -->
+	<div
+		id="error-modal"
+		style="
+				display: none;
+				position: fixed;
+				inset: 0;
+				z-index: 100;
+				background: rgba(0, 0, 0, 0.85);
+				backdrop-filter: blur(8px);
+			"
+		class="flex items-center justify-center px-6">
+		<div
+			style="
+					background: #111;
+					border: 1px solid rgba(248, 113, 113, 0.3);
+					max-width: 400px;
+					width: 100%;
+					padding: 40px;
+					text-align: center;
+				">
+			<div class="mb-5">
+				<svg
+					width="48"
+					height="48"
+					viewBox="0 0 48 48"
+					fill="none"
+					class="mx-auto">
+					<polygon
+						points="24,3 44,14 44,34 24,45 4,34 4,14"
+						stroke="#f87171"
+						stroke-width="1.5"
+						fill="rgba(248, 113, 113, 0.06)" />
+					<path
+						d="M24 16V28 M24 32H24.01"
+						stroke="#f87171"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round" />
+				</svg>
+			</div>
+			<h3
+				id="error-modal-title"
+				class="mb-3"
+				style="
+						font-family: &quot;Cormorant Garamond&quot;, serif;
+						font-size: 1.8rem;
+						font-weight: 400;
+						color: #f87171;
+					">
+				Gagal Mengirim!
+			</h3>
+			<p id="error-modal-msg" class="text-smoke text-sm mb-6" style="line-height: 1.7">
+				Terjadi kesalahan saat memproses pesanan Anda. Silakan coba lagi.
+			</p>
+			<button onclick="closeErrorModal()" class="w-full flex items-center justify-center gap-2" style="
+				background: #f87171;
+				color: #000;
+				padding: 12px 24px;
+				font-family: 'Syne', sans-serif;
+				font-size: 11px;
+				font-weight: 700;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				transition: all 0.3s;
+			">
+				Tutup
+			</button>
+		</div>
+	</div>
+
 
 </body>
 

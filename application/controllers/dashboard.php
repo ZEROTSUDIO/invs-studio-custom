@@ -89,7 +89,7 @@ class Dashboard extends CI_Controller
 		$safe_deadline_data = $this->m_schedule->get_earliest_deadline($est_duration);
 		
 		if ($deadline_date && $safe_deadline_data['earliest_date'] && $deadline_date < $safe_deadline_data['earliest_date']) {
-			redirect(base_url() . 'dashboard/new_order?alert=gagal'); // Should probably pass a specific error message, but this handles the bypass
+			redirect(base_url() . 'dashboard/new_order?alert=deadline_conflict');
 			return;
 		}
 
@@ -110,7 +110,7 @@ class Dashboard extends CI_Controller
 		if ($result) {
 			redirect(base_url() . 'dashboard?alert=order_saved');
 		} else {
-			redirect(base_url() . 'dashboard/new_order?alert=gagal');
+			redirect(base_url() . 'dashboard/new_order?alert=save_failed');
 		}
 	}
 

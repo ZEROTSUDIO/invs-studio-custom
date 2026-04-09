@@ -16,6 +16,18 @@
 			</div>
 		<?php endif; ?>
 
+		<?php if ($this->input->get('alert') == 'deadline_conflict'): ?>
+			<div class="alert" style="background:rgba(248,113,113,0.1); border-color:rgba(248,113,113,0.3); color:#f87171; margin-bottom:16px;">
+				⚠ &nbsp;<b>Deadline Terlalu Cepat!</b> Waktu pengerjaan tidak mencukupi untuk deadline yang dipilih.
+			</div>
+		<?php endif; ?>
+
+		<?php if ($this->input->get('alert') == 'save_failed'): ?>
+			<div class="alert" style="background:rgba(248,113,113,0.1); border-color:rgba(248,113,113,0.3); color:#f87171; margin-bottom:16px;">
+				⚠ &nbsp;<b>Kesalahan Sistem!</b> Gagal menyimpan data pesanan Anda. Silakan coba lagi.
+			</div>
+		<?php endif; ?>
+
 		<form method="post" action="<?php echo base_url() . 'dashboard/save_order' ?>" enctype="multipart/form-data">
 
 			<div class="panel">

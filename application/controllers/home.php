@@ -78,7 +78,7 @@ class Home extends CI_Controller
 		$safe_deadline_data = $this->m_schedule->get_earliest_deadline($est_duration);
 		
 		if ($deadline_date && $safe_deadline_data['earliest_date'] && $deadline_date < $safe_deadline_data['earliest_date']) {
-			redirect('home?alert=gagal'); 
+			redirect('home?alert=deadline_conflict#order'); 
 			return;
 		}
 
@@ -96,7 +96,7 @@ class Home extends CI_Controller
 		if ($this->m_data->save_order($customer_id, $order, $items)) {
 			redirect('home?alert=success#order');
 		} else {
-			redirect('home?alert=error#order');
+			redirect('home?alert=save_failed#order');
 		}
 	}
 
