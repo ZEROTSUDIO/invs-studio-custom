@@ -8,6 +8,11 @@ class Dashboard extends CI_Controller
 		date_default_timezone_set('Asia/Jakarta');
 		$this->load->model('m_login');
 		$this->load->model('m_data');
+
+		// Pseudo-cron: Automatically update production statuses
+		$this->load->model('m_schedule');
+		$this->m_schedule->auto_update_statuses();
+
 		if ($this->session->userdata('status') != "telah_login") {
 			redirect('login?alert=belum_login');
 		}
@@ -361,7 +366,7 @@ class Dashboard extends CI_Controller
 	public function update_status($order_id, $new_status)
 	{
 		// Allowed transitions explicitly listed
-		$allowed_orders_statuses = ['waiting', 'scheduled', 'in_progress', 'done'];
+		$allowed_orders_statuses = ['waiting', 'scheduled', 'in_progress', 'done', 'canceled'];
 
 		if (!in_array($new_status, $allowed_orders_statuses)) {
 			redirect(base_url() . 'dashboard/orders');
@@ -387,5 +392,111 @@ class Dashboard extends CI_Controller
 		$this->db->trans_complete();
 
 		redirect(base_url() . 'dashboard/orders?alert=status_updated');
+	}
+
+	public function edit_order($id)
+	{
+		$data['page_title'] = 'Edit Order';
+		$data['order'] = $this->m_data->get_order_by_id($id);
+		
+		if (!$data['order'] || $data['order']->status == 'done' || $data['order']->status == 'canceled') {
+			redirect(base_url() . 'dashboard/orders?alert=invalid_action');
+			return;
+		}
+		
+		$data['items'] = $this->m_data->get_order_items($id);
+		
+		$this->load->view('v_header', $data);
+		$this->load->view('v_edit_order', $data);
+		$this->load->view('v_footer');
+	}
+
+	public function update_order($id)
+	{
+		$order = $this->m_data->get_order_by_id($id);
+		if (!$order || $order->status == 'done' || $order->status == 'canceled') {
+			redirect(base_url() . 'dashboard/orders?alert=invalid_action');
+			return;
+		}
+
+		$sizes = $this->input->post('size');
+		$qtys  = $this->input->post('qty');
+
+		$total_qty = 0;
+		$items = array();
+		if (is_array($sizes)) {
+			foreach ($sizes as $i => $size) {
+				if (!empty($qtys[$i]) && $qtys[$i] > 0) {
+					$items[] = array(
+						'size' => $size,
+						'qty'  => (int) $qtys[$i],
+					);
+					$total_qty += (int) $qtys[$i];
+				}
+			}
+		}
+
+		$design_file = $order->design_file;
+		if (!empty($_FILES['design_file']['name'])) {
+			$config['upload_path']   = './gambar/orders/';
+			$config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|ai|psd|zip';
+			$config['max_size']      = 10240; 
+			$new_filename            = uniqid() . '.' . pathinfo($_FILES['design_file']['name'], PATHINFO_EXTENSION);
+			$config['file_name']     = $new_filename;
+			$this->load->library('upload', $config);
+
+			if ($this->upload->do_upload('design_file')) {
+				$design_file = $this->upload->data('file_name');
+			}
+		}
+
+		$est_duration = (int) $this->input->post('est_duration');
+
+		$update_data = array(
+			'product_type' => $this->input->post('product_type'),
+			'qty'          => $total_qty,
+			'design_file'  => $design_file,
+			'notes'        => $this->input->post('notes'),
+			'est_duration' => $est_duration,
+			'deadline'     => $this->input->post('deadline'),
+		);
+
+		// If editing a "scheduled" or "in_progress" order and it changed in a way that disrupts queue,
+		// we might need to regenerate. Actually, changing qty on waiting orders affects queue tail too!
+		$needs_regen = false;
+		if ($order->est_duration != $est_duration || $order->deadline != $update_data['deadline']) {
+			$needs_regen = true;
+		}
+
+		$result = $this->m_data->update_order_complete($id, $update_data, $items);
+
+		if ($result) {
+			if ($needs_regen) {
+				$this->m_schedule->generate();
+			}
+			redirect(base_url() . 'dashboard/orders?alert=order_updated');
+		} else {
+			redirect(base_url() . 'dashboard/edit_order/'.$id.'?alert=update_failed');
+		}
+	}
+
+	public function cancel_order($id)
+	{
+		$order = $this->m_data->get_order_by_id($id);
+		if (!$order || $order->status == 'done' || $order->status == 'canceled') {
+			redirect(base_url() . 'dashboard/orders?alert=invalid_action');
+			return;
+		}
+
+		$this->db->trans_start();
+
+		$this->db->where('id', $id)->update('orders', ['status' => 'canceled']);
+		$this->db->where('order_id', $id)->delete('production_schedule');
+
+		$this->db->trans_complete();
+
+		$this->m_schedule->generate();
+
+		redirect(base_url() . 'dashboard/orders?alert=order_canceled');
 	}
 }

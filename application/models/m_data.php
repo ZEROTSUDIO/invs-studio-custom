@@ -85,4 +85,42 @@ class M_data extends CI_Model
         $this->db->order_by('orders.id', 'DESC');
         return $this->db->get();
     }
+
+    function get_order_by_id($id)
+    {
+        $this->db->select('orders.*, customers.name as customer_name, customers.phone as customer_phone');
+        $this->db->from('orders');
+        $this->db->join('customers', 'customers.id = orders.customer_id');
+        $this->db->where('orders.id', $id);
+        return $this->db->get()->row();
+    }
+
+    function get_order_items($order_id)
+    {
+        $this->db->where('order_id', $order_id);
+        return $this->db->get('order_items')->result();
+    }
+
+    function update_order_complete($order_id, $order_data, $items)
+    {
+        $this->db->trans_start();
+        
+        // Update main order
+        $this->db->where('id', $order_id);
+        $this->db->update('orders', $order_data);
+        
+        // Replace order items
+        $this->db->where('order_id', $order_id);
+        $this->db->delete('order_items');
+        
+        if (!empty($items)) {
+            foreach ($items as $item) {
+                $item['order_id'] = $order_id;
+                $this->db->insert('order_items', $item);
+            }
+        }
+        
+        $this->db->trans_complete();
+        return $this->db->trans_status();
+    }
 }

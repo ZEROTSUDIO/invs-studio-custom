@@ -9,6 +9,10 @@ class Home extends CI_Controller
 		parent::__construct();
 		date_default_timezone_set('Asia/Jakarta');
 		$this->load->model('m_data');
+
+		// Pseudo-cron: Automatically update production statuses
+		$this->load->model('m_schedule');
+		$this->m_schedule->auto_update_statuses();
 	}
 	public function index()
 	{

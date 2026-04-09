@@ -346,4 +346,42 @@ class M_schedule extends CI_Model
         if ($total_min < (8*60+30) || $total_min >= (17*60)) return true;
         return false;
     }
+
+    /**
+     * Pseudo-cron: Automatically update statuses based on the current time.
+     * scheduled -> in_progress (if start_date <= NOW)
+     * in_progress -> done/completed (if end_date <= NOW)
+     */
+    public function auto_update_statuses()
+    {
+        $now = date('Y-m-d H:i:s');
+        
+        // 1. Move scheduled -> in_progress
+        $this->db->select('order_id, id as schedule_id');
+        $this->db->where('status', 'scheduled');
+        $this->db->where('start_date <=', $now);
+        $to_start = $this->db->get('production_schedule')->result();
+        
+        if (!empty($to_start)) {
+            $order_ids = array_map(fn($item) => $item->order_id, $to_start);
+            $schedule_ids = array_map(fn($item) => $item->schedule_id, $to_start);
+            
+            $this->db->where_in('id', $order_ids)->update('orders', ['status' => 'in_progress']);
+            $this->db->where_in('id', $schedule_ids)->update('production_schedule', ['status' => 'in_progress']);
+        }
+        
+        // 2. Move in_progress -> done
+        $this->db->select('order_id, id as schedule_id');
+        $this->db->where('status', 'in_progress');
+        $this->db->where('end_date <=', $now);
+        $to_finish = $this->db->get('production_schedule')->result();
+        
+        if (!empty($to_finish)) {
+            $order_ids = array_map(fn($item) => $item->order_id, $to_finish);
+            $schedule_ids = array_map(fn($item) => $item->schedule_id, $to_finish);
+            
+            $this->db->where_in('id', $order_ids)->update('orders', ['status' => 'done']);
+            $this->db->where_in('id', $schedule_ids)->update('production_schedule', ['status' => 'completed']);
+        }
+    }
 }

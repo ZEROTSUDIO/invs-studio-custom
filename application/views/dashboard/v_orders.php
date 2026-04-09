@@ -54,18 +54,30 @@
 							<td><?php echo format_order_date($o->end_date); ?></td>
 							<td><?php echo render_status_badge($o->status); ?></td>
 							<td style="display:flex; gap:6px; padding: 8px 16px;">
+								<?php if ($o->status != 'done' && $o->status != 'canceled') : ?>
+									<a href="<?php echo base_url('dashboard/edit_order/' . $o->id); ?>" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(255,255,255,0.05); color:var(--cream); border:1px solid rgba(255,255,255,0.2);">Edit</a>
+								<?php endif; ?>
+
 								<?php if ($o->status == 'waiting') : ?>
-									<span style="font-size:9px; color:var(--smoke); margin-top:5px;">Waiting for schedule</span>
+									<form method="POST" action="<?php echo base_url('dashboard/cancel_order/' . $o->id); ?>" style="margin:0;">
+										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.25);" onclick="return confirm('WARNING: Cancel this order? This cannot be undone.');">Cancel</button>
+									</form>
 								<?php elseif ($o->status == 'scheduled') : ?>
-									<form method="POST" action="<?php echo base_url('dashboard/update_status/' . $o->id . '/in_progress'); ?>">
+									<form method="POST" action="<?php echo base_url('dashboard/update_status/' . $o->id . '/in_progress'); ?>" style="margin:0;">
 										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(232,160,32,0.12); color:var(--ember); border:1px solid rgba(232,160,32,0.25);" onclick="return confirm('Start producing this order?');">→ Produce</button>
 									</form>
+									<form method="POST" action="<?php echo base_url('dashboard/cancel_order/' . $o->id); ?>" style="margin:0;">
+										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.25);" onclick="return confirm('WARNING: Cancel this order? This cannot be undone.');">Cancel</button>
+									</form>
 								<?php elseif ($o->status == 'in_progress') : ?>
-									<form method="POST" action="<?php echo base_url('dashboard/update_status/' . $o->id . '/done'); ?>">
+									<form method="POST" action="<?php echo base_url('dashboard/update_status/' . $o->id . '/done'); ?>" style="margin:0;">
 										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(34,197,94,0.12); color:#4ade80; border:1px solid rgba(34,197,94,0.25);" onclick="return confirm('Mark this order as done?');">→ Done</button>
 									</form>
-								<?php elseif ($o->status == 'done') : ?>
-									<!-- Empty action or maybe Picked Up later -->
+									<form method="POST" action="<?php echo base_url('dashboard/cancel_order/' . $o->id); ?>" style="margin:0;">
+										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.25);" onclick="return confirm('WARNING: Cancel this order? This cannot be undone.');">Cancel</button>
+									</form>
+								<?php elseif ($o->status == 'canceled') : ?>
+									<span style="font-size:9px; color:#f87171; margin-top:5px; font-weight:600;">CANCELED</span>
 								<?php endif; ?>
 							</td>
 						</tr>
