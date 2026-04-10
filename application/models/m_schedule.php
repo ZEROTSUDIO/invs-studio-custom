@@ -27,20 +27,27 @@ class M_schedule extends CI_Model
         if (!$orders) return;
 
         // Get anchor time: end of the latest in_progress job
-        $in_progress = $this->db
+        $latest_in_progress = $this->db
             ->where('status', 'in_progress')
             ->order_by('end_date', 'DESC')
             ->limit(1)
             ->get('production_schedule')
             ->row();
 
-        if ($in_progress) {
-            $anchor = $this->force_business_hours($in_progress->end_date);
-            $queue  = $in_progress->queue_position + 1;
+        if ($latest_in_progress) {
+            $anchor = $this->force_business_hours($latest_in_progress->end_date);
         } else {
             $anchor = $this->force_business_hours(date('Y-m-d H:i:s'));
-            $queue  = 1;
         }
+
+        // Determine next queue sequence intelligently if multiple items are in progress
+        $max_queue = $this->db
+            ->select_max('queue_position')
+            ->where('status', 'in_progress')
+            ->get('production_schedule')
+            ->row();
+
+        $queue = ($max_queue && $max_queue->queue_position) ? $max_queue->queue_position + 1 : 1;
 
         // 2. Three-tier classification
         //

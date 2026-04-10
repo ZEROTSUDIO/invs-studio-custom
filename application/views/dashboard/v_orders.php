@@ -39,8 +39,9 @@
 				<tbody>
 					<?php foreach ($orders as $o) : ?>
 						<?php
-						$queue = $o->queue_position ? sprintf('%02d', $o->queue_position) : '<span style="opacity:0.4;">—</span>';
-						$queue_color = $o->queue_position ? 'var(--ember)' : 'var(--smoke)';
+						$is_active = in_array($o->status, ['waiting', 'scheduled', 'in_progress']);
+						$queue = ($is_active && $o->queue_position) ? sprintf('%02d', $o->queue_position) : '<span style="opacity:0.4;">—</span>';
+						$queue_color = ($is_active && $o->queue_position) ? 'var(--ember)' : 'var(--smoke)';
 						?>
 						<tr>
 							<td><span style="font-family:'Bebas Neue'; font-size:18px; color: <?php echo $queue_color; ?>;"><?php echo $queue; ?></span></td>
