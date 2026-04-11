@@ -366,7 +366,7 @@ class Dashboard extends CI_Controller
 	public function update_status($order_id, $new_status)
 	{
 		// Allowed transitions explicitly listed
-		$allowed_orders_statuses = ['waiting', 'scheduled', 'in_progress', 'done', 'canceled'];
+		$allowed_orders_statuses = ['ordered', 'waiting', 'scheduled', 'in_progress', 'done', 'canceled'];
 
 		if (!in_array($new_status, $allowed_orders_statuses)) {
 			redirect(base_url() . 'dashboard/orders');
@@ -380,6 +380,7 @@ class Dashboard extends CI_Controller
 
 		// Map order statuses to production schedule statuses safely
 		$schedule_status_map = [
+			'ordered' => 'ordered',
 			'scheduled' => 'scheduled',
 			'in_progress' => 'in_progress',
 			'done' => 'completed'

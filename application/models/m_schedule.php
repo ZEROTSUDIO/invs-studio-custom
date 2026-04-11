@@ -18,7 +18,7 @@ class M_schedule extends CI_Model
         $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 240;
         $quick_deadline_days = $this->config->item('quick_insert_deadline_days') ?: 2;
 
-        // 1. Fetch all schedulable orders (waiting or previously scheduled)
+        // 1. Fetch all schedulable orders (only waiting and scheduled ones)
         $orders = $this->db
             ->where_in('status', ['waiting', 'scheduled'])
             ->get('orders')

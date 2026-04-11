@@ -59,7 +59,14 @@
 									<a href="<?php echo base_url('dashboard/edit_order/' . $o->id); ?>" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(255,255,255,0.05); color:var(--cream); border:1px solid rgba(255,255,255,0.2);">Edit</a>
 								<?php endif; ?>
 
-								<?php if ($o->status == 'waiting') : ?>
+								<?php if ($o->status == 'ordered') : ?>
+									<form method="POST" action="<?php echo base_url('dashboard/update_status/' . $o->id . '/waiting'); ?>" style="margin:0;">
+										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(232,160,32,0.12); color:var(--ember); border:1px solid rgba(232,160,32,0.25);" onclick="return confirm('Start producing this order?');">→ Produce</button>
+									</form>
+									<form method="POST" action="<?php echo base_url('dashboard/cancel_order/' . $o->id); ?>" style="margin:0;">
+										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.25);" onclick="return confirm('WARNING: Cancel this order? This cannot be undone.');">Cancel</button>
+									</form>
+								<?php elseif ($o->status == 'waiting') : ?>
 									<form method="POST" action="<?php echo base_url('dashboard/cancel_order/' . $o->id); ?>" style="margin:0;">
 										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.25);" onclick="return confirm('WARNING: Cancel this order? This cannot be undone.');">Cancel</button>
 									</form>

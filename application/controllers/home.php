@@ -92,15 +92,15 @@ class Home extends CI_Controller
 			'qty'          => $total_qty,
 			'design_file'  => $design_file,
 			'notes'        => $this->input->post('notes'),
-			'status'       => 'waiting',
+			'status'       => 'ordered',
 			'est_duration' => $est_duration,
 			'deadline'     => $deadline_date,
 		);
 
 		if ($this->m_data->save_order($customer_id, $order, $items)) {
-			redirect('home?alert=success#order');
+			redirect('alert=success#order');
 		} else {
-			redirect('home?alert=save_failed#order');
+			redirect('alert=save_failed#order');
 		}
 	}
 
