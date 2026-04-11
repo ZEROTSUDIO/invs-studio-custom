@@ -28,8 +28,23 @@ class Dashboard extends CI_Controller
 	function index()
 	{
 		$data['page_title'] = 'Admin Dashboard';
+
+		// KPI stat cards
+		$data['stats'] = $this->m_data->get_dashboard_stats();
+
+		// Today's Work Order to-do list
+		$data['today_work'] = $this->m_data->get_todays_work_orders();
+
+		// Live queue preview (top 5 from full schedule)
+		$this->load->model('m_schedule');
+		$full_schedule        = $this->m_schedule->get_full_schedule();
+		$data['queue_preview'] = array_slice($full_schedule, 0, 5);
+
+		// Deadline alerts: orders due today or tomorrow
+		$data['deadline_alerts'] = $this->m_data->get_deadline_alerts(1);
+
 		$this->load->view('v_header', $data);
-		$this->load->view('v_index');
+		$this->load->view('v_index', $data);
 		$this->load->view('v_footer');
 	}
 

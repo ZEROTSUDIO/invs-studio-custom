@@ -123,4 +123,74 @@ class M_data extends CI_Model
         $this->db->trans_complete();
         return $this->db->trans_status();
     }
+
+    // ─── Dashboard home data ───────────────────────────────────────────────
+
+    /**
+     * Returns KPI aggregate stats for the dashboard landing page.
+     */
+    function get_dashboard_stats()
+    {
+        $total   = $this->db->count_all('orders');
+        $new_today = $this->db
+            ->where("DATE(created_at) = '" . date('Y-m-d') . "'", NULL, FALSE)
+            ->count_all_results('orders');
+        $in_progress = $this->db
+            ->where('status', 'in_progress')
+            ->count_all_results('orders');
+        $done_month = $this->db
+            ->where('status', 'done')
+            ->where('MONTH(created_at) = MONTH(NOW())', null, false)
+            ->where('YEAR(created_at) = YEAR(NOW())', null, false)
+            ->count_all_results('orders');
+        $waiting = $this->db
+            ->where('status', 'waiting')
+            ->count_all_results('orders');
+        $scheduled = $this->db
+            ->where('status', 'scheduled')
+            ->count_all_results('orders');
+
+        return (object)[
+            'total_orders'  => $total,
+            'new_today'     => $new_today,
+            'in_progress'   => $in_progress,
+            'done_month'    => $done_month,
+            'waiting'       => $waiting,
+            'scheduled'     => $scheduled,
+        ];
+    }
+
+    /**
+     * Returns today's production schedule items (in_progress + scheduled starting today).
+     * Used for the "Today's Work Order" to-do list.
+     */
+    function get_todays_work_orders()
+    {
+        $today = date('Y-m-d');
+        $this->db->select('ps.id as schedule_id, ps.order_id, ps.queue_position, ps.start_date, ps.end_date, ps.status as schedule_status, o.order_code, o.product_type, o.qty, o.est_duration, o.deadline, o.status as order_status, c.name as customer_name');
+        $this->db->from('production_schedule ps');
+        $this->db->join('orders o', 'o.id = ps.order_id');
+        $this->db->join('customers c', 'c.id = o.customer_id');
+        $this->db->group_start();
+            $this->db->where('ps.status', 'in_progress');
+            $this->db->or_where("DATE(ps.start_date) = '" . $today . "'", NULL, FALSE);
+        $this->db->group_end();
+        $this->db->order_by('ps.queue_position', 'ASC');
+        return $this->db->get()->result();
+    }
+
+    /**
+     * Returns orders with deadline within the next $days days (exclusive of done/canceled).
+     */
+    function get_deadline_alerts($days = 1)
+    {
+        $cutoff = date('Y-m-d', strtotime("+{$days} days"));
+        $this->db->select('o.id, o.order_code, o.product_type, o.qty, o.deadline, o.status, c.name as customer_name');
+        $this->db->from('orders o');
+        $this->db->join('customers c', 'c.id = o.customer_id');
+        $this->db->where('o.deadline <=', $cutoff);
+        $this->db->where_not_in('o.status', ['done', 'canceled']);
+        $this->db->order_by('o.deadline', 'ASC');
+        return $this->db->get()->result();
+    }
 }
