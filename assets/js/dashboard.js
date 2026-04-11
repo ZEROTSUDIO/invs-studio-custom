@@ -71,29 +71,32 @@ function removeRow(btn) {
 }
 
 // Calculate Production Duration (Minutes based, for form)
-function calcDuration() {
-	let qtyInputs = document.querySelectorAll(".qty-input");
-	let total = 0;
+// Specialized versions in v_new_order.php or v_edit_order.php will take precedence.
+if (typeof window.calcDuration === "undefined") {
+	window.calcDuration = function () {
+		let qtyInputs = document.querySelectorAll(".qty-input");
+		let total = 0;
 
-	qtyInputs.forEach((input) => {
-		total += parseInt(input.value) || 0;
-	});
+		qtyInputs.forEach((input) => {
+			total += parseInt(input.value) || 0;
+		});
 
-	let productTypeSelect = document.getElementById("product-type");
-	if (!productTypeSelect) return;
+		let productTypeSelect = document.getElementById("product-type");
+		if (!productTypeSelect) return;
 
-	let base = parseInt(productTypeSelect.value);
-	let duration = total * base + 20;
+		let base = parseInt(productTypeSelect.value);
+		let duration = total > 0 ? total * base + 30 : 0;
 
-	const box = document.getElementById("duration-box");
-	const val = document.getElementById("duration-val");
-	const hidden = document.getElementById("est-duration-hidden");
+		const box = document.getElementById("duration-box");
+		const val = document.getElementById("duration-val");
+		const hidden = document.getElementById("est-duration-hidden");
 
-	if (total > 0) {
-		if (box) box.style.display = "block";
-		if (val) val.innerText = duration + " minutes";
-		if (hidden) hidden.value = duration;
-	} else {
-		if (box) box.style.display = "none";
-	}
+		if (total > 0) {
+			if (box) box.style.display = "block";
+			if (val) val.innerText = duration + " minutes";
+			if (hidden) hidden.value = duration;
+		} else {
+			if (box) box.style.display = "none";
+		}
+	};
 }
