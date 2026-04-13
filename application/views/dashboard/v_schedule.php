@@ -37,8 +37,12 @@
 					<?php
 					$today = date('Y-m-d');
 					for ($i = 0; $i < 10; $i++) {
-						$date_label = date('j M', strtotime("$today +$i days"));
-						echo '<div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">' . $date_label . '</div>';
+						$ts = strtotime("$today +$i days");
+						$date_label = date('j M', $ts);
+						$is_sunday = date('w', $ts) == 0;
+						$bg_style = $is_sunday ? 'background: rgba(239, 68, 68, 0.05); color: var(--ember);' : 'color: var(--smoke);';
+						$label_append = $is_sunday ? '<br><span style="font-size:7px; opacity:0.7">OFF</span>' : '';
+						echo '<div style="font-size:9px; letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px; ' . $bg_style . '">' . $date_label . $label_append . '</div>';
 					}
 					?>
 				</div>
@@ -47,19 +51,20 @@
 				<div style="display:flex; flex-direction:column; gap:6px;">
 					<?php foreach ($schedules as $s) : ?>
 						<?php
-						$today_start = date('Y-m-d') . ' 08:30:00';
+						$today_start = date('Y-m-d') . ' 00:00:00';
 						
 						$actual_start = $s->start_date;
 						if (new DateTime($actual_start) < new DateTime($today_start)) {
 						    $actual_start = $today_start;
 						}
 						
-						$offset_mins = get_operational_minutes($today_start, $actual_start);
-						$duration_mins = get_operational_minutes($actual_start, $s->end_date);
+						// Calculate physical minutes to match calendar columns
+						$offset_mins = (strtotime($actual_start) - strtotime($today_start)) / 60;
+						$duration_mins = (strtotime($s->end_date) - strtotime($actual_start)) / 60;
 						
-						// Total visible timeline = 10 days * 510 mins = 5100 mins
-						$left_pct = ($offset_mins / 5100) * 100;
-						$width_pct = ($duration_mins / 5100) * 100;
+						// Total visible timeline = 10 calendar days = 14400 mins
+						$left_pct = ($offset_mins / 14400) * 100;
+						$width_pct = ($duration_mins / 14400) * 100;
 						
 						// Skip if task starts completely outside the 10-day block
 						if ($left_pct >= 100) continue;
@@ -89,7 +94,12 @@
 
 							<div style="flex:1; position:relative; height:100%; background:rgba(255,255,255,0.02); display:grid; grid-template-columns: repeat(10, 1fr);">
 							    <?php for ($i=0; $i<10; $i++): ?>
-							        <div style="border-left:1px solid var(--ghost);"></div>
+							        <?php 
+                                        $ts = strtotime("$today +$i days");
+                                        $is_sunday = date('w', $ts) == 0;
+                                        $col_bg = $is_sunday ? 'background: rgba(239, 68, 68, 0.05);' : '';
+                                    ?>
+							        <div style="border-left:1px solid var(--ghost); <?php echo $col_bg; ?>"></div>
 							    <?php endfor; ?>
 								<div class="gantt-bar flex justify-center items-center" style="position:absolute; top:0; bottom:0; left:<?php echo $left_pct; ?>%; width:<?php echo $width_pct; ?>%; height:100%; background:<?php echo $bg; ?>; color:<?php echo $col; ?>; min-width:20px; overflow:hidden; white-space:nowrap; text-align:center;">
 									<?php echo $s->qty; ?>p · <?php echo format_duration($s->est_duration); ?>
