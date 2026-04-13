@@ -84,6 +84,16 @@
 		<div class="topbar">
 			<div class="page-title" id="topbar-title"><?php echo isset($page_title) ? $page_title : 'Admin Dashboard'; ?></div>
 			<div style="display:flex; align-items:center; gap:16px;">
+				
+				<!-- DEMO MODE TOGGLE -->
+				<a href="<?php echo base_url('dashboard/toggle_demo_mode'); ?>" style="display:flex; align-items:center; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; text-decoration: none; border: 1px solid <?php echo $this->session->userdata('demo_mode_active') ? '#e8a020' : 'var(--ash)'; ?>; background: <?php echo $this->session->userdata('demo_mode_active') ? 'rgba(232, 160, 32, 0.1)' : 'transparent'; ?>; color: <?php echo $this->session->userdata('demo_mode_active') ? '#e8a020' : 'var(--smoke)'; ?>; transition: all 0.2s ease;">
+					<?php if($this->session->userdata('demo_mode_active')): ?>
+						⚡ Demo Mode ON
+					<?php else: ?>
+						🛠 Demo Mode OFF
+					<?php endif; ?>
+				</a>
+
 				<div style="font-size:11px; color: var(--smoke);">
 					<span style="color: var(--ember);">●</span> &nbsp; <?php echo date('d-F-Y'); ?> &nbsp;|&nbsp; <?php echo date('H:i'); ?> WIB
 				</div>
@@ -96,3 +106,4 @@
 				</div>
 			</div>
 		</div>
+

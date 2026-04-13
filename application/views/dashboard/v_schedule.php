@@ -51,8 +51,21 @@
 				<div style="display:flex; flex-direction:column; gap:6px;">
 					<?php foreach ($schedules as $s) : ?>
 						<div style="display:flex; align-items:center; height:28px;">
-							<div style="font-size:11px; color:var(--cream); width:160px; min-width:160px; padding-right:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-								<?php echo htmlspecialchars($s->order_code); ?> <?php echo htmlspecialchars($s->customer_name); ?>
+							<div style="font-size:11px; color:var(--cream); width:160px; min-width:160px; padding-right:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; justify-content:space-between; align-items:center;">
+								<span title="<?php echo htmlspecialchars($s->order_code); ?> <?php echo htmlspecialchars($s->customer_name); ?>">
+									<?php echo htmlspecialchars($s->order_code); ?> <?php echo htmlspecialchars($s->customer_name); ?>
+								</span>
+								<?php if ($this->session->userdata('demo_mode_active')): ?>
+									<?php if ($s->status == 'scheduled'): ?>
+										<form method="POST" action="<?php echo base_url('dashboard/update_status/' . $s->order_id . '/in_progress'); ?>" style="margin:0;">
+											<button type="submit" title="Force Start Now" style="cursor:pointer; background:rgba(232,160,32,0.2); border:1px solid #e8a020; color:#e8a020; border-radius:3px; padding:0 4px; font-size:10px;">⚡</button>
+										</form>
+									<?php elseif ($s->status == 'in_progress'): ?>
+										<form method="POST" action="<?php echo base_url('dashboard/update_status/' . $s->order_id . '/done'); ?>" style="margin:0;">
+											<button type="submit" title="Force Complete Early" style="cursor:pointer; background:rgba(74,222,128,0.2); border:1px solid #4ade80; color:#4ade80; border-radius:3px; padding:0 4px; font-size:10px;">✅</button>
+										</form>
+									<?php endif; ?>
+								<?php endif; ?>
 							</div>
 
 							<div style="flex:1; position:relative; height:100%; background:rgba(255,255,255,0.02); display:grid; grid-template-columns: repeat(10, 1fr);">

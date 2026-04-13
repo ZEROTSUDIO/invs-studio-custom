@@ -536,6 +536,10 @@ class Dashboard extends CI_Controller
 
 		$this->db->trans_complete();
 
+		// Trigger recalculation so future jobs shift backwards filling the gap of early completed jobs
+		$this->load->model('m_schedule');
+		$this->m_schedule->generate();
+
 		redirect(base_url() . 'dashboard/orders?alert=status_updated');
 	}
 
@@ -640,8 +644,16 @@ class Dashboard extends CI_Controller
 
 		$this->db->trans_complete();
 
+		$this->load->model('m_schedule');
 		$this->m_schedule->generate();
 
 		redirect(base_url() . 'dashboard/orders?alert=order_canceled');
+	}
+
+	public function toggle_demo_mode()
+	{
+		$is_demo = $this->session->userdata('demo_mode_active');
+		$this->session->set_userdata('demo_mode_active', !$is_demo);
+		redirect($_SERVER['HTTP_REFERER'] ?? base_url('dashboard'));
 	}
 }
