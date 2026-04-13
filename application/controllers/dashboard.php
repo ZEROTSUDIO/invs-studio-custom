@@ -354,6 +354,21 @@ class Dashboard extends CI_Controller
 		$this->load->view('dashboard/v_schedule', $data);
 	}
 
+	public function schedule2()
+	{
+		$this->load->model('m_schedule');
+		$data['page_title'] = 'Production Schedule';
+
+		// Fetch schedules
+		$data['schedules'] = $this->m_schedule->get_full_schedule();
+		
+		// Calculate stats
+		$data['stats'] = $this->m_schedule->get_queue_stats($data['schedules']);
+
+		$this->load->view('dashboard/v_header', $data);
+		$this->load->view('dashboard/v_schedule2', $data);
+	}
+
 	public function generate_schedule()
 	{
 		$this->load->model('m_schedule');
