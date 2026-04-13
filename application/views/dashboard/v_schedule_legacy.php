@@ -49,74 +49,7 @@
 
 				<!-- Gantt Rows -->
 				<div style="display:flex; flex-direction:column; gap:6px;">
-					<?php
-					$grid_start_date = date('Y-m-d');
-					
-					// Helper to calculate hybrid grid percentage
-					if (!function_exists('get_hybrid_grid_pct')) {
-						function get_hybrid_grid_pct($target_date_str, $grid_start_str) {
-							$target = new DateTime($target_date_str);
-							$target_day = new DateTime($target->format('Y-m-d') . ' 00:00:00');
-							$start_day = new DateTime($grid_start_str . ' 00:00:00');
-							
-							// Prevent pushing items off the left side of the screen
-							if ($target_day < $start_day) return 0;
-							
-							$diff = $start_day->diff($target_day);
-							$day_diff = $diff->invert ? -$diff->days : $diff->days;
-							
-							// Mins elapsed in target's day
-							$mins = ((int)$target->format('G') * 60) + (int)$target->format('i');
-							
-							// Clamp to working hours (08:30 to 17:00) so "night time" doesn't render
-							if ($mins < 510) $mins = 510;
-							if ($mins > 1020) $mins = 1020;
-							
-							// Scale 0-1 across the column based on working hours
-							$col_fraction = ($mins - 510) / 510;
-							
-							// 10 columns = 10% per day
-							return ($day_diff * 10) + ($col_fraction * 10);
-						}
-					}
-					?>
 					<?php foreach ($schedules as $s) : ?>
-						<?php
-						$actual_start = $s->start_date;
-						
-						// Clamp old tasks so they start evenly at today's open time
-						if (new DateTime($actual_start) < new DateTime($grid_start_date . ' 08:30:00')) {
-						    $actual_start = $grid_start_date . ' 08:30:00';
-						}
-						
-						// Calculate Left and End positions, then width
-						$left_pct = get_hybrid_grid_pct($actual_start, $grid_start_date);
-						$end_pct = get_hybrid_grid_pct($s->end_date, $grid_start_date);
-						
-						$width_pct = $end_pct - $left_pct;
-						if ($width_pct < 0) $width_pct = 0;
-						
-						// Skip if task starts completely outside the 10-day block
-						if ($left_pct >= 100) continue;
-						
-						// Clamp width if it bleeds over
-						if (($left_pct + $width_pct) > 100) {
-						    $width_pct = 100 - $left_pct;
-						}
-
-						// Determine color based on status
-						if ($s->status == 'in_progress') {
-							$bg = '#1a5c2a';
-							$col = '#4ade80';
-						} elseif ($s->status == 'scheduled') {
-							$bg = '#7a4010';
-							$col = 'var(--ember)';
-						} else {
-							$bg = 'var(--ghost)';
-							$col = 'var(--cream)';
-						}
-						?>
-
 						<div style="display:flex; align-items:center; height:28px;">
 							<div style="font-size:11px; color:var(--cream); width:160px; min-width:160px; padding-right:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
 								<?php echo htmlspecialchars($s->order_code); ?> <?php echo htmlspecialchars($s->customer_name); ?>
@@ -131,7 +64,7 @@
                                     ?>
 							        <div style="border-left:1px solid var(--ghost); <?php echo $col_bg; ?>"></div>
 							    <?php endfor; ?>
-								<div class="gantt-bar flex justify-center items-center" style="position:absolute; top:0; bottom:0; left:<?php echo $left_pct; ?>%; width:<?php echo $width_pct; ?>%; height:100%; background:<?php echo $bg; ?>; color:<?php echo $col; ?>; min-width:20px; overflow:hidden; white-space:nowrap; text-align:center;">
+								<div class="gantt-bar flex justify-center items-center" style="position:absolute; top:0; bottom:0; left:<?php echo $s->left_pct; ?>%; width:<?php echo $s->width_pct; ?>%; height:100%; background:<?php echo $s->bg; ?>; color:<?php echo $s->col; ?>; min-width:20px; overflow:hidden; white-space:nowrap; text-align:center;">
 									<?php echo $s->qty; ?>p · <?php echo format_duration($s->est_duration); ?>
 								</div>
 							</div>

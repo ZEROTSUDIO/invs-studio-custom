@@ -344,29 +344,143 @@ class Dashboard extends CI_Controller
 		$this->load->model('m_schedule');
 		$data['page_title'] = 'Production Schedule';
 
-		// Fetch schedules
-		$data['schedules'] = $this->m_schedule->get_full_schedule();
+		// Fetch raw schedules and format sizes for view
+		$raw_schedules = $this->m_schedule->get_full_schedule();
+		// Use working-hours logic
+		$data['schedules'] = $this->_prepare_schedule2_gantt_data($raw_schedules);
 		
-		// Calculate stats
-		$data['stats'] = $this->m_schedule->get_queue_stats($data['schedules']);
+		// Calculate stats from raw schedules
+		$data['stats'] = $this->m_schedule->get_queue_stats($raw_schedules);
 
 		$this->load->view('dashboard/v_header', $data);
 		$this->load->view('dashboard/v_schedule', $data);
 	}
 
-	public function schedule2()
+	public function schedule_legacy()
 	{
 		$this->load->model('m_schedule');
-		$data['page_title'] = 'Production Schedule';
+		$data['page_title'] = 'Production Schedule (24h)';
 
-		// Fetch schedules
-		$data['schedules'] = $this->m_schedule->get_full_schedule();
+		// Fetch raw schedules and format sizes for view
+		$raw_schedules = $this->m_schedule->get_full_schedule();
+		// Use 24-hour logic
+		$data['schedules'] = $this->_prepare_schedule_gantt_data($raw_schedules);
 		
-		// Calculate stats
-		$data['stats'] = $this->m_schedule->get_queue_stats($data['schedules']);
+		// Calculate stats from raw schedules
+		$data['stats'] = $this->m_schedule->get_queue_stats($raw_schedules);
 
 		$this->load->view('dashboard/v_header', $data);
-		$this->load->view('dashboard/v_schedule2', $data);
+		$this->load->view('dashboard/v_schedule_legacy', $data);
+	}
+
+	private function _prepare_schedule_gantt_data($schedules) {
+		$today_start = date('Y-m-d') . ' 00:00:00';
+		$formatted = [];
+
+		foreach ($schedules as $s) {
+			$actual_start = $s->start_date;
+			if (new DateTime($actual_start) < new DateTime($today_start)) {
+				$actual_start = $today_start;
+			}
+			
+			// Calculate physical minutes to match calendar columns
+			$offset_mins = (strtotime($actual_start) - strtotime($today_start)) / 60;
+			$duration_mins = (strtotime($s->end_date) - strtotime($actual_start)) / 60;
+			
+			// Total visible timeline = 10 calendar days = 14400 mins
+			$left_pct = ($offset_mins / 14400) * 100;
+			$width_pct = ($duration_mins / 14400) * 100;
+			
+			// Skip if task starts completely outside the 10-day block
+			if ($left_pct >= 100) continue;
+			
+			// Clamp width if it bleeds over
+			if (($left_pct + $width_pct) > 100) {
+				$width_pct = 100 - $left_pct;
+			}
+
+			// Determine color based on status
+			if ($s->status == 'in_progress') {
+				$s->bg = '#1a5c2a';
+				$s->col = '#4ade80';
+			} elseif ($s->status == 'scheduled') {
+				$s->bg = '#7a4010';
+				$s->col = 'var(--ember)';
+			} else {
+				$s->bg = 'var(--ghost)';
+				$s->col = 'var(--cream)';
+			}
+
+			$s->left_pct = $left_pct;
+			$s->width_pct = $width_pct;
+			
+			$formatted[] = $s;
+		}
+
+		return $formatted;
+	}
+
+	private function _get_hybrid_grid_pct($target_date_str, $grid_start_str) {
+		$target = new DateTime($target_date_str);
+		$target_day = new DateTime($target->format('Y-m-d') . ' 00:00:00');
+		$start_day = new DateTime($grid_start_str . ' 00:00:00');
+		
+		if ($target_day < $start_day) return 0;
+		
+		$diff = $start_day->diff($target_day);
+		$day_diff = $diff->invert ? -$diff->days : $diff->days;
+		
+		$mins = ((int)$target->format('G') * 60) + (int)$target->format('i');
+		
+		if ($mins < 510) $mins = 510;
+		if ($mins > 1020) $mins = 1020;
+		
+		$col_fraction = ($mins - 510) / 510;
+		
+		return ($day_diff * 10) + ($col_fraction * 10);
+	}
+
+	private function _prepare_schedule2_gantt_data($schedules) {
+		$grid_start_date = date('Y-m-d');
+		$formatted = [];
+		
+		foreach ($schedules as $s) {
+			$actual_start = $s->start_date;
+			
+			if (new DateTime($actual_start) < new DateTime($grid_start_date . ' 08:30:00')) {
+				$actual_start = $grid_start_date . ' 08:30:00';
+			}
+			
+			$left_pct = $this->_get_hybrid_grid_pct($actual_start, $grid_start_date);
+			$end_pct = $this->_get_hybrid_grid_pct($s->end_date, $grid_start_date);
+			
+			$width_pct = $end_pct - $left_pct;
+			if ($width_pct < 0) $width_pct = 0;
+			
+			if ($left_pct >= 100) continue;
+			
+			if (($left_pct + $width_pct) > 100) {
+				$width_pct = 100 - $left_pct;
+			}
+
+			if ($s->status == 'in_progress') {
+				$s->bg = '#1a5c2a';
+				$s->col = '#4ade80';
+			} elseif ($s->status == 'scheduled') {
+				$s->bg = '#7a4010';
+				$s->col = 'var(--ember)';
+			} else {
+				$s->bg = 'var(--ghost)';
+				$s->col = 'var(--cream)';
+			}
+
+			$s->left_pct = $left_pct;
+			$s->width_pct = $width_pct;
+			
+			$formatted[] = $s;
+		}
+
+		return $formatted;
 	}
 
 	public function generate_schedule()
