@@ -43,17 +43,17 @@ class Dashboard extends CI_Controller
 		// Deadline alerts: orders due today or tomorrow
 		$data['deadline_alerts'] = $this->m_data->get_deadline_alerts(1);
 
-		$this->load->view('v_header', $data);
-		$this->load->view('v_index', $data);
-		$this->load->view('v_footer');
+		$this->load->view('dashboard/v_header', $data);
+		$this->load->view('dashboard/v_index', $data);
+		$this->load->view('dashboard/v_footer');
 	}
 
 	public function new_order()
 	{
 		$data['page_title'] = 'New Order';
-		$this->load->view('v_header', $data);
-		$this->load->view('v_new_order');
-		$this->load->view('v_footer');
+		$this->load->view('dashboard/v_header', $data);
+		$this->load->view('dashboard/v_new_order');
+		$this->load->view('dashboard/v_footer');
 	}
 	public function save_order()
 	{
@@ -166,9 +166,9 @@ class Dashboard extends CI_Controller
 	{
 		$data['page_title'] = 'Customers';
 		$data['customers']  = $this->m_data->get_all_customers();
-		$this->load->view('v_header', $data);
+		$this->load->view('dashboard/v_header', $data);
 		$this->load->view('dashboard/v_customers', $data);
-		$this->load->view('v_footer');
+		$this->load->view('dashboard/v_footer');
 	}
 
 	// AJAX: returns the earliest safe deadline date for a given est_duration (minutes)
@@ -350,7 +350,7 @@ class Dashboard extends CI_Controller
 		// Calculate stats
 		$data['stats'] = $this->m_schedule->get_queue_stats($data['schedules']);
 
-		$this->load->view('v_header', $data);
+		$this->load->view('dashboard/v_header', $data);
 		$this->load->view('dashboard/v_schedule', $data);
 	}
 
@@ -374,7 +374,7 @@ class Dashboard extends CI_Controller
 		$this->db->order_by('o.id', 'DESC');
 		$data['orders'] = $this->db->get()->result();
 
-		$this->load->view('v_header', $data);
+		$this->load->view('dashboard/v_header', $data);
 		$this->load->view('dashboard/v_orders', $data);
 	}
 
@@ -422,9 +422,9 @@ class Dashboard extends CI_Controller
 		
 		$data['items'] = $this->m_data->get_order_items($id);
 		
-		$this->load->view('v_header', $data);
-		$this->load->view('v_edit_order', $data);
-		$this->load->view('v_footer');
+		$this->load->view('dashboard/v_header', $data);
+		$this->load->view('dashboard/v_edit_order', $data);
+		$this->load->view('dashboard/v_footer');
 	}
 
 	public function update_order($id)
