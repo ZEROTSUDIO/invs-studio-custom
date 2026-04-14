@@ -107,7 +107,7 @@ class Dashboard extends CI_Controller
 		// Deadline safety check (Backend)
 		$this->load->model('m_schedule');
 		$safe_deadline_data = $this->m_schedule->get_earliest_deadline($est_duration);
-		
+
 		if ($deadline_date && $safe_deadline_data['earliest_date'] && $deadline_date < $safe_deadline_data['earliest_date']) {
 			redirect(base_url() . 'dashboard/new_order?alert=deadline_conflict');
 			return;
@@ -194,151 +194,6 @@ class Dashboard extends CI_Controller
 		redirect('login');
 	}
 
-
-	// //pengguna
-
-	// public function pengguna()
-	// {
-
-	// 	$data['pengguna'] = $this->m_data->get_data('pengguna')->result();
-	// 	$this->load->view('dashboard/v_header');
-	// 	$this->load->view('dashboard/v_pengguna', $data);
-	// 	$this->load->view('dashboard/v_footer');
-	// }
-
-	// public function pengguna_tambah()
-	// {
-	// 	$this->load->view('dashboard/v_header');
-	// 	$this->load->view('dashboard/v_pengguna_tambah');
-	// 	$this->load->view('dashboard/v_footer');
-	// }
-
-	// public function pengguna_tambah_aksi()
-	// {
-	// 	$this->form_validation->set_rules('nama', 'Nama Pengguna', 'required');
-	// 	$this->form_validation->set_rules('email', 'Email Pengguna', 'required');
-	// 	$this->form_validation->set_rules('username', 'Username Pengguna', 'required');
-	// 	$this->form_validation->set_rules('password', 'Password Pengguna', 'required|min_length[8]');
-	// 	$this->form_validation->set_rules('level', 'Level Pengguna', 'required');
-	// 	$this->form_validation->set_rules('status', 'Status Pengguna', 'required');
-	// 	if ($this->form_validation->run() != false) {
-	// 		$nama = $this->input->post('nama');
-	// 		$email = $this->input->post('email');
-	// 		$username = $this->input->post('username');
-	// 		$password = md5($this->input->post('password'));
-	// 		$level = $this->input->post('level');
-	// 		$status = $this->input->post('status');
-	// 		$data = array(
-	// 			'pengguna_nama' => $nama,
-	// 			'pengguna_email' => $email,
-	// 			'pengguna_username' => $username,
-	// 			'pengguna_password' => $password,
-	// 			'pengguna_level' => $level,
-	// 			'pengguna_status' => $status
-	// 		);
-	// 		$this->m_data->insert_data('pengguna', $data);
-	// 		redirect(base_url() . 'dashboard/pengguna');
-	// 	} else {
-	// 		$this->load->view('dashboard/v_header');
-	// 		$this->load->view('dashboard/v_pengguna_tambah');
-	// 		$this->load->view('dashboard/v_footer');
-	// 	}
-	// }
-
-	// public function pengguna_edit($id)
-	// {
-	// 	$where = array(
-	// 		'pengguna_id' => $id
-	// 	);
-	// 	$data['pengguna'] = $this->m_data->edit_data('pengguna', $where)->result();
-	// 	$this->load->view('dashboard/v_header');
-	// 	$this->load->view('dashboard/v_pengguna_edit', $data);
-	// 	$this->load->view('dashboard/v_footer');
-	// }
-
-	// public function pengguna_update()
-	// {
-	// 	//rules untuk wajib diisi
-	// 	$this->form_validation->set_rules('nama', 'Nama Pengguna', 'required');
-	// 	$this->form_validation->set_rules('email', 'Email Pengguna', 'required');
-	// 	$this->form_validation->set_rules('username', 'Username Pengguna', 'required');
-	// 	$this->form_validation->set_rules('level', 'Level Pengguna', 'required');
-	// 	$this->form_validation->set_rules('status', 'Status Pengguna', 'required');
-	// 	if ($this->form_validation->run() != false) {
-	// 		$id = $this->input->post('id');
-	// 		$nama = $this->input->post('nama');
-	// 		$email = $this->input->post('email');
-	// 		$username = $this->input->post('username');
-	// 		$password = md5($this->input->post('password'));
-	// 		$level = $this->input->post('level');
-	// 		$status = $this->input->post('status');
-	// 		if ($this->input->post('password') == "") {
-	// 			$data = array(
-	// 				'pengguna_nama' => $nama,
-	// 				'pengguna_email' => $email,
-	// 				'pengguna_username' => $username,
-	// 				'pengguna_level' => $level,
-	// 				'pengguna_status' => $status
-	// 			);
-	// 		} else {
-	// 			$data = array(
-	// 				'pengguna_nama' => $nama,
-	// 				'pengguna_email' => $email,
-	// 				'pengguna_username' => $username,
-	// 				'pengguna_password' => $password,
-	// 				'pengguna_level' => $level,
-	// 				'pengguna_status' => $status
-	// 			);
-	// 		}
-	// 		$where = array(
-	// 			'pengguna_id' => $id
-	// 		);
-	// 		$this->m_data->update_data('pengguna', $data, $where);
-	// 		redirect(base_url() . 'dashboard/pengguna');
-	// 	} else {
-	// 		$id = $this->input->post('id');
-	// 		$where = array(
-	// 			'pengguna_id' => $id
-	// 		);
-	// 		$data['pengguna'] = $this->m_data->get_data('pengguna', $where)->result();
-	// 		$this->load->view('dashboard/v_header');
-	// 		$this->load->view('dashboard/v_pengguna_edit', $data);
-	// 		$this->load->view('dashboard/v_footer');
-	// 	}
-	// }
-
-	// //hpus pengguna
-
-	// public function pengguna_hapus($id)
-	// {
-	// 	$where = array(
-	// 		'pengguna_id' => $id
-	// 	);
-	// 	$data['pengguna_hapus'] = $this->m_data->edit_data('pengguna', $where)->row();
-	// 	$data['pengguna_lain'] = $this->db->query("SELECT * FROM pengguna WHERE pengguna_id != '$id'")->result();
-	// 	$this->load->view('dashboard/v_header');
-	// 	$this->load->view('dashboard/v_pengguna_hapus', $data);
-	// 	$this->load->view('dashboard/v_footer');
-	// }
-
-	// public function pengguna_hapus_aksi()
-	// {
-	// 	$pengguna_hapus = $this->input->post('pengguna_hapus');
-	// 	$pengguna_tujuan = $this->input->post('pengguna_tujuan');
-	// 	$where = array(
-	// 		'pengguna_id' => $pengguna_hapus
-	// 	);
-	// 	$w = array(
-	// 		'artikel_author' => $pengguna_hapus
-	// 	);
-	// 	$d = array(
-	// 		'artikel_author' => $pengguna_tujuan
-	// 	);
-	// 	$this->m_data->update_data('artikel', $d, $w);
-	// 	$this->m_data->delete_data('pengguna', $where);
-	// 	redirect(base_url() . 'dashboard/pengguna');
-	// }
-
 	public function schedule()
 	{
 		$this->load->model('m_schedule');
@@ -348,7 +203,7 @@ class Dashboard extends CI_Controller
 		$raw_schedules = $this->m_schedule->get_full_schedule();
 		// Use working-hours logic
 		$data['schedules'] = $this->_prepare_schedule2_gantt_data($raw_schedules);
-		
+
 		// Calculate stats from raw schedules
 		$data['stats'] = $this->m_schedule->get_queue_stats($raw_schedules);
 
@@ -365,7 +220,7 @@ class Dashboard extends CI_Controller
 		$raw_schedules = $this->m_schedule->get_full_schedule();
 		// Use 24-hour logic
 		$data['schedules'] = $this->_prepare_schedule_gantt_data($raw_schedules);
-		
+
 		// Calculate stats from raw schedules
 		$data['stats'] = $this->m_schedule->get_queue_stats($raw_schedules);
 
@@ -373,7 +228,8 @@ class Dashboard extends CI_Controller
 		$this->load->view('dashboard/v_schedule_legacy', $data);
 	}
 
-	private function _prepare_schedule_gantt_data($schedules) {
+	private function _prepare_schedule_gantt_data($schedules)
+	{
 		$today_start = date('Y-m-d') . ' 00:00:00';
 		$formatted = [];
 
@@ -382,18 +238,18 @@ class Dashboard extends CI_Controller
 			if (new DateTime($actual_start) < new DateTime($today_start)) {
 				$actual_start = $today_start;
 			}
-			
+
 			// Calculate physical minutes to match calendar columns
 			$offset_mins = (strtotime($actual_start) - strtotime($today_start)) / 60;
 			$duration_mins = (strtotime($s->end_date) - strtotime($actual_start)) / 60;
-			
+
 			// Total visible timeline = 10 calendar days = 14400 mins
 			$left_pct = ($offset_mins / 14400) * 100;
 			$width_pct = ($duration_mins / 14400) * 100;
-			
+
 			// Skip if task starts completely outside the 10-day block
 			if ($left_pct >= 100) continue;
-			
+
 			// Clamp width if it bleeds over
 			if (($left_pct + $width_pct) > 100) {
 				$width_pct = 100 - $left_pct;
@@ -413,52 +269,54 @@ class Dashboard extends CI_Controller
 
 			$s->left_pct = $left_pct;
 			$s->width_pct = $width_pct;
-			
+
 			$formatted[] = $s;
 		}
 
 		return $formatted;
 	}
 
-	private function _get_hybrid_grid_pct($target_date_str, $grid_start_str) {
+	private function _get_hybrid_grid_pct($target_date_str, $grid_start_str)
+	{
 		$target = new DateTime($target_date_str);
 		$target_day = new DateTime($target->format('Y-m-d') . ' 00:00:00');
 		$start_day = new DateTime($grid_start_str . ' 00:00:00');
-		
+
 		if ($target_day < $start_day) return 0;
-		
+
 		$diff = $start_day->diff($target_day);
 		$day_diff = $diff->invert ? -$diff->days : $diff->days;
-		
+
 		$mins = ((int)$target->format('G') * 60) + (int)$target->format('i');
-		
+
 		if ($mins < 510) $mins = 510;
 		if ($mins > 1020) $mins = 1020;
-		
+
 		$col_fraction = ($mins - 510) / 510;
-		
+
 		return ($day_diff * 10) + ($col_fraction * 10);
 	}
 
-	private function _prepare_schedule2_gantt_data($schedules) {
+	private function _prepare_schedule2_gantt_data($schedules)
+	{
 		$grid_start_date = date('Y-m-d');
 		$formatted = [];
-		
+
 		foreach ($schedules as $s) {
 			$actual_start = $s->start_date;
-			
+
 			if (new DateTime($actual_start) < new DateTime($grid_start_date . ' 08:30:00')) {
 				$actual_start = $grid_start_date . ' 08:30:00';
 			}
-			
+
 			$left_pct = $this->_get_hybrid_grid_pct($actual_start, $grid_start_date);
 			$end_pct = $this->_get_hybrid_grid_pct($s->end_date, $grid_start_date);
-			
+
 			$width_pct = $end_pct - $left_pct;
 			if ($width_pct < 0) $width_pct = 0;
-			
+
 			if ($left_pct >= 100) continue;
-			
+
 			if (($left_pct + $width_pct) > 100) {
 				$width_pct = 100 - $left_pct;
 			}
@@ -476,7 +334,7 @@ class Dashboard extends CI_Controller
 
 			$s->left_pct = $left_pct;
 			$s->width_pct = $width_pct;
-			
+
 			$formatted[] = $s;
 		}
 
@@ -495,13 +353,95 @@ class Dashboard extends CI_Controller
 	{
 		$data['page_title'] = 'Orders list';
 
-		// Fetch all orders joined with customers and schedule
-		$this->db->select('o.*, c.name as customer_name, ps.queue_position, ps.start_date, ps.end_date');
+		$search = $this->input->get('q');
+		$status = $this->input->get('status');
+		$sort_by = $this->input->get('sort_by');
+		$sort_order = $this->input->get('sort_order');
+		if ($sort_order != 'asc' && $sort_order != 'desc') $sort_order = 'desc';
+
+		$allowed_sorts = [
+			'id'       => 'o.id',
+			'deadline' => 'o.deadline',
+			'queue'    => 'ps.queue_position',
+			'status'   => 'o.status'
+		];
+		$sort_col = isset($allowed_sorts[$sort_by]) ? $allowed_sorts[$sort_by] : 'o.id';
+
+		// Base query preparation
 		$this->db->from('orders o');
 		$this->db->join('customers c', 'o.customer_id = c.id');
 		$this->db->join('production_schedule ps', 'o.id = ps.order_id', 'left');
-		$this->db->order_by('o.id', 'DESC');
+
+		if (!empty($search)) {
+			$this->db->group_start();
+			$this->db->like('o.order_code', $search);
+			$this->db->or_like('c.name', $search);
+			$this->db->group_end();
+		}
+
+		if (!empty($status)) {
+			if ($status == 'active') {
+				$this->db->where_in('o.status', ['ordered', 'waiting', 'scheduled', 'in_progress']);
+			} elseif ($status == 'completed') {
+				$this->db->where('o.status', 'done');
+			} elseif ($status == 'canceled') {
+				$this->db->where('o.status', 'canceled');
+			}
+		}
+
+		$total_rows = $this->db->count_all_results('', FALSE);
+
+		// Pagination Config
+		$this->load->library('pagination');
+		$config['base_url'] = base_url('dashboard/orders');
+		$config['total_rows'] = $total_rows;
+		$config['per_page'] = 10;
+		$config['page_query_string'] = TRUE;
+		$config['reuse_query_string'] = TRUE;
+		$config['query_string_segment'] = 'per_page';
+
+		$config['full_tag_open'] = '<ul class="pagination">';
+		$config['full_tag_close'] = '</ul>';
+		$config['first_link'] = 'First';
+		$config['last_link'] = 'Last';
+		$config['first_tag_open'] = '<li>';
+		$config['first_tag_close'] = '</li>';
+		$config['prev_link'] = '&laquo;';
+		$config['prev_tag_open'] = '<li class="prev">';
+		$config['prev_tag_close'] = '</li>';
+		$config['next_link'] = '&raquo;';
+		$config['next_tag_open'] = '<li>';
+		$config['next_tag_close'] = '</li>';
+		$config['last_tag_open'] = '<li>';
+		$config['last_tag_close'] = '</li>';
+		$config['cur_tag_open'] = '<li class="active"><a href="#">';
+		$config['cur_tag_close'] = '</a></li>';
+		$config['num_tag_open'] = '<li>';
+		$config['num_tag_close'] = '</li>';
+
+		$this->pagination->initialize($config);
+		$data['pagination'] = $this->pagination->create_links();
+
+		$limit = $config['per_page'];
+		$offset = $this->input->get('per_page') ? (int) $this->input->get('per_page') : 0;
+
+		$this->db->select('o.*, c.name as customer_name, ps.queue_position, ps.start_date, ps.end_date');
+
+		if ($sort_col == 'ps.queue_position' && $sort_order == 'asc') {
+			$this->db->order_by('ps.queue_position IS NULL', 'ASC', FALSE); // keep nulls at the bottom
+			$this->db->order_by('ps.queue_position', 'ASC');
+		} else {
+			$this->db->order_by($sort_col, $sort_order);
+		}
+
+		$this->db->limit($limit, $offset);
+
 		$data['orders'] = $this->db->get()->result();
+		$data['total_rows'] = $total_rows;
+		$data['filter_search'] = $search;
+		$data['filter_status'] = $status;
+		$data['sort_by'] = $sort_by;
+		$data['sort_order'] = $sort_order;
 
 		$this->load->view('dashboard/v_header', $data);
 		$this->load->view('dashboard/v_orders', $data);
@@ -543,14 +483,14 @@ class Dashboard extends CI_Controller
 	{
 		$data['page_title'] = 'Edit Order';
 		$data['order'] = $this->m_data->get_order_by_id($id);
-		
+
 		if (!$data['order'] || $data['order']->status == 'done' || $data['order']->status == 'canceled') {
 			redirect(base_url() . 'dashboard/orders?alert=invalid_action');
 			return;
 		}
-		
+
 		$data['items'] = $this->m_data->get_order_items($id);
-		
+
 		$this->load->view('dashboard/v_header', $data);
 		$this->load->view('dashboard/v_edit_order', $data);
 		$this->load->view('dashboard/v_footer');
@@ -585,7 +525,7 @@ class Dashboard extends CI_Controller
 		if (!empty($_FILES['design_file']['name'])) {
 			$config['upload_path']   = './gambar/orders/';
 			$config['allowed_types'] = 'jpg|jpeg|png|gif|pdf|ai|psd|zip';
-			$config['max_size']      = 10240; 
+			$config['max_size']      = 10240;
 			$new_filename            = uniqid() . '.' . pathinfo($_FILES['design_file']['name'], PATHINFO_EXTENSION);
 			$config['file_name']     = $new_filename;
 			$this->load->library('upload', $config);
@@ -621,7 +561,7 @@ class Dashboard extends CI_Controller
 			}
 			redirect(base_url() . 'dashboard/orders?alert=order_updated');
 		} else {
-			redirect(base_url() . 'dashboard/edit_order/'.$id.'?alert=update_failed');
+			redirect(base_url() . 'dashboard/edit_order/' . $id . '?alert=update_failed');
 		}
 	}
 

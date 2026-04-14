@@ -40,14 +40,8 @@ class M_schedule extends CI_Model
             $anchor = $this->force_business_hours(date('Y-m-d H:i:s'));
         }
 
-        // Determine next queue sequence intelligently if multiple items are in progress
-        $max_queue = $this->db
-            ->select_max('queue_position')
-            ->where('status', 'in_progress')
-            ->get('production_schedule')
-            ->row();
-
-        $queue = ($max_queue && $max_queue->queue_position) ? $max_queue->queue_position + 1 : 1;
+        // Determine next queue sequence will happen during the transaction block 
+        // to reset the queue starting from 1.
 
         // 2. Three-tier classification
         //
@@ -120,6 +114,19 @@ class M_schedule extends CI_Model
         $this->db->where('status', 'scheduled')->delete('production_schedule');
 
         $this->db->trans_start();
+
+        // 4b. Compress existing in-progress queue numbers to always start from 1
+        $in_progress_jobs = $this->db
+            ->where('status', 'in_progress')
+            ->order_by('queue_position', 'ASC')
+            ->get('production_schedule')
+            ->result();
+
+        $queue = 1;
+        foreach ($in_progress_jobs as $ip) {
+            $this->db->where('id', $ip->id)->update('production_schedule', ['queue_position' => $queue]);
+            $queue++;
+        }
 
         // 5a. QUICK-INSERT jobs start from NOW (pause-slot model).
         //     Workers pause the in_progress batch, handle these today, then resume.

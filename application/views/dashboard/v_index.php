@@ -177,14 +177,25 @@ function days_until($deadline) {
                             <?php endif; ?>
 
                             <?php if (!$is_done): ?>
-                            <a href="<?php echo base_url() . 'dashboard/update_status/' . $job->order_id . '/done'; ?>"
-                               id="done-btn-<?php echo $job->order_id; ?>"
-                               onclick="return confirm('Mark <?php echo htmlspecialchars($job->order_code); ?> as Done?')"
-                               style="margin-left:auto; font-size:10px; font-family:'Syne',sans-serif; font-weight:700; letter-spacing:0.08em; padding:4px 12px; background:transparent; border:1px solid #4ade80; color:#4ade80; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:background .2s, color .2s;"
-                               onmouseover="this.style.background='#4ade80'; this.style.color='var(--ink)'"
-                               onmouseout="this.style.background='transparent'; this.style.color='#4ade80'">
-                                ✓ Done
-                            </a>
+                                <?php if ($job->schedule_status === 'scheduled'): ?>
+                                <a href="<?php echo base_url() . 'dashboard/update_status/' . $job->order_id . '/in_progress'; ?>"
+                                   id="produce-btn-<?php echo $job->order_id; ?>"
+                                   onclick="return confirm('Start producing <?php echo htmlspecialchars($job->order_code); ?>?')"
+                                   style="margin-left:auto; font-size:10px; font-family:'Syne',sans-serif; font-weight:700; letter-spacing:0.08em; padding:4px 12px; background:transparent; border:1px solid #e8a020; color:#e8a020; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:background .2s, color .2s;"
+                                   onmouseover="this.style.background='#e8a020'; this.style.color='var(--ink)'"
+                                   onmouseout="this.style.background='transparent'; this.style.color='#e8a020'">
+                                    ▶ Produce
+                                </a>
+                                <?php else: ?>
+                                <a href="<?php echo base_url() . 'dashboard/update_status/' . $job->order_id . '/done'; ?>"
+                                   id="done-btn-<?php echo $job->order_id; ?>"
+                                   onclick="return confirm('Mark <?php echo htmlspecialchars($job->order_code); ?> as Done?')"
+                                   style="margin-left:auto; font-size:10px; font-family:'Syne',sans-serif; font-weight:700; letter-spacing:0.08em; padding:4px 12px; background:transparent; border:1px solid #4ade80; color:#4ade80; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:background .2s, color .2s;"
+                                   onmouseover="this.style.background='#4ade80'; this.style.color='var(--ink)'"
+                                   onmouseout="this.style.background='transparent'; this.style.color='#4ade80'">
+                                    ✓ Done
+                                </a>
+                                <?php endif; ?>
                             <?php else: ?>
                             <span style="margin-left:auto; font-size:10px; font-family:'Syne',sans-serif; color:#4ade80; letter-spacing:0.08em;">✓ COMPLETED</span>
                             <?php endif; ?>

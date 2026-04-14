@@ -38,7 +38,7 @@
 			<a href="<?php echo base_url() . 'dashboard/new_order' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "new_order") ? 'active' : ''; ?>">
 				<span class="icon">+</span> New Order
 			</a>
-			<a href="<?php echo base_url() . 'dashboard/orders' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "orders") ? 'active' : ''; ?>">
+			<a href="<?php echo base_url() . 'dashboard/orders?sort_by=queue&sort_order=asc&status=active&q=' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "orders") ? 'active' : ''; ?>">
 				<span class="icon">≡</span> Orders
 			</a>
 			<a href="<?php echo base_url() . 'dashboard/schedule' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "schedule") ? 'active' : ''; ?>">
