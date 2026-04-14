@@ -393,34 +393,193 @@ select.form-input option {
 	line-height: 1;
 }
 
-/* Gantt */
+/* ── Gantt chart ──────────────────────────────────────────────── */
 .gantt-bar {
-	height: 28px;
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
 	display: flex;
 	align-items: center;
-	padding: 0 10px;
+	justify-content: center;
 	font-size: 10px;
+	font-family: "Syne", sans-serif;
 	font-weight: 600;
-	letter-spacing: 0.05em;
-	position: relative;
+	letter-spacing: 0.04em;
 	overflow: hidden;
-	cursor: pointer;
-	transition: filter 0.15s;
+	white-space: nowrap;
+	cursor: default;
+	transition:
+		filter 0.15s,
+		transform 0.15s;
+	min-width: 6px;
 }
 
 .gantt-bar:hover {
-	filter: brightness(1.2);
+	filter: brightness(1.25);
+	transform: scaleY(1.06);
 }
 
-.gantt-bar::after {
-	content: "";
+/* View mode toggle buttons */
+.gantt-mode-btn {
+	padding: 5px 12px;
+	font-size: 10px;
+	letter-spacing: 0.08em;
+	border: none;
+	cursor: pointer;
+	background: transparent;
+	color: var(--smoke);
+	font-family: "Syne", sans-serif;
+	font-weight: 600;
+	transition: all 0.2s;
+}
+
+.gantt-mode-btn.active {
+	background: var(--ember);
+	color: #fff;
+}
+
+.gantt-mode-btn:hover:not(.active) {
+	background: var(--ghost);
+	color: var(--cream);
+}
+
+/* Nav controls */
+.gantt-nav-btn {
+	padding: 4px 10px;
+	font-size: 10px;
+	font-family: "Syne", sans-serif;
+	background: var(--ash);
+	border: 1px solid var(--ghost);
+	color: var(--smoke);
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+
+.gantt-nav-btn:hover {
+	border-color: var(--cream);
+	color: var(--cream);
+}
+
+.gantt-nav-btn.today {
+	border-color: var(--ember);
+	color: var(--ember);
+}
+
+.gantt-nav-btn.today:hover {
+	background: rgba(232, 160, 32, 0.12);
+}
+
+/* Sunday column tint */
+.gantt-col-sunday {
+	background: rgba(239, 68, 68, 0.06) !important;
+}
+
+/* Deadline tick */
+.gantt-deadline-tick {
+	position: absolute;
+	top: 0;
+	width: 2px;
+	height: 6px;
+	background: #ef4444;
+	border-radius: 1px;
+	z-index: 5;
+	opacity: 0.9;
+}
+
+/* Tooltip */
+.gantt-tooltip {
+	display: none;
+	position: fixed;
+	z-index: 9999;
+	background: rgba(20, 20, 20, 0.97);
+	border: 1px solid var(--ghost);
+	border-radius: 8px;
+	padding: 10px 14px;
+	font-size: 11px;
+	color: var(--cream);
+	min-width: 200px;
+	pointer-events: none;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+	backdrop-filter: blur(10px);
+	line-height: 1.8;
+}
+
+/* Row labels */
+.gantt-row-label {
+	font-size: 11px;
+	color: var(--cream);
+	width: 168px;
+	min-width: 168px;
+	padding-right: 10px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Gantt layout */
+.gantt-layout {
+	display: grid;
+	grid-template-columns: 1fr 300px;
+	gap: 16px;
+}
+
+.gantt-view-toggle {
+	display: flex;
+	background: var(--ash);
+	border-radius: 6px;
+	overflow: hidden;
+	border: 1px solid var(--ghost);
+}
+
+.gantt-header-sep {
+	border-left: 1px solid var(--ghost);
+}
+
+.gantt-col-cell {
+	flex: 1;
+	border-left: 1px solid var(--ghost);
+}
+
+.gantt-track {
+	flex: 1;
+	position: relative;
+	height: 100%;
+}
+
+.gantt-track-grid {
+	display: flex;
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(
-		90deg,
-		rgba(255, 255, 255, 0.08) 0%,
-		transparent 60%
-	);
+	pointer-events: none;
+}
+
+.gantt-row {
+	display: flex;
+	align-items: center;
+	height: 30px;
+}
+
+.gantt-tooltip-divider {
+	border-top: 1px solid rgba(255, 255, 255, 0.08);
+	margin: 7px 0;
+}
+
+.gantt-tooltip-title {
+	font-family: "Syne", sans-serif;
+	font-weight: 700;
+	font-size: 12px;
+	margin-bottom: 6px;
+	color: #fff;
+}
+
+.gantt-tooltip-label {
+	color: var(--smoke);
+}
+
+.gantt-tooltip-stats {
+	display: flex;
+	gap: 16px;
 }
 
 /* Scrollbar */
@@ -526,4 +685,3 @@ select.form-input option {
 .stat-card:nth-child(4)::before {
 	background: #c084fc;
 }
-

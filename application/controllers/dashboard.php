@@ -199,16 +199,18 @@ class Dashboard extends CI_Controller
 		$this->load->model('m_schedule');
 		$data['page_title'] = 'Production Schedule';
 
-		// Fetch raw schedules and format sizes for view
+		// Fetch raw schedules
 		$raw_schedules = $this->m_schedule->get_full_schedule();
-		// Use working-hours logic
-		$data['schedules'] = $this->_prepare_schedule2_gantt_data($raw_schedules);
+
+		// Pass raw JSON for JS-powered Gantt renderer
+		$data['schedule_json'] = $this->_get_schedule_json($raw_schedules);
 
 		// Calculate stats from raw schedules
 		$data['stats'] = $this->m_schedule->get_queue_stats($raw_schedules);
 
 		$this->load->view('dashboard/v_header', $data);
 		$this->load->view('dashboard/v_schedule', $data);
+		$this->load->view('dashboard/v_footer');
 	}
 
 	public function schedule_legacy()
@@ -339,6 +341,28 @@ class Dashboard extends CI_Controller
 		}
 
 		return $formatted;
+	}
+
+	/**
+	 * Converts raw schedule objects into a flat JSON-serialisable array
+	 * for the client-side Gantt renderer.
+	 */
+	private function _get_schedule_json($schedules)
+	{
+		$out = [];
+		foreach ($schedules as $s) {
+			$out[] = [
+				'order_code'    => $s->order_code,
+				'customer_name' => $s->customer_name,
+				'status'        => $s->status,
+				'start_date'    => $s->start_date,
+				'end_date'      => $s->end_date,
+				'deadline'      => isset($s->deadline) ? $s->deadline : null,
+				'qty'           => (int) $s->qty,
+				'est_duration'  => (int) $s->est_duration,
+			];
+		}
+		return json_encode($out);
 	}
 
 	public function generate_schedule()
