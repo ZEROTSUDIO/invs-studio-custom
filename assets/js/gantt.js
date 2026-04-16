@@ -188,9 +188,13 @@
 			/* Row */
 			var row = div('gantt-row');
 
+			var tierIcon = '';
+			if (s.schedule_tier === 'urgent') tierIcon = '<span title="Urgent (Deadline protection)" style="color:#f87171; font-size:10px; margin-right:4px;">🔥</span>';
+			if (s.schedule_tier === 'quick_insert') tierIcon = '<span title="Quick Insert (Pause slot)" style="color:#e8a020; font-size:10px; margin-right:4px;">⚡</span>';
+
 			/* Label */
 			var lbl = div('gantt-row-label');
-			lbl.textContent = s.order_code + ' ' + s.customer_name;
+			lbl.innerHTML = tierIcon + s.order_code + ' <span style="opacity:0.6; font-size:9px;">' + s.customer_name + '</span>';
 			row.appendChild(lbl);
 
 			/* Track */
@@ -278,9 +282,17 @@
 			completed   : '⚫ Done',
 		}[s.status] || s.status;
 
+		var tierLabel = '';
+		if (s.schedule_tier === 'urgent') tierLabel = '<span style="color:#f87171; font-size:9px; border:1px solid rgba(248,113,113,0.3); background:rgba(248,113,113,0.1); padding:2px 4px; border-radius:3px; margin-left:8px;">🔥 URGENT</span>';
+		if (s.schedule_tier === 'quick_insert') tierLabel = '<span style="color:#e8a020; font-size:9px; border:1px solid rgba(232,160,32,0.3); background:rgba(232,160,32,0.1); padding:2px 4px; border-radius:3px; margin-left:8px;">⚡ QUICK</span>';
+		if (s.schedule_tier === 'normal') tierLabel = '<span style="color:var(--smoke); font-size:9px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); padding:2px 4px; border-radius:3px; margin-left:8px;">SJF (NORMAL)</span>';
+
 		var t = getTooltip();
 		t.innerHTML =
-			'<div class="gantt-tooltip-title">' + s.order_code + '</div>' +
+			'<div style="display:flex; justify-content:space-between; align-items:flex-start;">' +
+				'<div class="gantt-tooltip-title">' + s.order_code + '</div>' + 
+				tierLabel +
+			'</div>' +
 			'<div class="gantt-tooltip-label">👤 ' + s.customer_name + '</div>' +
 			'<div>' + statusLabel + '</div>' +
 			'<div class="gantt-tooltip-divider"></div>' +

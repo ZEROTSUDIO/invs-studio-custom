@@ -24,7 +24,22 @@ class M_schedule extends CI_Model
             ->get('orders')
             ->result();
 
-        if (!$orders) return;
+        // 1b. Recalculate end dates for in-progress jobs in case their duration was edited
+        // If we don't do this, edited in-progress jobs will not shift the anchor for subsequent scheduled jobs.
+        $in_progress_data = $this->db
+            ->select('ps.id, ps.start_date, o.est_duration')
+            ->from('production_schedule ps')
+            ->join('orders o', 'o.id = ps.order_id')
+            ->where('ps.status', 'in_progress')
+            ->get()
+            ->result();
+
+        foreach ($in_progress_data as $ip) {
+            $new_end = $this->advance_time($ip->start_date, $ip->est_duration);
+            $this->db->where('id', $ip->id)->update('production_schedule', ['end_date' => $new_end]);
+        }
+
+        if (!$orders && empty($in_progress_data)) return;
 
         // Get anchor time: end of the latest in_progress job
         $latest_in_progress = $this->db
@@ -143,6 +158,7 @@ class M_schedule extends CI_Model
                     'start_date'     => $start,
                     'end_date'       => $end,
                     'status'         => 'scheduled',
+                    'schedule_tier'  => 'quick_insert',
                 ]);
 
                 $this->db->where('id', $o->id)->update('orders', ['status' => 'scheduled']);
@@ -152,9 +168,10 @@ class M_schedule extends CI_Model
             }
         }
 
-        // 5b. URGENT + NORMAL jobs start from the anchor (after in_progress ends).
         $current_time = $anchor;
-        foreach (array_merge($urgent, $normal) as $o) {
+        
+        // Next priority: URGENT tier
+        foreach ($urgent as $o) {
             $start = $current_time;
             $end   = $this->advance_time($start, $o->est_duration);
 
@@ -164,6 +181,27 @@ class M_schedule extends CI_Model
                 'start_date'     => $start,
                 'end_date'       => $end,
                 'status'         => 'scheduled',
+                'schedule_tier'  => 'urgent',
+            ]);
+
+            $this->db->where('id', $o->id)->update('orders', ['status' => 'scheduled']);
+
+            $current_time = $end;
+            $queue++;
+        }
+
+        // Final priority: NORMAL tier (SJF)
+        foreach ($normal as $o) {
+            $start = $current_time;
+            $end   = $this->advance_time($start, $o->est_duration);
+
+            $this->db->insert('production_schedule', [
+                'order_id'       => $o->id,
+                'queue_position' => $queue,
+                'start_date'     => $start,
+                'end_date'       => $end,
+                'status'         => 'scheduled',
+                'schedule_tier'  => 'normal',
             ]);
 
             $this->db->where('id', $o->id)->update('orders', ['status' => 'scheduled']);

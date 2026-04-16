@@ -360,6 +360,7 @@ class Dashboard extends CI_Controller
 				'deadline'      => isset($s->deadline) ? $s->deadline : null,
 				'qty'           => (int) $s->qty,
 				'est_duration'  => (int) $s->est_duration,
+				'schedule_tier' => isset($s->schedule_tier) ? $s->schedule_tier : 'normal',
 			];
 		}
 		return json_encode($out);
@@ -577,19 +578,12 @@ class Dashboard extends CI_Controller
 			'deadline'     => $this->input->post('deadline'),
 		);
 
-		// If editing a "scheduled" or "in_progress" order and it changed in a way that disrupts queue,
-		// we might need to regenerate. Actually, changing qty on waiting orders affects queue tail too!
-		$needs_regen = false;
-		if ($order->est_duration != $est_duration || $order->deadline != $update_data['deadline']) {
-			$needs_regen = true;
-		}
+		// If editing an order, we always regenerate the schedule to make sure any queue anchor or downstream dates are correctly refreshed.
 
 		$result = $this->m_data->update_order_complete($id, $update_data, $items);
 
 		if ($result) {
-			if ($needs_regen) {
-				$this->m_schedule->generate();
-			}
+			$this->m_schedule->generate();
 			redirect(base_url() . 'dashboard/orders?alert=order_updated');
 		} else {
 			redirect(base_url() . 'dashboard/edit_order/' . $id . '?alert=update_failed');
