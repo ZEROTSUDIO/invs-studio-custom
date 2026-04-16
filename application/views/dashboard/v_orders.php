@@ -15,65 +15,71 @@
 		<?php endif; ?>
 	<?php endif; ?>
 
-<?php
-$ci =& get_instance();
-if (!function_exists('build_sort_url')) {
-	function build_sort_url($col) {
-		$ci =& get_instance();
-		$get = $ci->input->get();
-		unset($get['per_page']); // reset pagination when sorting
-		$order = 'asc';
-		if (isset($get['sort_by']) && $get['sort_by'] == $col && isset($get['sort_order']) && $get['sort_order'] == 'asc') {
-			$order = 'desc';
+	<?php
+	$ci = &get_instance();
+	if (!function_exists('build_sort_url')) {
+		function build_sort_url($col)
+		{
+			$ci = &get_instance();
+			$get = $ci->input->get();
+			unset($get['per_page']); // reset pagination when sorting
+			$order = 'asc';
+			if (isset($get['sort_by']) && $get['sort_by'] == $col && isset($get['sort_order']) && $get['sort_order'] == 'asc') {
+				$order = 'desc';
+			}
+			$get['sort_by'] = $col;
+			$get['sort_order'] = $order;
+			return base_url('dashboard/orders') . '?' . http_build_query($get);
 		}
-		$get['sort_by'] = $col;
-		$get['sort_order'] = $order;
-		return base_url('dashboard/orders') . '?' . http_build_query($get);
-	}
-	function sort_icon($col) {
-		$ci =& get_instance();
-		if (isset($ci->input->get()['sort_by']) && $ci->input->get()['sort_by'] == $col) {
-			return isset($ci->input->get()['sort_order']) && $ci->input->get()['sort_order'] == 'asc' ? ' &uarr;' : ' &darr;';
+		function sort_icon($col)
+		{
+			$ci = &get_instance();
+			if (isset($ci->input->get()['sort_by']) && $ci->input->get()['sort_by'] == $col) {
+				return isset($ci->input->get()['sort_order']) && $ci->input->get()['sort_order'] == 'asc' ? ' &uarr;' : ' &darr;';
+			}
+			return '';
 		}
-		return '';
 	}
-}
-?>
+	?>
 	<div class="panel">
 		<div class="panel-header" style="flex-wrap:wrap; gap:16px;">
 			<div class="panel-title">All Orders <span style="font-size:10px; color: var(--smoke); font-weight:400; margin-left:8px;"><?php echo $total_rows; ?> total</span></div>
-			
+
 			<div style="flex:1;"></div>
-			
+
 			<!-- Filters Form -->
 			<form method="GET" action="<?php echo base_url('dashboard/orders'); ?>" style="display:flex; gap:12px; align-items:center; margin:0; flex-wrap:wrap;">
-				<?php if(!empty($sort_by)): ?>
+				<?php if (!empty($sort_by)): ?>
 					<input type="hidden" name="sort_by" value="<?php echo htmlspecialchars($sort_by); ?>">
 					<input type="hidden" name="sort_order" value="<?php echo htmlspecialchars($sort_order); ?>">
 				<?php endif; ?>
-				
+
 				<div style="display:flex; background:rgba(255,255,255,0.05); border-radius:6px; padding:2px;">
 					<label style="cursor:pointer; margin:0;">
 						<input type="radio" name="status" value="" onchange="this.form.submit()" style="display:none;" <?php echo empty($filter_status) ? 'checked' : ''; ?>>
 						<div style="padding:6px 12px; font-size:12px; border-radius:4px; <?php echo empty($filter_status) ? 'background:var(--ember);color:#000;' : 'color:var(--smoke);'; ?>">All</div>
 					</label>
 					<label style="cursor:pointer; margin:0;">
-						<input type="radio" name="status" value="active" onchange="this.form.submit()" style="display:none;" <?php echo ($filter_status=='active') ? 'checked' : ''; ?>>
-						<div style="padding:6px 12px; font-size:12px; border-radius:4px; <?php echo ($filter_status=='active') ? 'background:var(--ember);color:#000;' : 'color:var(--smoke);'; ?>">Active</div>
+						<input type="radio" name="status" value="active" onchange="this.form.submit()" style="display:none;" <?php echo ($filter_status == 'active') ? 'checked' : ''; ?>>
+						<div style="padding:6px 12px; font-size:12px; border-radius:4px; <?php echo ($filter_status == 'active') ? 'background:var(--ember);color:#000;' : 'color:var(--smoke);'; ?>">Active</div>
 					</label>
 					<label style="cursor:pointer; margin:0;">
-						<input type="radio" name="status" value="completed" onchange="this.form.submit()" style="display:none;" <?php echo ($filter_status=='completed') ? 'checked' : ''; ?>>
-						<div style="padding:6px 12px; font-size:12px; border-radius:4px; <?php echo ($filter_status=='completed') ? 'background:var(--ember);color:#000;' : 'color:var(--smoke);'; ?>">Completed</div>
+						<input type="radio" name="status" value="pending" onchange="this.form.submit()" style="display:none;" <?php echo ($filter_status == 'pending') ? 'checked' : ''; ?>>
+						<div style="padding:6px 12px; font-size:12px; border-radius:4px; <?php echo ($filter_status == 'pending') ? 'background:var(--ember);color:#000;' : 'color:var(--smoke);'; ?>">Pending</div>
 					</label>
 					<label style="cursor:pointer; margin:0;">
-						<input type="radio" name="status" value="canceled" onchange="this.form.submit()" style="display:none;" <?php echo ($filter_status=='canceled') ? 'checked' : ''; ?>>
-						<div style="padding:6px 12px; font-size:12px; border-radius:4px; <?php echo ($filter_status=='canceled') ? 'background:var(--ember);color:#000;' : 'color:var(--smoke);'; ?>">Canceled</div>
+						<input type="radio" name="status" value="completed" onchange="this.form.submit()" style="display:none;" <?php echo ($filter_status == 'completed') ? 'checked' : ''; ?>>
+						<div style="padding:6px 12px; font-size:12px; border-radius:4px; <?php echo ($filter_status == 'completed') ? 'background:var(--ember);color:#000;' : 'color:var(--smoke);'; ?>">Completed</div>
+					</label>
+					<label style="cursor:pointer; margin:0;">
+						<input type="radio" name="status" value="canceled" onchange="this.form.submit()" style="display:none;" <?php echo ($filter_status == 'canceled') ? 'checked' : ''; ?>>
+						<div style="padding:6px 12px; font-size:12px; border-radius:4px; <?php echo ($filter_status == 'canceled') ? 'background:var(--ember);color:#000;' : 'color:var(--smoke);'; ?>">Canceled</div>
 					</label>
 				</div>
-				
+
 				<input type="text" name="q" placeholder="Search orders..." class="form-control" style="width:200px; padding:6px 12px; font-size:12px;" value="<?php echo htmlspecialchars($filter_search); ?>">
 				<button type="submit" class="btn btn-primary" style="padding:6px 12px; font-size:12px;">Search</button>
-				<?php if(!empty($filter_search) || !empty($filter_status)): ?>
+				<?php if (!empty($filter_search) || !empty($filter_status)): ?>
 					<a href="<?php echo base_url('dashboard/orders'); ?>" style="font-size:12px; color:var(--smoke); text-decoration:underline;">Clear</a>
 				<?php endif; ?>
 			</form>
@@ -120,7 +126,7 @@ if (!function_exists('build_sort_url')) {
 
 								<?php if ($o->status == 'ordered') : ?>
 									<form method="POST" action="<?php echo base_url('dashboard/update_status/' . $o->id . '/waiting'); ?>" style="margin:0;">
-										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(232,160,32,0.12); color:var(--ember); border:1px solid rgba(232,160,32,0.25);" onclick="return confirm('Start producing this order?');">→ Produce</button>
+										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(232,160,32,0.12); color:var(--ember); border:1px solid rgba(232,160,32,0.25);" onclick="return confirm('Start Schedule this order?');">→ Schedule</button>
 									</form>
 									<form method="POST" action="<?php echo base_url('dashboard/cancel_order/' . $o->id); ?>" style="margin:0;">
 										<button type="submit" class="btn" style="padding:4px 10px; font-size:9px; background:rgba(248,113,113,0.12); color:#f87171; border:1px solid rgba(248,113,113,0.25);" onclick="return confirm('WARNING: Cancel this order? This cannot be undone.');">Cancel</button>
@@ -162,10 +168,37 @@ if (!function_exists('build_sort_url')) {
 		<?php if (!empty($pagination)) : ?>
 			<div style="padding: 16px; border-top: 1px solid rgba(255,255,255,0.05); display:flex; justify-content:flex-end;">
 				<style>
-					.pagination { display: flex; list-style: none; padding: 0; margin: 0; gap: 4px; }
-					.pagination li a, .pagination li strong { display: block; padding: 6px 12px; font-size: 13px; text-decoration: none; color: var(--smoke); background: rgba(255,255,255,0.05); border-radius: 4px; border: 1px solid rgba(255,255,255,0.05); }
-					.pagination li.active a, .pagination li.active strong { background: var(--ember); color: #000; border-color: var(--ember); font-weight:bold; }
-					.pagination li a:hover { background: rgba(255,255,255,0.1); }
+					.pagination {
+						display: flex;
+						list-style: none;
+						padding: 0;
+						margin: 0;
+						gap: 4px;
+					}
+
+					.pagination li a,
+					.pagination li strong {
+						display: block;
+						padding: 6px 12px;
+						font-size: 13px;
+						text-decoration: none;
+						color: var(--smoke);
+						background: rgba(255, 255, 255, 0.05);
+						border-radius: 4px;
+						border: 1px solid rgba(255, 255, 255, 0.05);
+					}
+
+					.pagination li.active a,
+					.pagination li.active strong {
+						background: var(--ember);
+						color: #000;
+						border-color: var(--ember);
+						font-weight: bold;
+					}
+
+					.pagination li a:hover {
+						background: rgba(255, 255, 255, 0.1);
+					}
 				</style>
 				<?php echo $pagination; ?>
 			</div>

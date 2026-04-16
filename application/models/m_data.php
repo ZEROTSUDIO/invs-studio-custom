@@ -82,7 +82,7 @@ class M_data extends CI_Model
         $this->db->select('orders.*, customers.name as customer_name');
         $this->db->from('orders');
         $this->db->join('customers', 'customers.id = orders.customer_id');
-        $this->db->order_by('orders.id', 'DESC');
+        $this->db->order_by('orders.created_at', 'DESC');
         return $this->db->get();
     }
 

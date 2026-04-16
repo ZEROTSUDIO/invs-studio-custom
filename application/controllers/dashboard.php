@@ -384,12 +384,13 @@ class Dashboard extends CI_Controller
 		if ($sort_order != 'asc' && $sort_order != 'desc') $sort_order = 'desc';
 
 		$allowed_sorts = [
-			'id'       => 'o.id',
-			'deadline' => 'o.deadline',
-			'queue'    => 'ps.queue_position',
-			'status'   => 'o.status'
+			'id'         => 'o.id',
+			'created_at' => 'o.created_at',
+			'deadline'   => 'o.deadline',
+			'queue'      => 'ps.queue_position',
+			'status'     => 'o.status'
 		];
-		$sort_col = isset($allowed_sorts[$sort_by]) ? $allowed_sorts[$sort_by] : 'o.id';
+		$sort_col = isset($allowed_sorts[$sort_by]) ? $allowed_sorts[$sort_by] : 'o.created_at';
 
 		// Base query preparation
 		$this->db->from('orders o');
@@ -405,7 +406,9 @@ class Dashboard extends CI_Controller
 
 		if (!empty($status)) {
 			if ($status == 'active') {
-				$this->db->where_in('o.status', ['ordered', 'waiting', 'scheduled', 'in_progress']);
+				$this->db->where_in('o.status', ['scheduled', 'in_progress']);
+			} elseif ($status == 'pending') {
+				$this->db->where_in('o.status', ['ordered', 'waiting']);
 			} elseif ($status == 'completed') {
 				$this->db->where('o.status', 'done');
 			} elseif ($status == 'canceled') {
