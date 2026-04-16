@@ -395,7 +395,7 @@ class M_schedule extends CI_Model
             $schedule_ids = array_map(fn($item) => $item->schedule_id, $to_finish);
             
             $this->db->where_in('id', $order_ids)->update('orders', ['status' => 'done']);
-            $this->db->where_in('id', $schedule_ids)->update('production_schedule', ['status' => 'completed']);
+            $this->db->where_in('id', $schedule_ids)->update('production_schedule', ['status' => 'completed', 'queue_position' => 0]);
         }
     }
 }

@@ -498,7 +498,11 @@ class Dashboard extends CI_Controller
 		];
 
 		if (isset($schedule_status_map[$new_status])) {
-			$this->db->where('order_id', $order_id)->update('production_schedule', ['status' => $schedule_status_map[$new_status]]);
+			$schedule_update = ['status' => $schedule_status_map[$new_status]];
+			if ($new_status == 'done') {
+				$schedule_update['queue_position'] = 0;
+			}
+			$this->db->where('order_id', $order_id)->update('production_schedule', $schedule_update);
 		}
 
 		$this->db->trans_complete();
