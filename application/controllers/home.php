@@ -16,7 +16,8 @@ class Home extends CI_Controller
 	}
 	public function index()
 	{
-		$this->load->view('v_home');
+		$data['categories'] = $this->m_data->get_categories();
+		$this->load->view('v_home', $data);
 	}
 	public function save_order()
 	{
@@ -88,7 +89,7 @@ class Home extends CI_Controller
 
 		$order = array(
 			'order_code'   => $order_code,
-			'product_type' => $this->input->post('product_type'),
+			'category_id'  => $this->input->post('category_id'),
 			'qty'          => $total_qty,
 			'design_file'  => $design_file,
 			'notes'        => $this->input->post('notes'),

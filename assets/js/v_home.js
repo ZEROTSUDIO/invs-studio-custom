@@ -86,7 +86,8 @@ function calcDuration() {
 		total += parseInt(input.value) || 0;
 	});
 
-	let base = parseInt(document.getElementById("product-type").value) || 10;
+	const selectedOpt = document.getElementById("product-type").options[document.getElementById("product-type").selectedIndex];
+	const base = parseInt(selectedOpt.getAttribute("data-duration")) || 10;
 	let setupTime = 30;
 	let est = total > 0 ? total * base + setupTime : 0;
 

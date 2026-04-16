@@ -34,15 +34,14 @@
 						</div>
 					</div>
 
-					<!-- PRODUCT -->
 					<div class="form-group">
-						<label class="form-label">Product Type</label>
-						<select name="product_type" id="product-type" class="form-input" onchange="calcDuration()">
-							<option value="10" <?php echo ($order->product_type == 10) ? 'selected' : ''; ?>>T-Shirt (DTF Print)</option>
-							<option value="12" <?php echo ($order->product_type == 12) ? 'selected' : ''; ?>>T-Shirt (Screen Print)</option>
-							<option value="15" <?php echo ($order->product_type == 15) ? 'selected' : ''; ?>>Hoodie</option>
-							<option value="13" <?php echo ($order->product_type == 13) ? 'selected' : ''; ?>>Polo Shirt</option>
-							<option value="8" <?php echo ($order->product_type == 8) ? 'selected' : ''; ?>>Tote Bag</option>
+						<label class="form-label">Category</label>
+						<select name="category_id" id="product-type" class="form-input" onchange="calcDuration()">
+							<?php foreach($categories as $cat): ?>
+								<option value="<?php echo $cat->id; ?>" data-duration="<?php echo $cat->base_duration; ?>" <?php echo ($order->category_id == $cat->id) ? 'selected' : ''; ?>>
+									<?php echo htmlspecialchars($cat->name); ?>
+								</option>
+							<?php endforeach; ?>
 						</select>
 					</div>
 
@@ -185,7 +184,8 @@ function calcDuration() {
 	let total = 0;
 	qts.forEach(q => { total += parseInt(q.value) || 0; });
 
-	const base = parseInt(document.getElementById('product-type').value) || 10;
+	const selectedOpt = document.getElementById('product-type').options[document.getElementById('product-type').selectedIndex];
+	const base = parseInt(selectedOpt.getAttribute('data-duration')) || 10;
 	const setupTime = 30; 
 	
 	let est = (total > 0) ? (total * base) + setupTime : 0;

@@ -51,8 +51,9 @@ class Dashboard extends CI_Controller
 	public function new_order()
 	{
 		$data['page_title'] = 'New Order';
+		$data['categories'] = $this->m_data->get_categories();
 		$this->load->view('dashboard/v_header', $data);
-		$this->load->view('dashboard/v_new_order');
+		$this->load->view('dashboard/v_new_order', $data);
 		$this->load->view('dashboard/v_footer');
 	}
 	public function save_order()
@@ -115,7 +116,7 @@ class Dashboard extends CI_Controller
 
 		$order = array(
 			'order_code'   => $order_code,
-			'product_type' => $this->input->post('product_type'),
+			'category_id'  => $this->input->post('category_id'),
 			'qty'          => $total_qty,
 			'design_file'  => $design_file,
 			'notes'        => $this->input->post('notes'),
@@ -354,6 +355,7 @@ class Dashboard extends CI_Controller
 			$out[] = [
 				'order_code'    => $s->order_code,
 				'customer_name' => $s->customer_name,
+				'category_name' => isset($s->category_name) ? $s->category_name : 'Custom',
 				'status'        => $s->status,
 				'start_date'    => $s->start_date,
 				'end_date'      => $s->end_date,
@@ -397,6 +399,7 @@ class Dashboard extends CI_Controller
 		$this->db->from('orders o');
 		$this->db->join('customers c', 'o.customer_id = c.id');
 		$this->db->join('production_schedule ps', 'o.id = ps.order_id', 'left');
+		$this->db->join('categories cat', 'o.category_id = cat.id', 'left');
 
 		if (!empty($search)) {
 			$this->db->group_start();
@@ -453,7 +456,7 @@ class Dashboard extends CI_Controller
 		$limit = $config['per_page'];
 		$offset = $this->input->get('per_page') ? (int) $this->input->get('per_page') : 0;
 
-		$this->db->select('o.*, c.name as customer_name, ps.queue_position, ps.start_date, ps.end_date');
+		$this->db->select('o.*, c.name as customer_name, cat.name as category_name, ps.queue_position, ps.start_date, ps.end_date');
 
 		if ($sort_col == 'ps.queue_position' && $sort_order == 'asc') {
 			$this->db->order_by('ps.queue_position IS NULL', 'ASC', FALSE); // keep nulls at the bottom
@@ -522,6 +525,7 @@ class Dashboard extends CI_Controller
 		}
 
 		$data['items'] = $this->m_data->get_order_items($id);
+		$data['categories'] = $this->m_data->get_categories();
 
 		$this->load->view('dashboard/v_header', $data);
 		$this->load->view('dashboard/v_edit_order', $data);
@@ -570,7 +574,7 @@ class Dashboard extends CI_Controller
 		$est_duration = (int) $this->input->post('est_duration');
 
 		$update_data = array(
-			'product_type' => $this->input->post('product_type'),
+			'category_id'  => $this->input->post('category_id'),
 			'qty'          => $total_qty,
 			'design_file'  => $design_file,
 			'notes'        => $this->input->post('notes'),

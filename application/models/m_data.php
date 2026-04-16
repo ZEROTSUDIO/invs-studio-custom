@@ -167,10 +167,11 @@ class M_data extends CI_Model
     function get_todays_work_orders()
     {
         $today = date('Y-m-d');
-        $this->db->select('ps.id as schedule_id, ps.order_id, ps.queue_position, ps.start_date, ps.end_date, ps.status as schedule_status, o.order_code, o.product_type, o.qty, o.est_duration, o.deadline, o.status as order_status, c.name as customer_name');
+        $this->db->select('ps.id as schedule_id, ps.order_id, ps.queue_position, ps.start_date, ps.end_date, ps.status as schedule_status, o.order_code, cat.name as category_name, o.qty, o.est_duration, o.deadline, o.status as order_status, c.name as customer_name');
         $this->db->from('production_schedule ps');
         $this->db->join('orders o', 'o.id = ps.order_id');
         $this->db->join('customers c', 'c.id = o.customer_id');
+        $this->db->join('categories cat', 'cat.id = o.category_id', 'left');
         $this->db->group_start();
             $this->db->where('ps.status', 'in_progress');
             $this->db->or_where("DATE(ps.start_date) = '" . $today . "'", NULL, FALSE);
@@ -185,12 +186,21 @@ class M_data extends CI_Model
     function get_deadline_alerts($days = 1)
     {
         $cutoff = date('Y-m-d', strtotime("+{$days} days"));
-        $this->db->select('o.id, o.order_code, o.product_type, o.qty, o.deadline, o.status, c.name as customer_name');
+        $this->db->select('o.id, o.order_code, cat.name as category_name, o.qty, o.deadline, o.status, c.name as customer_name');
         $this->db->from('orders o');
         $this->db->join('customers c', 'c.id = o.customer_id');
+        $this->db->join('categories cat', 'cat.id = o.category_id', 'left');
         $this->db->where('o.deadline <=', $cutoff);
         $this->db->where_not_in('o.status', ['done', 'canceled']);
         $this->db->order_by('o.deadline', 'ASC');
         return $this->db->get()->result();
+    }
+    /**
+     * Returns all categories from the database.
+     */
+    function get_categories()
+    {
+        $this->db->order_by('id', 'ASC');
+        return $this->db->get('categories')->result();
     }
 }

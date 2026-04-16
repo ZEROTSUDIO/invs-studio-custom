@@ -1112,15 +1112,15 @@
 						<div class="form-group">
 							<label class="form-label">Jenis Produk</label>
 							<select
-								name="product_type"
+								name="category_id"
 								id="product-type"
 								class="form-input"
 								onchange="calcDuration()">
-								<option value="10">T-Shirt (DTF Print)</option>
-								<option value="12">T-Shirt (Screen Print)</option>
-								<option value="15">Hoodie</option>
-								<option value="13">Polo Shirt</option>
-								<option value="8">Tote Bag</option>
+								<?php foreach($categories as $cat): ?>
+									<option value="<?php echo $cat->id; ?>" data-duration="<?php echo $cat->base_duration; ?>">
+										<?php echo htmlspecialchars($cat->name); ?>
+									</option>
+								<?php endforeach; ?>
 							</select>
 						</div>
 

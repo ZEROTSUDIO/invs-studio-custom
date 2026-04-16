@@ -93,13 +93,13 @@
 
 					<!-- PRODUCT -->
 					<div class="form-group">
-						<label class="form-label">Product Type</label>
-						<select name="product_type" id="product-type" class="form-input" onchange="calcDuration()">
-							<option value="10">T-Shirt (DTF Print)</option>
-							<option value="12">T-Shirt (Screen Print)</option>
-							<option value="15">Hoodie</option>
-							<option value="13">Polo Shirt</option>
-							<option value="8">Tote Bag</option>
+						<label class="form-label">Category</label>
+						<select name="category_id" id="product-type" class="form-input" onchange="calcDuration()">
+							<?php foreach($categories as $cat): ?>
+								<option value="<?php echo $cat->id; ?>" data-duration="<?php echo $cat->base_duration; ?>">
+									<?php echo htmlspecialchars($cat->name); ?>
+								</option>
+							<?php endforeach; ?>
 						</select>
 					</div>
 
@@ -356,7 +356,8 @@ function calcDuration() {
 	let total = 0;
 	qts.forEach(q => { total += parseInt(q.value) || 0; });
 
-	const base = parseInt(document.getElementById('product-type').value) || 10;
+	const selectedOpt = document.getElementById('product-type').options[document.getElementById('product-type').selectedIndex];
+	const base = parseInt(selectedOpt.getAttribute('data-duration')) || 10;
 	const setupTime = 30; 
 	
 	let est = (total > 0) ? (total * base) + setupTime : 0;

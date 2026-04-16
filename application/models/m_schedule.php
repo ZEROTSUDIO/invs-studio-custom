@@ -293,10 +293,11 @@ class M_schedule extends CI_Model
 
     public function get_full_schedule()
     {
-        $this->db->select('ps.*, o.order_code, o.qty, o.est_duration, o.deadline, c.name as customer_name');
+        $this->db->select('ps.*, o.order_code, cat.name as category_name, o.qty, o.est_duration, o.deadline, c.name as customer_name');
         $this->db->from('production_schedule ps');
         $this->db->join('orders o', 'o.id = ps.order_id');
         $this->db->join('customers c', 'c.id = o.customer_id');
+        $this->db->join('categories cat', 'o.category_id = cat.id', 'left');
         $this->db->where_in('ps.status', ['scheduled', 'in_progress']);
         $this->db->order_by('ps.queue_position', 'ASC');
         return $this->db->get()->result();

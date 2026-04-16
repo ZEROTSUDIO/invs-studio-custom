@@ -91,6 +91,7 @@
 						<th><a href="<?php echo build_sort_url('queue'); ?>" style="color:inherit;text-decoration:none;">Queue #<?php echo sort_icon('queue'); ?></a></th>
 						<th><a href="<?php echo build_sort_url('id'); ?>" style="color:inherit;text-decoration:none;">Order ID<?php echo sort_icon('id'); ?></a></th>
 						<th>Customer</th>
+						<th>Category</th>
 						<th>Design File</th>
 						<th>Qty</th>
 						<th>Est. Duration</th>
@@ -112,6 +113,7 @@
 							<td><span style="font-family:'Bebas Neue'; font-size:18px; color: <?php echo $queue_color; ?>;"><?php echo $queue; ?></span></td>
 							<td style="color: var(--ember);"><?php echo htmlspecialchars($o->order_code); ?></td>
 							<td><?php echo htmlspecialchars($o->customer_name); ?></td>
+							<td><span style="font-size:11px; color:var(--smoke);"><?php echo htmlspecialchars($o->category_name ?? 'Custom'); ?></span></td>
 							<td><?php echo render_design_link($o->design_file); ?></td>
 							<td><?php echo $o->qty; ?> pcs</td>
 							<td><?php echo format_duration($o->est_duration); ?></td>
