@@ -15,7 +15,8 @@ class M_schedule extends CI_Model
     {
         // Load config
         $slack_buffer        = $this->config->item('urgency_slack_buffer')      ?: 0.25;
-        $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 240;
+        $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 480;
+
         $quick_deadline_days = $this->config->item('quick_insert_deadline_days') ?: 2;
 
         // 1. Fetch all schedulable orders (only waiting and scheduled ones)
@@ -122,8 +123,16 @@ class M_schedule extends CI_Model
         usort($urgent,       fn($a, $b) => strtotime($a->deadline) - strtotime($b->deadline));
         //    Quick-Insert  → Shortest First (maximise throughput in the pause slot)
         usort($quick_insert, fn($a, $b) => $a->est_duration - $b->est_duration);
-        //    Normal        → Shortest Job First (classic SJF throughput)
-        usort($normal,       fn($a, $b) => $a->est_duration - $b->est_duration);
+        
+        //    Normal        → Deadline First, then Shortest Job First
+        //    This ensures April orders come before May orders, but preserves SJF efficiency within the same day/deadline.
+        usort($normal, function($a, $b) {
+            $da = $a->deadline ? strtotime($a->deadline) : 9999999999;
+            $db = $b->deadline ? strtotime($b->deadline) : 9999999999;
+            if ($da != $db) return $da - $db;
+            return $a->est_duration - $b->est_duration;
+        });
+
 
         // 4. Delete old unstarted scheduled entries
         $this->db->where('status', 'scheduled')->delete('production_schedule');
@@ -230,7 +239,8 @@ class M_schedule extends CI_Model
     public function get_earliest_deadline($est_duration_mins)
     {
         $slack_buffer        = $this->config->item('urgency_slack_buffer')      ?: 0.25;
-        $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 240;
+        $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 480; // Boosted to 8 hours
+
 
         // --- Quick-Insert fast path ---
         $remaining_today = $this->remaining_today_minutes();
@@ -252,12 +262,18 @@ class M_schedule extends CI_Model
 
         // --- Standard queue-tail path ---
 
-        // 1. Find the anchor (end of the currently generated schedule)
+        // 1. Find the anchor (end of MUST-RUN work)
+        // We only consider 'in_progress' and 'urgent' tiers because 'normal' tier jobs 
+        // can be pushed back to make room for a new order with a near deadline.
         $latest = $this->db
             ->select_max('end_date')
-            ->where_in('status', ['scheduled', 'in_progress'])
+            ->group_start()
+                ->where('status', 'in_progress')
+                ->or_where_in('schedule_tier', ['urgent', 'quick_insert'])
+            ->group_end()
             ->get('production_schedule')
             ->row();
+
 
         if ($latest && $latest->end_date) {
             $anchor = $this->force_business_hours($latest->end_date);
@@ -265,12 +281,19 @@ class M_schedule extends CI_Model
             $anchor = $this->force_business_hours(date('Y-m-d H:i:s'));
         }
 
-        // 2. Account for 'waiting' orders not yet in production_schedule
+        // 2. Account for 'waiting' orders (Only those that would likely be high-priority)
+        // To be safe but flexible, we'll only sum waiting orders that have a deadline
+        // in the next 7 days, as those would block our new order's timeline.
         $waiting_orders = $this->db
             ->select_sum('est_duration')
             ->where('status', 'waiting')
+            ->group_start()
+                ->where('deadline <=', date('Y-m-d', strtotime('+7 days')))
+                ->or_where('deadline', NULL)
+            ->group_end()
             ->get('orders')
             ->row();
+
 
         $waiting_mins = $waiting_orders ? (int)$waiting_orders->est_duration : 0;
 

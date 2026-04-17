@@ -46,5 +46,5 @@ $config['urgency_slack_buffer'] = 0.25;
 |   Recommended: 2 (must be due within 2 days to qualify)
 |
 */
-$config['quick_insert_threshold']     = 240;  // minutes — adjust here
+$config['quick_insert_threshold']     = 480;  // minutes — adjust here
 $config['quick_insert_deadline_days'] = 2;    // days    — adjust here
