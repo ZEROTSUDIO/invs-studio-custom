@@ -122,8 +122,15 @@ class M_schedule extends CI_Model
         usort($urgent,       fn($a, $b) => strtotime($a->deadline) - strtotime($b->deadline));
         //    Quick-Insert  → Shortest First (maximise throughput in the pause slot)
         usort($quick_insert, fn($a, $b) => $a->est_duration - $b->est_duration);
-        //    Normal        → Shortest Job First (classic SJF throughput)
-        usort($normal,       fn($a, $b) => $a->est_duration - $b->est_duration);
+        
+        //    Normal        → Deadline First, then Shortest Job First
+        //    This ensures April orders are prioritized over May filler orders.
+        usort($normal, function($a, $b) {
+            $da = strtotime($a->deadline ?: '9999-12-31');
+            $db = strtotime($b->deadline ?: '9999-12-31');
+            if ($da != $db) return $da - $db;
+            return $a->est_duration - $b->est_duration;
+        });
 
         // 4. Delete old unstarted scheduled entries
         $this->db->where('status', 'scheduled')->delete('production_schedule');
@@ -252,10 +259,18 @@ class M_schedule extends CI_Model
 
         // --- Standard queue-tail path ---
 
-        // 1. Find the anchor (end of the currently generated schedule)
+        // 1. Find the anchor (end of the fixed/priority schedule)
+        // We IGNORE 'normal' tier jobs because they are movable filler.
+        // We only block on In-Progress and Urgent/Quick-Insert jobs.
         $latest = $this->db
             ->select_max('end_date')
-            ->where_in('status', ['scheduled', 'in_progress'])
+            ->group_start()
+                ->where('status', 'in_progress')
+                ->or_group_start()
+                    ->where('status', 'scheduled')
+                    ->where_in('schedule_tier', ['urgent', 'quick_insert'])
+                ->group_end()
+            ->group_end()
             ->get('production_schedule')
             ->row();
 
@@ -266,13 +281,21 @@ class M_schedule extends CI_Model
         }
 
         // 2. Account for 'waiting' orders not yet in production_schedule
+        // Only count those that would be 'Urgent' (due soon).
         $waiting_orders = $this->db
-            ->select_sum('est_duration')
             ->where('status', 'waiting')
             ->get('orders')
-            ->row();
+            ->result();
+        
+        $waiting_mins = 0;
+        $urgency_threshold = strtotime("+3 days"); // Consider anything due within 3 days as blocking
 
-        $waiting_mins = $waiting_orders ? (int)$waiting_orders->est_duration : 0;
+        foreach ($waiting_orders as $wo) {
+            $deadline_ts = !empty($wo->deadline) ? strtotime($wo->deadline) : 0;
+            if ($deadline_ts > 0 && $deadline_ts <= $urgency_threshold) {
+                $waiting_mins += (int)$wo->est_duration;
+            }
+        }
 
         // 3. Project when THIS new job would finish
         $queue_tail    = $this->advance_time($anchor, $waiting_mins);
