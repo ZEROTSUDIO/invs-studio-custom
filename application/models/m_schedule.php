@@ -13,10 +13,10 @@ class M_schedule extends CI_Model
 
     public function generate()
     {
-        // Load config
-        $slack_buffer        = $this->config->item('urgency_slack_buffer')      ?: 0.25;
-        $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 240;
-        $quick_deadline_days = $this->config->item('quick_insert_deadline_days') ?: 2;
+        // Load settings from DB
+        $slack_buffer        = (float)$this->m_settings->get('urgency_slack_buffer', 0.25);
+        $quick_threshold     = (int)$this->m_settings->get('quick_insert_threshold', 480);
+        $quick_deadline_days = (int)$this->m_settings->get('quick_insert_deadline_days', 2);
 
         // 1. Fetch all schedulable orders (only waiting and scheduled ones)
         $orders = $this->db
@@ -236,8 +236,8 @@ class M_schedule extends CI_Model
      */
     public function get_earliest_deadline($est_duration_mins)
     {
-        $slack_buffer        = $this->config->item('urgency_slack_buffer')      ?: 0.25;
-        $quick_threshold     = $this->config->item('quick_insert_threshold')     ?: 240;
+        $slack_buffer    = (float)$this->m_settings->get('urgency_slack_buffer', 0.25);
+        $quick_threshold = (int)$this->m_settings->get('quick_insert_threshold', 480);
 
         // --- Quick-Insert fast path ---
         $remaining_today = $this->remaining_today_minutes();
@@ -354,18 +354,21 @@ class M_schedule extends CI_Model
     }
 
     /**
-     * Returns remaining operational minutes in today's business hours (08:30–17:00).
-     * Returns 0 on Sundays or after closing time.
-     * Mirrors the get_remaining_today_minutes() helper in app_helper.php.
+     * Returns remaining operational minutes in today's business hours.
+     * Starts after closing time or on Sundays returns 0.
      */
     private function remaining_today_minutes()
     {
         $now = new DateTime();
         if ($now->format('w') == 0) return 0;
 
-        $now_mins   = (int)$now->format('G') * 60 + (int)$now->format('i');
-        $start_mins = 8 * 60 + 30;  // 510
-        $end_mins   = 17 * 60;       // 1020
+        $now_mins = (int)$now->format('G') * 60 + (int)$now->format('i');
+        
+        // Get dynamic hours
+        list($h_s, $m_s) = explode(':', $this->m_settings->get('business_hour_start', '08:30'));
+        list($h_e, $m_e) = explode(':', $this->m_settings->get('business_hour_end', '17:00'));
+        $start_mins = (int)$h_s * 60 + (int)$m_s;
+        $end_mins   = (int)$h_e * 60 + (int)$m_e;
 
         if ($now_mins >= $end_mins)  return 0;
         if ($now_mins < $start_mins) return $end_mins - $start_mins;
@@ -382,21 +385,26 @@ class M_schedule extends CI_Model
     {
         $dt = new DateTime($current_time_str);
         
+        // Load dynamic hours
+        list($h_s, $m_s) = explode(':', $this->m_settings->get('business_hour_start', '08:30'));
+        list($h_e, $m_e) = explode(':', $this->m_settings->get('business_hour_end', '17:00'));
+        $start_h = (int)$h_s; $start_m = (int)$m_s;
+        $start_min = $start_h * 60 + $start_m;
+        $end_min   = (int)$h_e * 60 + (int)$m_e;
+
         while ($add_minutes > 0 || $this->needs_shift($dt)) {
             if ($dt->format('w') == 0) { // Sunday
-                $dt->modify('+1 day')->setTime(8, 30, 0);
+                $dt->modify('+1 day')->setTime($start_h, $start_m, 0);
                 continue;
             }
 
             $current_total_min = (int)$dt->format('G') * 60 + (int)$dt->format('i');
-            $start_min = 8 * 60 + 30; // 510 = 08:30
-            $end_min = 17 * 60;       // 1020 = 17:00
 
             if ($current_total_min < $start_min) {
-                $dt->setTime(8, 30, 0);
+                $dt->setTime($start_h, $start_m, 0);
                 $current_total_min = $start_min;
             } elseif ($current_total_min >= $end_min) {
-                $dt->modify('+1 day')->setTime(8, 30, 0);
+                $dt->modify('+1 day')->setTime($start_h, $start_m, 0);
                 continue;
             }
 
@@ -409,7 +417,7 @@ class M_schedule extends CI_Model
                 $add_minutes = 0;
             } else {
                 $add_minutes -= $available_today;
-                $dt->modify('+1 day')->setTime(8, 30, 0);
+                $dt->modify('+1 day')->setTime($start_h, $start_m, 0);
             }
         }
         return $dt->format('Y-m-d H:i:s');
@@ -418,8 +426,14 @@ class M_schedule extends CI_Model
     private function needs_shift($dt)
     {
         if ($dt->format('w') == 0) return true;
+
+        list($h_s, $m_s) = explode(':', $this->m_settings->get('business_hour_start', '08:30'));
+        list($h_e, $m_e) = explode(':', $this->m_settings->get('business_hour_end', '17:00'));
+        $start_min = (int)$h_s * 60 + (int)$m_s;
+        $end_min   = (int)$h_e * 60 + (int)$m_e;
+
         $total_min = (int)$dt->format('G') * 60 + (int)$dt->format('i');
-        if ($total_min < (8*60+30) || $total_min >= (17*60)) return true;
+        if ($total_min < $start_min || $total_min >= $end_min) return true;
         return false;
     }
 

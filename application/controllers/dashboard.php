@@ -11,6 +11,7 @@ class Dashboard extends CI_Controller
 
 		// Pseudo-cron: Automatically update production statuses
 		$this->load->model('m_schedule');
+		$this->load->model('m_settings');
 		$this->m_schedule->auto_update_statuses();
 
 		if ($this->session->userdata('status') != "telah_login") {
@@ -511,6 +512,10 @@ class Dashboard extends CI_Controller
 
 		$this->db->trans_complete();
 
+		// Live-Sync: Regenerate schedule so that marking a job as "Done" early 
+		// shifts the rest of the queue forward immediately.
+		$this->m_schedule->generate();
+
 		redirect(base_url() . 'dashboard/orders?alert=status_updated');
 	}
 
@@ -612,5 +617,37 @@ class Dashboard extends CI_Controller
 		$this->m_schedule->generate();
 
 		redirect(base_url() . 'dashboard/orders?alert=order_canceled');
+	}
+
+	public function settings()
+	{
+		$data['page_title'] = 'Studio Settings';
+		$data['settings']   = $this->m_settings->get_all();
+		
+		$this->load->view('dashboard/v_header', $data);
+		$this->load->view('dashboard/v_settings', $data);
+		$this->load->view('dashboard/v_footer');
+	}
+
+	public function save_settings()
+	{
+		$post = $this->input->post();
+		if (empty($post)) {
+			redirect(base_url() . 'dashboard/settings');
+			return;
+		}
+
+		// Cleanup and validate
+		$data = [];
+		foreach ($post as $key => $val) {
+			$data[trim($key)] = trim($val);
+		}
+
+		$this->m_settings->update_batch($data);
+		
+		// Regenerate schedule to apply new rules immediately
+		$this->m_schedule->generate();
+
+		redirect(base_url() . 'dashboard/settings?alert=settings_saved');
 	}
 }

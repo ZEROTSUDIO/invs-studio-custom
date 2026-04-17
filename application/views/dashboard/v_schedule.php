@@ -18,7 +18,14 @@
 	<?php endif; ?>
 
 	<!-- Raw schedule data for JS renderer -->
-	<script>window.scheduleData = <?php echo $schedule_json; ?>;</script>
+	<!-- Raw schedule data for JS renderer -->
+	<script>
+		window.scheduleData = <?php echo $schedule_json; ?>;
+		window.appConfig = {
+			business_hour_start: '<?php echo $this->m_settings->get("business_hour_start", "08:30"); ?>',
+			business_hour_end: '<?php echo $this->m_settings->get("business_hour_end", "17:00"); ?>'
+		};
+	</script>
 
 	<div class="gantt-layout">
 
