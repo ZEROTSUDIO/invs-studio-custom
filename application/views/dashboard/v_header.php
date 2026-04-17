@@ -47,6 +47,9 @@
 			<a href="<?php echo base_url() . 'dashboard/customers' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "customers") ? 'active' : ''; ?>">
 				<span class="icon">◎</span> Customers
 			</a>
+			<a href="<?php echo base_url() . 'dashboard/settings' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "settings") ? 'active' : ''; ?>">
+				<span class="icon">⚙</span> Settings
+			</a>
 			<a href="<?php echo base_url() . 'dashboard/schedule_legacy' ?>" class="nav-item <?php echo ($this->uri->segment(2) == "schedule_legacy") ? 'active' : ''; ?>">
 				<span class="icon">◫</span> Schedule (24h)
 			</a>

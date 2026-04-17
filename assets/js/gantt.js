@@ -10,9 +10,16 @@
 	var VIEW_DAYS   = { week: 7, '2weeks': 14, month: 30 };
 	var DAY_MS      = 86400000;
 	var LABEL_W     = 168; // px — must match .gantt-row-label width in CSS
-	var WORK_START  = 8 * 60 + 30;  // 08:30
-	var WORK_END    = 17 * 60;      // 17:00
-	var WORK_MINS   = WORK_END - WORK_START; // 510
+
+	/* ─── Business Hours (Dynamic) ────────────────────────────── */
+	var config = window.appConfig || { business_hour_start: '08:30', business_hour_end: '17:00' };
+	function parseTimeMins(timeStr) {
+		var p = timeStr.split(':');
+		return parseInt(p[0]) * 60 + parseInt(p[1]);
+	}
+	var WORK_START  = parseTimeMins(config.business_hour_start);
+	var WORK_END    = parseTimeMins(config.business_hour_end);
+	var WORK_MINS   = WORK_END - WORK_START;
 
 	var MONTHS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 	var DAYS_S  = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];

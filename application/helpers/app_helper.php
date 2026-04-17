@@ -8,8 +8,17 @@ if (!function_exists('format_duration')) {
      */
     function format_duration($mins) {
         if ($mins <= 0) return "0 mins";
-        $d = floor($mins / 510);
-        $rem = $mins % 510;
+        
+        $CI = &get_instance();
+        if (!isset($CI->m_settings)) $CI->load->model('m_settings');
+        
+        list($h_s, $m_s) = explode(':', $CI->m_settings->get('business_hour_start', '08:30'));
+        list($h_e, $m_e) = explode(':', $CI->m_settings->get('business_hour_end', '17:00'));
+        $day_mins = ((int)$h_e * 60 + (int)$m_e) - ((int)$h_s * 60 + (int)$m_s);
+        if ($day_mins <= 0) $day_mins = 510;
+
+        $d = floor($mins / $day_mins);
+        $rem = $mins % $day_mins;
         $h = floor($rem / 60);
         $m = $rem % 60;
         $parts = [];
@@ -30,34 +39,42 @@ if (!function_exists('get_operational_minutes')) {
         $end = new DateTime($end_txt);
         if ($start >= $end) return 0;
         
+        $CI = &get_instance();
+        if (!isset($CI->m_settings)) $CI->load->model('m_settings');
+        
+        list($h_s, $m_s) = explode(':', $CI->m_settings->get('business_hour_start', '08:30'));
+        list($h_e, $m_e) = explode(':', $CI->m_settings->get('business_hour_end', '17:00'));
+        $start_h = (int)$h_s; $start_m = (int)$m_s;
+        $start_mins = $start_h * 60 + $start_m;
+        $end_mins   = (int)$h_e * 60 + (int)$m_e;
+
         $minutes = 0;
         while ($start < $end) {
             if ($start->format('w') == 0) { // skip sunday
-                $start->modify('+1 day')->setTime(8, 30, 0);
+                $start->modify('+1 day')->setTime($start_h, $start_m, 0);
                 continue;
             }
             $curr_mins = (int)$start->format('G') * 60 + (int)$start->format('i');
             
-            // cap start bounds
-            if ($curr_mins < 510) { 
-                $start->setTime(8, 30, 0); 
-                $curr_mins = 510; 
+            if ($curr_mins < $start_mins) { 
+                $start->setTime($start_h, $start_m, 0); 
+                $curr_mins = $start_mins; 
             }
-            if ($curr_mins >= 1020) { 
-                $start->modify('+1 day')->setTime(8, 30, 0); 
+            if ($curr_mins >= $end_mins) { 
+                $start->modify('+1 day')->setTime($start_h, $start_m, 0); 
                 continue; 
             }
             
             if ($start->format('Y-m-d') == $end->format('Y-m-d')) {
                 $eh = (int)$end->format('G');
                 $em = (int)$end->format('i');
-                $end_mins = $eh * 60 + $em;
-                if ($end_mins > 1020) $end_mins = 1020;
-                $minutes += max(0, $end_mins - $curr_mins);
+                $finish_mins = $eh * 60 + $em;
+                if ($finish_mins > $end_mins) $finish_mins = $end_mins;
+                $minutes += max(0, $finish_mins - $curr_mins);
                 break;
             } else {
-                $minutes += max(0, 1020 - $curr_mins);
-                $start->modify('+1 day')->setTime(8, 30, 0);
+                $minutes += max(0, $end_mins - $curr_mins);
+                $start->modify('+1 day')->setTime($start_h, $start_m, 0);
             }
         }
         return $minutes;
@@ -120,14 +137,20 @@ if (!function_exists('get_remaining_today_minutes')) {
      */
     function get_remaining_today_minutes() {
         $now = new DateTime();
-        if ($now->format('w') == 0) return 0; // Sunday — no business
+        if ($now->format('w') == 0) return 0;
 
-        $now_mins   = (int)$now->format('G') * 60 + (int)$now->format('i');
-        $start_mins = 8 * 60 + 30;  // 08:30 = 510
-        $end_mins   = 17 * 60;      // 17:00 = 1020
+        $CI = &get_instance();
+        if (!isset($CI->m_settings)) $CI->load->model('m_settings');
+        
+        list($h_s, $m_s) = explode(':', $CI->m_settings->get('business_hour_start', '08:30'));
+        list($h_e, $m_e) = explode(':', $CI->m_settings->get('business_hour_end', '17:00'));
+        $start_mins = (int)$h_s * 60 + (int)$m_s;
+        $end_mins   = (int)$h_e * 60 + (int)$m_e;
 
-        if ($now_mins >= $end_mins)   return 0;                      // past closing
-        if ($now_mins < $start_mins)  return $end_mins - $start_mins; // before opening — full day available
+        $now_mins = (int)$now->format('G') * 60 + (int)$now->format('i');
+
+        if ($now_mins >= $end_mins)   return 0;
+        if ($now_mins < $start_mins)  return $end_mins - $start_mins;
 
         return $end_mins - $now_mins;
     }
