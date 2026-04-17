@@ -185,14 +185,14 @@ function days_until($deadline)
                                         <?php if ($job->schedule_status === 'scheduled'): ?>
                                             <form method="POST" action="<?php echo base_url('dashboard/update_status/' . $job->order_id . '/in_progress'); ?>" style="margin:0;">
                                                 <button type="submit" onclick="return confirm('Start producing <?php echo htmlspecialchars($job->order_code); ?>?')"
-                                                    style="font-size:10px; font-family:'Syne',sans-serif; font-weight:700; letter-spacing:0.08em; padding:4px 12px; background:transparent; border:1px solid #e8a020; color:#e8a020; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:background .2s, color .2s;">
+                                                    style="min-width:85px; justify-content:center; font-size:10px; font-family:'Syne',sans-serif; font-weight:700; letter-spacing:0.08em; padding:5px 10px; background:transparent; border:1px solid #e8a020; color:#e8a020; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:all .2s;">
                                                     ▶ Produce
                                                 </button>
                                             </form>
                                         <?php else: ?>
                                             <form method="POST" action="<?php echo base_url('dashboard/update_status/' . $job->order_id . '/done'); ?>" style="margin:0;">
                                                 <button type="submit" onclick="return confirm('Mark <?php echo htmlspecialchars($job->order_code); ?> as Done?')"
-                                                    style="font-size:10px; font-family:'Syne',sans-serif; font-weight:700; letter-spacing:0.08em; padding:4px 12px; background:transparent; border:1px solid #4ade80; color:#4ade80; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:background .2s, color .2s;">
+                                                    style="min-width:85px; justify-content:center; font-size:10px; font-family:'Syne',sans-serif; font-weight:700; letter-spacing:0.08em; padding:5px 10px; background:transparent; border:1px solid #4ade80; color:#4ade80; text-decoration:none; text-transform:uppercase; cursor:pointer; transition:all .2s;">
                                                     ✓ Done
                                                 </button>
                                             </form>
@@ -200,11 +200,11 @@ function days_until($deadline)
 
                                         <!-- Small Action Dropdown for Dashboard -->
                                         <div class="dropdown">
-                                            <button class="btn btn-ghost" style="padding:2px 6px; font-size:10px; min-height:22px; border-color:var(--border);">•••</button>
+                                            <button class="btn btn-ghost" style="padding:4px 8px; font-size:10px; min-height:24px; border-color:rgba(255,255,255,0.1);">•••</button>
                                             <div class="dropdown-content" style="bottom: 100%; top: auto; right: 0; margin-bottom: 5px;">
                                                 <a href="<?php echo base_url('dashboard/edit_order/' . $job->order_id); ?>">✏ Edit Details</a>
                                                 <form method="POST" action="<?php echo base_url('dashboard/cancel_order/' . $job->order_id); ?>" style="margin:0;">
-                                                    <button type="submit" onclick="return confirm('WARNING: Cancel this order?');" style="color:#f87171;">✕ Cancel Order</button>
+                                                    <button type="submit" onclick="return confirm('WARNING: Cancel this order?');" style="color:#f87171 !important;">✕ Cancel Order</button>
                                                 </form>
                                             </div>
                                         </div>
