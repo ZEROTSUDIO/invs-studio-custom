@@ -376,7 +376,7 @@ class M_schedule extends CI_Model
         return $end_mins - $now_mins;
     }
 
-    private function force_business_hours($datetime_str)
+    public function force_business_hours($datetime_str)
     {
         return $this->advance_time($datetime_str, 0);
     }

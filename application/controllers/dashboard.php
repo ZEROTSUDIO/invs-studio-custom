@@ -504,9 +504,20 @@ class Dashboard extends CI_Controller
 
 		if (isset($schedule_status_map[$new_status])) {
 			$schedule_update = ['status' => $schedule_status_map[$new_status]];
-			if ($new_status == 'done') {
+			
+			$this->load->model('m_schedule');
+			$now = $this->m_schedule->force_business_hours(date('Y-m-d H:i:s'));
+
+			if ($new_status == 'in_progress') {
+				// Prevent the "future queue" bug: If an admin forces a future job 
+				// to start NOW, we must overwrite its scheduled start_date to today.
+				// This guarantees M_schedule::generate() uses today as the anchor.
+				$schedule_update['start_date'] = $now;
+			} elseif ($new_status == 'done') {
 				$schedule_update['queue_position'] = 0;
+				$schedule_update['end_date'] = $now; // Log actual completion time
 			}
+
 			$this->db->where('order_id', $order_id)->update('production_schedule', $schedule_update);
 		}
 
