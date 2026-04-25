@@ -118,8 +118,13 @@ class M_schedule extends CI_Model
         }
 
         // 3. Sort each tier
-        //    Urgent       → Earliest Deadline First (protect hard deadlines)
-        usort($urgent,       fn($a, $b) => strtotime($a->deadline) - strtotime($b->deadline));
+        //    Urgent       → Earliest Deadline First, then Shortest Job First
+        usort($urgent, function($a, $b) {
+            $da = strtotime($a->deadline ?: '9999-12-31');
+            $db = strtotime($b->deadline ?: '9999-12-31');
+            if ($da != $db) return $da - $db;
+            return $a->est_duration - $b->est_duration;
+        });
         //    Quick-Insert  → Shortest First (maximise throughput in the pause slot)
         usort($quick_insert, fn($a, $b) => $a->est_duration - $b->est_duration);
         
