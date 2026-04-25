@@ -201,7 +201,7 @@
 
 			/* Label */
 			var lbl = div('gantt-row-label');
-			lbl.innerHTML = tierIcon + s.order_code + ' <span style="opacity:0.6; font-size:9px;">' + s.customer_name + '</span>';
+			lbl.innerHTML = tierIcon + '<span style="background:var(--ember); color:var(--ink); font-weight:700; padding:1px 5px; border-radius:2px; margin-right:8px; font-size:10px;">' + s.queue_position + '</span>' + s.order_code + ' <span style="opacity:0.6; font-size:9px;">' + s.customer_name + '</span>';
 			row.appendChild(lbl);
 
 			/* Track */
@@ -221,7 +221,7 @@
 			bar.style.width = width + '%';
 			bar.style.background = colors.bg;
 			bar.style.color = colors.col;
-			bar.textContent = s.qty + 'p · ' + fmtDuration(s.est_duration);
+			bar.textContent = 'Q' + s.queue_position + ' · ' + s.qty + 'p · ' + fmtDuration(s.est_duration);
 
 			bar.addEventListener('mouseenter', function (e) { showTooltip(e, s); });
 			bar.addEventListener('mousemove',  moveTooltip);
@@ -297,7 +297,7 @@
 		var t = getTooltip();
 		t.innerHTML =
 			'<div style="display:flex; justify-content:space-between; align-items:flex-start;">' +
-				'<div class="gantt-tooltip-title">' + s.order_code + '</div>' + 
+				'<div class="gantt-tooltip-title"><span style="color:var(--ember); font-weight:700; margin-right:8px;">Queue #' + s.queue_position + '</span> · ' + s.order_code + '</div>' + 
 				tierLabel +
 			'</div>' +
 			'<div class="gantt-tooltip-label">👤 ' + s.customer_name + '</div>' +

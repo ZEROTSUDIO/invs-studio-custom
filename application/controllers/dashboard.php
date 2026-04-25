@@ -354,7 +354,9 @@ class Dashboard extends CI_Controller
 		$out = [];
 		foreach ($schedules as $s) {
 			$out[] = [
-				'order_code'    => $s->order_code,
+				'order_id'       => isset($s->order_id) ? $s->order_id : (isset($s->id) ? $s->id : null),
+				'queue_position' => (int) $s->queue_position,
+				'order_code'     => $s->order_code,
 				'customer_name' => $s->customer_name,
 				'category_name' => isset($s->category_name) ? $s->category_name : 'Custom',
 				'status'        => $s->status,
