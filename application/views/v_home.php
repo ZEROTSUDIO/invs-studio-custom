@@ -974,6 +974,119 @@
 		</div>
 	</section>
 
+	<!--
+	<section class="py-24 px-6">
+		<div class="max-w-5xl mx-auto">
+			<div class="text-center mb-14">
+				<p
+					class="text-xs uppercase tracking-widest text-gold-500 mb-4"
+					style="
+							font-family: &quot;Syne&quot;, sans-serif;
+							letter-spacing: 0.3em;
+						">
+					Kata Mereka
+				</p>
+				<h2
+					class="gold-text"
+					style="
+							font-family: &quot;Cormorant Garamond&quot;, serif;
+							font-size: clamp(2rem, 5vw, 3.5rem);
+							font-weight: 300;
+						">
+					Testimoni
+				</h2>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<div class="testimonial-card">
+					<p class="text-smoke text-sm mt-6 mb-6" style="line-height: 1.7">
+						Kualitas bagus banget! Desain yang kami minta kompleks tapi
+						hasilnya persis sama. Pengiriman juga tepat waktu.
+					</p>
+					<div class="flex items-center gap-3">
+						<div
+							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
+							style="
+									border-color: rgba(212, 160, 23, 0.25);
+									font-family: &quot;Syne&quot;, sans-serif;
+								">
+							AS
+						</div>
+						<div>
+							<div
+								class="text-white text-sm font-bold"
+								style="font-family: &quot;Syne&quot;, sans-serif">
+								Andi S.
+							</div>
+							<div class="text-smoke text-xs">Owner, DistroKeren</div>
+						</div>
+						<div class="ml-auto text-gold-400" style="font-size: 12px">
+							★★★★★
+						</div>
+					</div>
+				</div>
+
+				<div class="testimonial-card">
+					<p class="text-smoke text-sm mt-6 mb-6" style="line-height: 1.7">
+						Sudah 3x order untuk event kampus. Harga bersaing, respon admin
+						cepat, hasil memuaskan. Recommended!
+					</p>
+					<div class="flex items-center gap-3">
+						<div
+							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
+							style="
+									border-color: rgba(212, 160, 23, 0.25);
+									font-family: &quot;Syne&quot;, sans-serif;
+								">
+							RP
+						</div>
+						<div>
+							<div
+								class="text-white text-sm font-bold"
+								style="font-family: &quot;Syne&quot;, sans-serif">
+								Risa P.
+							</div>
+							<div class="text-smoke text-xs">Ketua BEM, UNY</div>
+						</div>
+						<div class="ml-auto text-gold-400" style="font-size: 12px">
+							★★★★★
+						</div>
+					</div>
+				</div>
+
+				<div class="testimonial-card">
+					<p class="text-smoke text-sm mt-6 mb-6" style="line-height: 1.7">
+						Bahan hoodie-nya tebal dan nyaman. Cetak bordir logonya rapi.
+						Pasti balik lagi untuk order berikutnya.
+					</p>
+					<div class="flex items-center gap-3">
+						<div
+							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
+							style="
+									border-color: rgba(212, 160, 23, 0.25);
+									font-family: &quot;Syne&quot;, sans-serif;
+								">
+							DW
+						</div>
+						<div>
+							<div
+								class="text-white text-sm font-bold"
+								style="font-family: &quot;Syne&quot;, sans-serif">
+								Dwi W.
+							</div>
+							<div class="text-smoke text-xs">Manager, StartupJogja</div>
+						</div>
+						<div class="ml-auto text-gold-400" style="font-size: 12px">
+							★★★★★
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+-->
+
 	<div class="section-divider mx-6"></div>
 
 	<!-- ===================== GALLERY ===================== -->
