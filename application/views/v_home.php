@@ -53,6 +53,13 @@
 						letter-spacing: 0.15em;
 					">Proses</a>
 			<a
+				href="#gallery"
+				class="text-xs font-title uppercase tracking-widest text-smoke hover:text-gold-400 transition-colors"
+				style="
+						font-family: &quot;Syne&quot;, sans-serif;
+						letter-spacing: 0.15em;
+					">Galeri</a>
+			<a
 				href="#order"
 				class="text-xs font-title uppercase tracking-widest text-smoke hover:text-gold-400 transition-colors"
 				style="
@@ -107,6 +114,14 @@
 					font-family: &quot;Cormorant Garamond&quot;, serif;
 					font-size: 2rem;
 				">Proses</a>
+		<a
+			href="#gallery"
+			onclick="toggleMobileMenu()"
+			class="text-2xl font-title uppercase tracking-widest text-gold-400"
+			style="
+					font-family: &quot;Cormorant Garamond&quot;, serif;
+					font-size: 2rem;
+				">Galeri</a>
 		<a
 			href="#order"
 			onclick="toggleMobileMenu()"
@@ -1006,6 +1021,107 @@
 
 	<div class="section-divider mx-6"></div>
 
+	<!-- ===================== GALLERY ===================== -->
+	<section id="gallery" class="py-24 px-6">
+		<div class="max-w-6xl mx-auto">
+			<!-- Section header -->
+			<div class="text-center mb-16">
+				<p
+					class="text-xs uppercase tracking-widest text-gold-500 mb-4"
+					style="
+							font-family: &quot;Syne&quot;, sans-serif;
+							letter-spacing: 0.3em;
+						">
+					Hasil Kerja
+				</p>
+				<h2
+					class="gold-text mb-4"
+					style="
+							font-family: &quot;Cormorant Garamond&quot;, serif;
+							font-size: clamp(2rem, 5vw, 3.5rem);
+							font-weight: 300;
+						">
+					Galeri Produksi
+				</h2>
+				<p class="text-smoke text-sm max-w-md mx-auto" style="line-height: 1.7">
+					Sekilas karya nyata dari tangan kami — setiap detail dikerjakan dengan presisi.
+				</p>
+				<div class="deco-line mx-auto mt-6"></div>
+			</div>
+
+			<!-- Masonry Gallery Grid -->
+			<div class="gallery-grid">
+				<!-- Row 1: 3 columns -->
+				<div class="gallery-item gallery-item--tall">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_05.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_01.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_02.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item gallery-item--wide">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_10.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_03.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_04.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_06.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item gallery-item--wide">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_11.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_07.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_08.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+				<div class="gallery-item">
+					<img src="<?php echo base_url(); ?>assets/gambar/website/gallery_09.jpg" alt="Galeri INVS Studio Custom" loading="lazy">
+					<div class="gallery-overlay"><span>INVS Studio</span></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Lightbox -->
+	<div id="gallery-lightbox" class="gallery-lightbox">
+		<button class="gallery-lightbox__close" onclick="closeLightbox()" aria-label="Tutup">
+			<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+				<path d="M6 18L18 6M6 6l12 12" />
+			</svg>
+		</button>
+		<button class="gallery-lightbox__nav gallery-lightbox__nav--prev" onclick="lightboxNav(-1)" aria-label="Sebelumnya">
+			<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+				<path d="M15 19l-7-7 7-7" />
+			</svg>
+		</button>
+		<img id="gallery-lightbox-img" src="" alt="Galeri">
+		<button class="gallery-lightbox__nav gallery-lightbox__nav--next" onclick="lightboxNav(1)" aria-label="Berikutnya">
+			<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+				<path d="M9 5l7 7-7 7" />
+			</svg>
+		</button>
+	</div>
+
+	<div class="section-divider mx-6"></div>
+
 	<!-- ===================== ORDER FORM ===================== -->
 	<section id="order" class="py-24 px-6">
 		<div class="max-w-2xl mx-auto">
@@ -1116,7 +1232,7 @@
 								id="product-type"
 								class="form-input"
 								onchange="calcDuration()">
-								<?php foreach($categories as $cat): ?>
+								<?php foreach ($categories as $cat): ?>
 									<option value="<?php echo $cat->id; ?>" data-duration="<?php echo $cat->base_duration; ?>">
 										<?php echo htmlspecialchars($cat->name); ?>
 									</option>

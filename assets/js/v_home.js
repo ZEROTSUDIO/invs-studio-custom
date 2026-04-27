@@ -244,5 +244,64 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("error-modal-msg").innerText = msg;
         document.getElementById("error-modal").style.display = "flex";
     }
+
+    // ---- Gallery Lightbox Init ----
+    initGallery();
 });
+
+// ===================== GALLERY LIGHTBOX =====================
+let galleryImages = [];
+let currentLightboxIndex = 0;
+
+function initGallery() {
+    const items = document.querySelectorAll(".gallery-item");
+    galleryImages = [];
+
+    items.forEach((item, idx) => {
+        const img = item.querySelector("img");
+        if (img) {
+            galleryImages.push(img.src);
+            item.addEventListener("click", () => openLightbox(idx));
+        }
+    });
+
+    // Close on backdrop click
+    document.getElementById("gallery-lightbox").addEventListener("click", function (e) {
+        if (e.target === this) closeLightbox();
+    });
+
+    // Keyboard navigation
+    document.addEventListener("keydown", function (e) {
+        const lb = document.getElementById("gallery-lightbox");
+        if (!lb.classList.contains("active")) return;
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowRight") lightboxNav(1);
+        if (e.key === "ArrowLeft") lightboxNav(-1);
+    });
+}
+
+function openLightbox(index) {
+    currentLightboxIndex = index;
+    const lb = document.getElementById("gallery-lightbox");
+    const lbImg = document.getElementById("gallery-lightbox-img");
+    lbImg.src = galleryImages[index];
+    lb.classList.add("active");
+    document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+    document.getElementById("gallery-lightbox").classList.remove("active");
+    document.body.style.overflow = "";
+}
+
+function lightboxNav(direction) {
+    currentLightboxIndex = (currentLightboxIndex + direction + galleryImages.length) % galleryImages.length;
+    const lbImg = document.getElementById("gallery-lightbox-img");
+    lbImg.style.opacity = "0";
+    setTimeout(() => {
+        lbImg.src = galleryImages[currentLightboxIndex];
+        lbImg.style.opacity = "1";
+    }, 150);
+}
+
 
