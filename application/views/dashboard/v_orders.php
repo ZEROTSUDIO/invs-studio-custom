@@ -132,9 +132,9 @@
 
 											if ($o->status == 'ordered') {
 												$action_url = base_url('dashboard/update_status/' . $o->id . '/waiting');
-												$action_label = '→ Schedule';
-												$action_btn_style = 'background:rgba(232,160,32,0.12); color:var(--ember); border:1px solid rgba(232,160,32,0.25);';
-												$confirm_msg = 'Start scheduling this order?';
+												$action_label = '✓ Confirm';
+												$action_btn_style = 'background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.25);';
+												$confirm_msg = 'Confirm this order and move to waiting list?';
 											} elseif ($o->status == 'scheduled') {
 												$action_url = base_url('dashboard/update_status/' . $o->id . '/in_progress');
 												$action_label = '▶ Produce';

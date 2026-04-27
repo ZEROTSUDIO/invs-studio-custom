@@ -527,7 +527,9 @@ class Dashboard extends CI_Controller
 
 		// Live-Sync: Regenerate schedule so that marking a job as "Done" early 
 		// shifts the rest of the queue forward immediately.
-		$this->m_schedule->generate();
+		if ($new_status != 'waiting') {
+			$this->m_schedule->generate();
+		}
 
 		redirect(base_url() . 'dashboard/orders?alert=status_updated');
 	}
