@@ -9,6 +9,7 @@ class Home extends CI_Controller
 		parent::__construct();
 		date_default_timezone_set('Asia/Jakarta');
 		$this->load->model('m_data');
+		$this->load->model('m_settings');
 
 		// Pseudo-cron: Automatically update production statuses
 		$this->load->model('m_schedule');
@@ -83,7 +84,7 @@ class Home extends CI_Controller
 		$safe_deadline_data = $this->m_schedule->get_earliest_deadline($est_duration);
 		
 		if ($deadline_date && $safe_deadline_data['earliest_date'] && $deadline_date < $safe_deadline_data['earliest_date']) {
-			redirect('home?alert=deadline_conflict#order'); 
+			redirect('?alert=deadline_conflict#order'); 
 			return;
 		}
 
@@ -99,9 +100,9 @@ class Home extends CI_Controller
 		);
 
 		if ($this->m_data->save_order($customer_id, $order, $items)) {
-			redirect('alert=success#order');
+			redirect('?alert=success#order');
 		} else {
-			redirect('alert=save_failed#order');
+			redirect('?alert=save_failed#order');
 		}
 	}
 

@@ -73,6 +73,6 @@ $route['dashboard'] = 'dashboard';
 // $route['page/(:any)'] = 'welcome/page/$1';
 //route untuk URL SEO artikel
 $route['migrate'] = 'migrate';
-$route['(:any)'] = 'welcome/single/$1';
-$route['404_override'] = 'welcome/notfound';
+// $route['(:any)'] = 'welcome/single/$1';
+// $route['404_override'] = 'welcome/notfound';
 $route['translate_uri_dashes'] = FALSE;

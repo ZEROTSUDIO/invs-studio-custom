@@ -3,6 +3,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_schedule extends CI_Model
 {
+    public function __construct()
+    {
+        parent::__construct();
+        $this->load->model('m_settings');
+    }
+
     //concept
     //1. ambil order yang bisa dijadwalkan (selagi bukan finished)
     //2. pisahkan urgent vs normal
