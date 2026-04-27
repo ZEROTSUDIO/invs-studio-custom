@@ -247,11 +247,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ---- Gallery Lightbox Init ----
     initGallery();
+    initTestimoni();
 });
 
 // ===================== GALLERY LIGHTBOX =====================
 let galleryImages = [];
 let currentLightboxIndex = 0;
+let activeImageSet = [];   // whichever set is currently open
 
 function initGallery() {
     const items = document.querySelectorAll(".gallery-item");
@@ -261,7 +263,7 @@ function initGallery() {
         const img = item.querySelector("img");
         if (img) {
             galleryImages.push(img.src);
-            item.addEventListener("click", () => openLightbox(idx));
+            item.addEventListener("click", () => openLightbox(idx, galleryImages));
         }
     });
 
@@ -280,11 +282,25 @@ function initGallery() {
     });
 }
 
-function openLightbox(index) {
+function initTestimoni() {
+    const testimoniImages = [];
+    const shots = document.querySelectorAll(".testimoni-shot");
+
+    shots.forEach((shot, idx) => {
+        const img = shot.querySelector("img");
+        if (img) {
+            testimoniImages.push(img.src);
+            shot.addEventListener("click", () => openLightbox(idx, testimoniImages));
+        }
+    });
+}
+
+function openLightbox(index, imageSet) {
+    activeImageSet = imageSet;
     currentLightboxIndex = index;
     const lb = document.getElementById("gallery-lightbox");
     const lbImg = document.getElementById("gallery-lightbox-img");
-    lbImg.src = galleryImages[index];
+    lbImg.src = activeImageSet[index];
     lb.classList.add("active");
     document.body.style.overflow = "hidden";
 }
@@ -295,13 +311,11 @@ function closeLightbox() {
 }
 
 function lightboxNav(direction) {
-    currentLightboxIndex = (currentLightboxIndex + direction + galleryImages.length) % galleryImages.length;
+    currentLightboxIndex = (currentLightboxIndex + direction + activeImageSet.length) % activeImageSet.length;
     const lbImg = document.getElementById("gallery-lightbox-img");
     lbImg.style.opacity = "0";
     setTimeout(() => {
-        lbImg.src = galleryImages[currentLightboxIndex];
+        lbImg.src = activeImageSet[currentLightboxIndex];
         lbImg.style.opacity = "1";
     }, 150);
 }
-
-

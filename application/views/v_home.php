@@ -921,7 +921,7 @@
 					Kata Mereka
 				</p>
 				<h2
-					class="gold-text"
+					class="gold-text mb-3"
 					style="
 							font-family: &quot;Cormorant Garamond&quot;, serif;
 							font-size: clamp(2rem, 5vw, 3.5rem);
@@ -929,90 +929,45 @@
 						">
 					Testimoni
 				</h2>
+				<p class="text-smoke text-sm max-w-sm mx-auto" style="line-height: 1.7">
+					Kepercayaan pelanggan adalah prioritas kami &mdash; lihat langsung dari mereka.
+				</p>
+				<div class="deco-line mx-auto mt-6"></div>
 			</div>
 
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-				<div class="testimonial-card">
-					<p class="text-smoke text-sm mt-6 mb-6" style="line-height: 1.7">
-						Kualitas bagus banget! Desain yang kami minta kompleks tapi
-						hasilnya persis sama. Pengiriman juga tepat waktu.
-					</p>
-					<div class="flex items-center gap-3">
-						<div
-							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
-							style="
-									border-color: rgba(212, 160, 23, 0.25);
-									font-family: &quot;Syne&quot;, sans-serif;
-								">
-							AS
-						</div>
-						<div>
-							<div
-								class="text-white text-sm font-bold"
-								style="font-family: &quot;Syne&quot;, sans-serif">
-								Andi S.
-							</div>
-							<div class="text-smoke text-xs">Owner, DistroKeren</div>
-						</div>
-						<div class="ml-auto text-gold-400" style="font-size: 12px">
-							★★★★★
-						</div>
+			<!-- Screenshot testimoni -->
+			<div class="testimoni-screenshots">
+				<div class="testimoni-shot">
+					<img
+						src="<?php echo base_url(); ?>assets/gambar/website/testimoni_1.jpg"
+						alt="Screenshot testimoni pelanggan INVS Studio"
+						loading="lazy">
+					<div class="testimoni-shot__overlay">
+						<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+							<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+						</svg>
 					</div>
 				</div>
-
-				<div class="testimonial-card">
-					<p class="text-smoke text-sm mt-6 mb-6" style="line-height: 1.7">
-						Sudah 3x order untuk event kampus. Harga bersaing, respon admin
-						cepat, hasil memuaskan. Recommended!
-					</p>
-					<div class="flex items-center gap-3">
-						<div
-							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
-							style="
-									border-color: rgba(212, 160, 23, 0.25);
-									font-family: &quot;Syne&quot;, sans-serif;
-								">
-							RP
-						</div>
-						<div>
-							<div
-								class="text-white text-sm font-bold"
-								style="font-family: &quot;Syne&quot;, sans-serif">
-								Risa P.
-							</div>
-							<div class="text-smoke text-xs">Ketua BEM, UNY</div>
-						</div>
-						<div class="ml-auto text-gold-400" style="font-size: 12px">
-							★★★★★
-						</div>
+				<div class="testimoni-shot">
+					<img
+						src="<?php echo base_url(); ?>assets/gambar/website/testimoni_2.jpg"
+						alt="Screenshot testimoni pelanggan INVS Studio"
+						loading="lazy">
+					<div class="testimoni-shot__overlay">
+						<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+							<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+						</svg>
 					</div>
 				</div>
-
-				<div class="testimonial-card">
-					<p class="text-smoke text-sm mt-6 mb-6" style="line-height: 1.7">
-						Bahan hoodie-nya tebal dan nyaman. Cetak bordir logonya rapi.
-						Pasti balik lagi untuk order berikutnya.
-					</p>
-					<div class="flex items-center gap-3">
-						<div
-							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
-							style="
-									border-color: rgba(212, 160, 23, 0.25);
-									font-family: &quot;Syne&quot;, sans-serif;
-								">
-							DW
-						</div>
-						<div>
-							<div
-								class="text-white text-sm font-bold"
-								style="font-family: &quot;Syne&quot;, sans-serif">
-								Dwi W.
-							</div>
-							<div class="text-smoke text-xs">Manager, StartupJogja</div>
-						</div>
-						<div class="ml-auto text-gold-400" style="font-size: 12px">
-							★★★★★
-						</div>
+				<div class="testimoni-shot">
+					<img
+						src="<?php echo base_url(); ?>assets/gambar/website/testimoni_3.jpg"
+						alt="Screenshot testimoni pelanggan INVS Studio"
+						loading="lazy">
+					<div class="testimoni-shot__overlay">
+						<svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+							<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+						</svg>
 					</div>
 				</div>
 			</div>
