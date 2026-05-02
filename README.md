@@ -13,7 +13,7 @@ INVS Studio Custom adalah sebuah aplikasi sistem informasi manajemen berbasis we
 
 ## Persyaratan Sistem
 
-- PHP 5.6 atau versi lebih baru (direkomendasikan PHP 7.x/8.x)
+- PHP 5.6 atau versi lebih baru (direkomendasikan PHP 7.4)
 - Web Server (Apache / Nginx, seperti XAMPP atau Laragon)
 - Database MySQL / MariaDB
 
