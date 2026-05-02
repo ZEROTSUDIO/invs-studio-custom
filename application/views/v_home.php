@@ -221,7 +221,7 @@
 				class="mt-20 grid grid-cols-3 gap-6 max-w-lg mx-auto fade-up delay-3">
 				<div class="text-center">
 					<div
-						class="gold-text text-3xl font-display font-semibold"
+						class="white-text text-3xl font-display font-semibold"
 						style="
 								font-family: &quot;Cormorant Garamond&quot;, serif;
 								font-size: 2.5rem;
@@ -238,7 +238,7 @@
 					class="text-center border-x"
 					style="border-color: rgba(255,255,255,0.1)">
 					<div
-						class="gold-text text-3xl font-display font-semibold"
+						class="white-text text-3xl font-display font-semibold"
 						style="
 								font-family: &quot;Cormorant Garamond&quot;, serif;
 								font-size: 2.5rem;
@@ -253,7 +253,7 @@
 				</div>
 				<div class="text-center">
 					<div
-						class="gold-text text-3xl font-display font-semibold"
+						class="white-text text-3xl font-display font-semibold"
 						style="
 								font-family: &quot;Cormorant Garamond&quot;, serif;
 								font-size: 2.5rem;
@@ -290,71 +290,71 @@
 
 	<!-- ===================== MARQUEE ===================== -->
 	<!-- <div
-		class="overflow-hidden py-4 border-y border-gold"
+		class="overflow-hidden py-4 border-y border-white/20"
 		style="
 				border-color: rgba(212, 160, 23, 0.12);
 				background: rgba(212, 160, 23, 0.02);
 			">
 		<div class="marquee-track">
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">T-Shirt Custom</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Hoodie Premium</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Polo Shirt</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Tote Bag</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">DTF Print</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Screen Print</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">T-Shirt Custom</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Hoodie Premium</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Polo Shirt</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Tote Bag</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">DTF Print</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 			<span
-				class="text-xs uppercase tracking-widest text-gold-600 mx-8"
+				class="text-xs uppercase tracking-widest text-white opacity-40 mx-8"
 				style="font-family: &quot;Syne&quot;, sans-serif; opacity: 0.5">Screen Print</span>
-			<span class="text-gold-500 mx-4" style="opacity: 0.3">✦</span>
+			<span class="text-white opacity-50 mx-4" style="opacity: 0.3">✦</span>
 		</div>
 	</div> -->
 
 	<!-- ===================== CATALOG ===================== -->
-	<section id="catalog" class="py-24 px-6">
+	<!-- <section id="catalog" class="py-24 px-6">
 		<div class="max-w-6xl mx-auto">
-			<!-- Section header -->
+			Section header
 			<div class="text-center mb-16">
 				<p
-					class="text-xs uppercase tracking-widest text-gold-500 mb-4"
+					class="text-xs uppercase tracking-widest text-white opacity-50 mb-4"
 					style="
 							font-family: &quot;Syne&quot;, sans-serif;
 							letter-spacing: 0.3em;
@@ -362,7 +362,7 @@
 					Pilihan Produk
 				</p>
 				<h2
-					class="gold-text mb-4"
+					class="white-text mb-4"
 					style="
 							font-family: &quot;Cormorant Garamond&quot;, serif;
 							font-size: clamp(2rem, 5vw, 3.5rem);
@@ -397,7 +397,7 @@
 								stroke-dasharray="3 2" />
 						</svg>
 						<div
-							class="absolute top-3 right-3 bg-gold-500 text-onyx text-xs px-2 py-1"
+							class="absolute top-3 right-3 bg-white/10 text-onyx text-xs px-2 py-1"
 							style="
 									font-family: &quot;Syne&quot;, sans-serif;
 									font-size: 9px;
@@ -434,7 +434,7 @@
 							<div>
 								<span class="text-xs text-smoke">Mulai dari</span>
 								<div
-									class="gold-text"
+									class="white-text"
 									style="
 											font-family: &quot;Cormorant Garamond&quot;, serif;
 											font-size: 1.4rem;
@@ -478,7 +478,7 @@
 								stroke-dasharray="4 3" />
 						</svg>
 						<div
-							class="absolute top-3 right-3 bg-graphite border border-gold text-gold-400 text-xs px-2 py-1"
+							class="absolute top-3 right-3 bg-graphite border border-white/20 text-white opacity-60 text-xs px-2 py-1"
 							style="
 									border-color: rgba(212, 160, 23, 0.3);
 									font-family: &quot;Syne&quot;, sans-serif;
@@ -516,7 +516,7 @@
 							<div>
 								<span class="text-xs text-smoke">Mulai dari</span>
 								<div
-									class="gold-text"
+									class="white-text"
 									style="
 											font-family: &quot;Cormorant Garamond&quot;, serif;
 											font-size: 1.4rem;
@@ -581,7 +581,7 @@
 							<div>
 								<span class="text-xs text-smoke">Mulai dari</span>
 								<div
-									class="gold-text"
+									class="white-text"
 									style="
 											font-family: &quot;Cormorant Garamond&quot;, serif;
 											font-size: 1.4rem;
@@ -654,7 +654,7 @@
 							<div>
 								<span class="text-xs text-smoke">Mulai dari</span>
 								<div
-									class="gold-text"
+									class="white-text"
 									style="
 											font-family: &quot;Cormorant Garamond&quot;, serif;
 											font-size: 1.4rem;
@@ -721,7 +721,7 @@
 							<div>
 								<span class="text-xs text-smoke">Mulai dari</span>
 								<div
-									class="gold-text"
+									class="white-text"
 									style="
 											font-family: &quot;Cormorant Garamond&quot;, serif;
 											font-size: 1.4rem;
@@ -765,7 +765,7 @@
 							stroke-linecap="round" />
 					</svg>
 					<h3
-						class="gold-text mb-3"
+						class="white-text mb-3"
 						style="
 								font-family: &quot;Cormorant Garamond&quot;, serif;
 								font-size: 1.5rem;
@@ -797,7 +797,7 @@
 					Cara Kerja
 				</p>
 				<h2
-					class="gold-text mb-4"
+					class="white-text mb-4"
 					style="
 							font-family: &quot;Cormorant Garamond&quot;, serif;
 							font-size: clamp(2rem, 5vw, 3.5rem);
@@ -936,7 +936,7 @@
 		<div class="max-w-5xl mx-auto">
 			<div class="text-center mb-14">
 				<p
-					class="text-xs uppercase tracking-widest text-gold-500 mb-4"
+					class="text-xs uppercase tracking-widest text-white opacity-50 mb-4"
 					style="
 							font-family: &quot;Syne&quot;, sans-serif;
 							letter-spacing: 0.3em;
@@ -944,7 +944,7 @@
 					Kata Mereka
 				</p>
 				<h2
-					class="gold-text mb-3"
+					class="white-text mb-3"
 					style="
 							font-family: &quot;Cormorant Garamond&quot;, serif;
 							font-size: clamp(2rem, 5vw, 3.5rem);
@@ -1002,7 +1002,7 @@
 		<div class="max-w-5xl mx-auto">
 			<div class="text-center mb-14">
 				<p
-					class="text-xs uppercase tracking-widest text-gold-500 mb-4"
+					class="text-xs uppercase tracking-widest text-white opacity-50 mb-4"
 					style="
 							font-family: &quot;Syne&quot;, sans-serif;
 							letter-spacing: 0.3em;
@@ -1010,7 +1010,7 @@
 					Kata Mereka
 				</p>
 				<h2
-					class="gold-text"
+					class="white-text"
 					style="
 							font-family: &quot;Cormorant Garamond&quot;, serif;
 							font-size: clamp(2rem, 5vw, 3.5rem);
@@ -1028,7 +1028,7 @@
 					</p>
 					<div class="flex items-center gap-3">
 						<div
-							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
+							class="w-9 h-9 rounded-full bg-graphite border border-white/20 flex items-center justify-center text-white opacity-60 text-xs font-bold"
 							style="
 									border-color: rgba(212, 160, 23, 0.25);
 									font-family: &quot;Syne&quot;, sans-serif;
@@ -1043,7 +1043,7 @@
 							</div>
 							<div class="text-smoke text-xs">Owner, DistroKeren</div>
 						</div>
-						<div class="ml-auto text-gold-400" style="font-size: 12px">
+						<div class="ml-auto text-white opacity-60" style="font-size: 12px">
 							★★★★★
 						</div>
 					</div>
@@ -1056,7 +1056,7 @@
 					</p>
 					<div class="flex items-center gap-3">
 						<div
-							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
+							class="w-9 h-9 rounded-full bg-graphite border border-white/20 flex items-center justify-center text-white opacity-60 text-xs font-bold"
 							style="
 									border-color: rgba(212, 160, 23, 0.25);
 									font-family: &quot;Syne&quot;, sans-serif;
@@ -1071,7 +1071,7 @@
 							</div>
 							<div class="text-smoke text-xs">Ketua BEM, UNY</div>
 						</div>
-						<div class="ml-auto text-gold-400" style="font-size: 12px">
+						<div class="ml-auto text-white opacity-60" style="font-size: 12px">
 							★★★★★
 						</div>
 					</div>
@@ -1084,7 +1084,7 @@
 					</p>
 					<div class="flex items-center gap-3">
 						<div
-							class="w-9 h-9 rounded-full bg-graphite border border-gold flex items-center justify-center text-gold-400 text-xs font-bold"
+							class="w-9 h-9 rounded-full bg-graphite border border-white/20 flex items-center justify-center text-white opacity-60 text-xs font-bold"
 							style="
 									border-color: rgba(212, 160, 23, 0.25);
 									font-family: &quot;Syne&quot;, sans-serif;
@@ -1099,7 +1099,7 @@
 							</div>
 							<div class="text-smoke text-xs">Manager, StartupJogja</div>
 						</div>
-						<div class="ml-auto text-gold-400" style="font-size: 12px">
+						<div class="ml-auto text-white opacity-60" style="font-size: 12px">
 							★★★★★
 						</div>
 					</div>
@@ -1127,7 +1127,7 @@
 					Hasil Kerja
 				</p>
 				<h2
-					class="gold-text mb-4"
+					class="white-text mb-4"
 					style="
 							font-family: &quot;Cormorant Garamond&quot;, serif;
 							font-size: clamp(2rem, 5vw, 3.5rem);
@@ -1228,7 +1228,7 @@
 					Mulai Order
 				</p>
 				<h2
-					class="gold-text mb-4"
+					class="white-text mb-4"
 					style="
 							font-family: &quot;Cormorant Garamond&quot;, serif;
 							font-size: clamp(2rem, 5vw, 3.5rem);
@@ -1274,7 +1274,7 @@
 					<!-- Customer Info -->
 					<div class="mb-6">
 						<div
-							class="text-xs uppercase tracking-widest text-gold-600 mb-4"
+							class="text-xs uppercase tracking-widest mb-4"
 							style="
 									font-family: &quot;Syne&quot;, sans-serif;
 									font-size: 9px;
@@ -1307,12 +1307,12 @@
 					<!-- Product Info -->
 					<div class="mb-6">
 						<div
-							class="text-xs uppercase tracking-widest text-gold-600 mb-4"
+							class="text-xs uppercase tracking-widest text-white opacity-40 mb-4"
 							style="
 									font-family: &quot;Syne&quot;, sans-serif;
 									font-size: 9px;
 									letter-spacing: 0.2em;
-									border-bottom: 1px solid rgba(212, 160, 23, 0.1);
+									border-bottom: 1px solid rgba(204, 204, 204, 0.1);
 									padding-bottom: 8px;
 								">
 							Detail Produk
@@ -1469,7 +1469,7 @@
 						</div>
 						<div
 							id="duration-val"
-							class="gold-text"
+							class="white-text"
 							style="
 									font-family: &quot;Cormorant Garamond&quot;, serif;
 									font-size: 2rem;
@@ -1485,7 +1485,7 @@
 					<!-- Additional -->
 					<div class="mb-2">
 						<div
-							class="text-xs uppercase tracking-widest text-gold-600 mb-4"
+							class="text-xs uppercase tracking-widest text-white opacity-40 mb-4"
 							style="
 									font-family: &quot;Syne&quot;, sans-serif;
 									font-size: 9px;
@@ -1578,7 +1578,7 @@
 						<path
 							d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
 					</svg>
-					<span class="text-smoke text-xs">hello@aurum-apparel.id</span>
+					<span class="text-smoke text-xs">invsstudiocustom@gmail.com</span>
 				</div>
 				<div class="hidden sm:block opacity-20" style="color:#fff">|</div>
 				<div class="flex items-center gap-2 justify-center">
@@ -1593,7 +1593,7 @@
 							d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
 						<path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
 					</svg>
-					<span class="text-smoke text-xs">Yogyakarta, Indonesia</span>
+					<span class="text-smoke text-xs">Magelang, Indonesia</span>
 				</div>
 			</div>
 		</div>
@@ -1610,13 +1610,14 @@
 			<div
 				class="flex flex-col md:flex-row justify-between items-center gap-6 mb-8">
 				<div class="flex items-center gap-3">
-					<svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+					<!-- <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
 						<polygon
 							points="14,2 26,9 26,19 14,26 2,19 2,9"
 							stroke="#d4a017"
 							stroke-width="1.5"
 							fill="none" />
-					</svg>
+					</svg> -->
+					<img src="<?php echo base_url(); ?>assets/img/favicon/android-chrome-192x192.png" width="32" height="32" alt="">
 					<span
 						style="
 								font-family: &quot;Syne&quot;, sans-serif;
@@ -1624,13 +1625,9 @@
 								letter-spacing: 0.25em;
 								color: #ffffff;
 								font-size: 14px;
-							">AURUM</span>
+							">INVS</span>
 				</div>
-				<p
-					class="text-smoke text-xs text-center"
-					style="font-family: &quot;DM Sans&quot;, sans-serif">
-					Premium Custom Apparel · Yogyakarta
-				</p>
+
 				<div class="flex gap-4">
 					<a
 						href="#"
@@ -1675,7 +1672,7 @@
 				<p
 					class="text-xs text-ash"
 					style="font-family: &quot;DM Sans&quot;, sans-serif">
-					© 2025 AURUM Custom Apparel. All rights reserved.
+					© 2026 INVS Studio Custom. All rights reserved.
 				</p>
 			</div>
 		</div>
@@ -1723,7 +1720,7 @@
 				</svg>
 			</div>
 			<h3
-				class="gold-text mb-3"
+				class="white-text mb-3"
 				style="
 						font-family: &quot;Cormorant Garamond&quot;, serif;
 						font-size: 1.8rem;

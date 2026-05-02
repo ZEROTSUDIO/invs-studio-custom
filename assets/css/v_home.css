@@ -9,7 +9,8 @@ body {
 }
 
 /* Chrome/White gradient text — mirrors the logo's metallic lettering */
-.gold-text {
+.gold-text,
+.white-text {
 	background: linear-gradient(
 		135deg,
 		#ffffff 0%,
@@ -63,7 +64,8 @@ nav {
 
 /* Hero */
 .hero-bg {
-	background: radial-gradient(
+	background:
+		radial-gradient(
 			ellipse 80% 60% at 50% -10%,
 			rgba(255, 255, 255, 0.07) 0%,
 			transparent 60%
@@ -80,7 +82,12 @@ nav {
 .deco-line {
 	width: 60px;
 	height: 1px;
-	background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 255, 255, 0.6),
+		transparent
+	);
 }
 
 /* Product card */
@@ -96,7 +103,11 @@ nav {
 	content: "";
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 60%);
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.04) 0%,
+		transparent 60%
+	);
 	opacity: 0;
 	transition: opacity 0.4s;
 }
@@ -108,7 +119,10 @@ nav {
 .product-card:hover {
 	border-color: rgba(255, 255, 255, 0.4);
 	transform: translateY(-4px);
-	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 20px rgba(255,255,255,0.03);
+	box-shadow:
+		0 20px 60px rgba(0, 0, 0, 0.8),
+		0 0 0 1px rgba(255, 255, 255, 0.08),
+		0 0 20px rgba(255, 255, 255, 0.03);
 }
 
 /* Product image placeholder */
@@ -173,7 +187,9 @@ nav {
 	font-family: "DM Sans", sans-serif;
 	font-size: 14px;
 	border-radius: 4px;
-	transition: border-color 0.3s, box-shadow 0.3s;
+	transition:
+		border-color 0.3s,
+		box-shadow 0.3s;
 	outline: none;
 }
 
@@ -203,7 +219,13 @@ nav {
 
 /* Buttons — chrome white on black */
 .btn-gold {
-	background: linear-gradient(135deg, #e8e8e8 0%, #a0a0a0 40%, #d0d0d0 70%, #ffffff 100%);
+	background: linear-gradient(
+		135deg,
+		#e8e8e8 0%,
+		#a0a0a0 40%,
+		#d0d0d0 70%,
+		#ffffff 100%
+	);
 	background-size: 200% 200%;
 	color: #080808;
 	font-family: "Syne", sans-serif;
@@ -222,7 +244,9 @@ nav {
 
 .btn-gold:hover {
 	background-position: right center;
-	box-shadow: 0 8px 30px rgba(255, 255, 255, 0.18), 0 0 0 1px rgba(255,255,255,0.2);
+	box-shadow:
+		0 8px 30px rgba(255, 255, 255, 0.18),
+		0 0 0 1px rgba(255, 255, 255, 0.2);
 	transform: translateY(-1px);
 }
 
@@ -287,13 +311,19 @@ nav {
 	border: 1px solid rgba(255, 255, 255, 0.08);
 	background: #111;
 	cursor: pointer;
-	transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+	transition:
+		border-color 0.4s ease,
+		box-shadow 0.4s ease,
+		transform 0.4s ease;
 	border-radius: 6px;
 }
 
 .testimoni-shot:hover {
 	border-color: rgba(255, 255, 255, 0.4);
-	box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.08), 0 0 20px rgba(255,255,255,0.05);
+	box-shadow:
+		0 10px 40px rgba(0, 0, 0, 0.7),
+		0 0 0 1px rgba(255, 255, 255, 0.08),
+		0 0 20px rgba(255, 255, 255, 0.05);
 	transform: translateY(-4px);
 	z-index: 10;
 }
@@ -318,7 +348,9 @@ nav {
 	justify-content: center;
 	color: rgba(255, 255, 255, 0.85);
 	opacity: 0;
-	transition: opacity 0.4s ease, transform 0.4s ease;
+	transition:
+		opacity 0.4s ease,
+		transform 0.4s ease;
 	background: rgba(5, 5, 5, 0.2);
 }
 
@@ -334,7 +366,9 @@ nav {
 	width: 16px;
 	height: 16px;
 	opacity: 0;
-	transition: opacity 0.4s ease, transform 0.4s ease;
+	transition:
+		opacity 0.4s ease,
+		transform 0.4s ease;
 	z-index: 2;
 }
 
@@ -519,7 +553,8 @@ input[type="file"].form-input::file-selector-button {
 	height: 100%;
 	object-fit: cover;
 	display: block;
-	transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+	transition:
+		transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94),
 		filter 0.4s ease;
 	filter: brightness(0.85) saturate(0.8) contrast(1.05);
 }
@@ -532,11 +567,7 @@ input[type="file"].form-input::file-selector-button {
 .gallery-overlay {
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(
-		to top,
-		rgba(5, 5, 5, 0.8) 0%,
-		transparent 50%
-	);
+	background: linear-gradient(to top, rgba(5, 5, 5, 0.8) 0%, transparent 50%);
 	display: flex;
 	align-items: flex-end;
 	padding: 18px;
