@@ -1,0 +1,9 @@
+Field	Type	Null	Key	Default	Extra
+id	int	NO	PRI	NULL	auto_increment
+order_id	int	NO	MUL	NULL	
+queue_position	int	NO		NULL	
+start_date	datetime	YES		NULL	
+end_date	datetime	YES		NULL	
+status	enum('scheduled','in_progress','completed')	YES		scheduled	
+created_at	timestamp	YES		CURRENT_TIMESTAMP	DEFAULT_GENERATED
+updated_at	timestamp	YES		CURRENT_TIMESTAMP	DEFAULT_GENERATED on update CURRENT_TIMESTAMP

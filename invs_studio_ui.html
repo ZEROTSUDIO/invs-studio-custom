@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invs Studio — Production System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1714;
+    --coal: #242220;
+    --ash: #2e2c29;
+    --ember: #e8a020;
+    --ember-dim: #b07a18;
+    --cream: #f0ead8;
+    --smoke: #6b6760;
+    --ghost: #3a3835;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background-color: var(--ink);
+    color: var(--cream);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    margin: 0;
+    min-height: 100vh;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 24px, rgba(255,255,255,0.015) 24px, rgba(255,255,255,0.015) 25px),
+      repeating-linear-gradient(90deg, transparent, transparent 24px, rgba(255,255,255,0.015) 24px, rgba(255,255,255,0.015) 25px);
+  }
+
+  .font-display { font-family: 'Bebas Neue', cursive; letter-spacing: 0.05em; }
+  .font-syne { font-family: 'Syne', sans-serif; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 220px;
+    background: var(--coal);
+    border-right: 1px solid var(--ghost);
+    height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+  }
+
+  .sidebar-logo {
+    padding: 20px 18px 16px;
+    border-bottom: 1px solid var(--ghost);
+  }
+
+  .sidebar-logo .brand {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 26px;
+    letter-spacing: 0.1em;
+    color: var(--ember);
+    line-height: 1;
+  }
+
+  .sidebar-logo .sub {
+    font-size: 9px;
+    color: var(--smoke);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    padding: 14px 0 6px;
+  }
+
+  .nav-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--smoke);
+    text-transform: uppercase;
+    padding: 0 18px;
+    margin-bottom: 4px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 18px;
+    cursor: pointer;
+    color: var(--smoke);
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    font-size: 12px;
+  }
+
+  .nav-item:hover {
+    color: var(--cream);
+    background: var(--ghost);
+  }
+
+  .nav-item.active {
+    color: var(--ember);
+    border-left-color: var(--ember);
+    background: rgba(232, 160, 32, 0.08);
+  }
+
+  .nav-item .icon { font-size: 14px; width: 18px; text-align: center; }
+
+  .sidebar-footer {
+    margin-top: auto;
+    padding: 14px 18px;
+    border-top: 1px solid var(--ghost);
+  }
+
+  /* Main */
+  .main { margin-left: 220px; min-height: 100vh; }
+
+  /* Topbar */
+  .topbar {
+    height: 52px;
+    background: var(--coal);
+    border-bottom: 1px solid var(--ghost);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    color: var(--cream);
+  }
+
+  /* Panels */
+  .page { display: none; padding: 28px; }
+  .page.active { display: block; }
+
+  /* Stat cards */
+  .stat-card {
+    background: var(--coal);
+    border: 1px solid var(--ghost);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--ember);
+  }
+
+  .stat-val {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 42px;
+    color: var(--cream);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    margin-top: 4px;
+  }
+
+  .stat-sub {
+    font-size: 11px;
+    color: var(--ember);
+    margin-top: 6px;
+  }
+
+  /* Status badges */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .badge-pending    { background: rgba(107,103,96,0.3); color: #9b9790; border: 1px solid #4a4845; }
+  .badge-confirmed  { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+  .badge-production { background: rgba(232,160,32,0.15); color: var(--ember); border: 1px solid rgba(232,160,32,0.3); }
+  .badge-done       { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+  .badge-pickedup   { background: rgba(168,85,247,0.12); color: #c084fc; border: 1px solid rgba(168,85,247,0.25); }
+
+  /* Tables */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .data-table th {
+    text-align: left;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--ghost);
+    background: var(--ash);
+  }
+
+  .data-table td {
+    padding: 11px 16px;
+    border-bottom: 1px solid rgba(58,56,53,0.5);
+    color: var(--cream);
+    font-size: 12px;
+  }
+
+  .data-table tr:hover td { background: rgba(255,255,255,0.025); }
+
+  /* Form elements */
+  .form-group { margin-bottom: 18px; }
+
+  .form-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--smoke);
+    margin-bottom: 6px;
+  }
+
+  .form-input {
+    width: 100%;
+    background: var(--ash);
+    border: 1px solid var(--ghost);
+    color: var(--cream);
+    padding: 9px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--ember); }
+  .form-input::placeholder { color: var(--smoke); }
+
+  select.form-input option { background: var(--ash); }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+
+  .btn-primary { background: var(--ember); color: var(--ink); }
+  .btn-primary:hover { background: #f0b030; }
+  .btn-ghost { background: transparent; color: var(--smoke); border: 1px solid var(--ghost); }
+  .btn-ghost:hover { color: var(--cream); border-color: var(--smoke); }
+  .btn-danger { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+
+  /* Panel containers */
+  .panel {
+    background: var(--coal);
+    border: 1px solid var(--ghost);
+  }
+
+  .panel-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--ghost);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .panel-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--cream);
+  }
+
+  /* Queue card */
+  .queue-card {
+    background: var(--ash);
+    border: 1px solid var(--ghost);
+    border-left: 3px solid var(--ember);
+    padding: 14px 16px;
+    position: relative;
+  }
+
+  .queue-card.in-prod { border-left-color: #4ade80; }
+  .queue-card.done    { border-left-color: var(--smoke); opacity: 0.6; }
+
+  .queue-num {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 36px;
+    color: var(--ghost);
+    position: absolute;
+    right: 14px;
+    top: 8px;
+    line-height: 1;
+  }
+
+  /* Gantt */
+  .gantt-bar {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: filter 0.15s;
+  }
+
+  .gantt-bar:hover { filter: brightness(1.2); }
+
+  .gantt-bar::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--ink); }
+  ::-webkit-scrollbar-thumb { background: var(--ghost); }
+
+  /* Role toggle */
+  .role-toggle {
+    display: flex;
+    background: var(--ash);
+    border: 1px solid var(--ghost);
+    padding: 3px;
+    gap: 3px;
+  }
+
+  .role-btn {
+    padding: 5px 14px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--smoke);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+
+  .role-btn.active { background: var(--ember); color: var(--ink); }
+
+  /* Alert */
+  .alert {
+    padding: 10px 14px;
+    border-left: 3px solid var(--ember);
+    background: rgba(232,160,32,0.08);
+    font-size: 12px;
+    color: #c89828;
+    margin-bottom: 18px;
+  }
+
+  /* Progress bar */
+  .prog-track {
+    background: var(--ghost);
+    height: 4px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .prog-fill {
+    height: 4px;
+    background: var(--ember);
+    transition: width 0.4s;
+  }
+
+  /* Animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .page.active > * {
+    animation: fadeIn 0.25s ease both;
+  }
+
+  .file-drop {
+    border: 1px dashed var(--ghost);
+    background: var(--ash);
+    padding: 28px;
+    text-align: center;
+    transition: border-color 0.15s;
+    cursor: pointer;
+  }
+
+  .file-drop:hover { border-color: var(--ember); }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">INVS STUDIO</div>
+    <div class="sub">Production System v1.0</div>
+  </div>
+
+  <!-- Role toggle -->
+  <div style="padding: 14px 18px 0;">
+    <div class="form-label">Viewing as</div>
+    <div class="role-toggle">
+      <button class="role-btn active" onclick="setRole('admin', this)">Admin</button>
+      <button class="role-btn" onclick="setRole('customer', this)">Customer</button>
+    </div>
+  </div>
+
+  <!-- Admin Nav -->
+  <div class="nav-section" id="nav-admin">
+    <div class="nav-label">Admin Panel</div>
+    <div class="nav-item active" onclick="showPage('admin-dashboard', this)">
+      <span class="icon">▦</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('admin-orders', this)">
+      <span class="icon">≡</span> Orders
+    </div>
+    <div class="nav-item" onclick="showPage('admin-schedule', this)">
+      <span class="icon">◫</span> Schedule
+    </div>
+    <div class="nav-label" style="margin-top:12px;">Reports</div>
+    <div class="nav-item" onclick="showPage('admin-reports', this)">
+      <span class="icon">↗</span> Analytics
+    </div>
+  </div>
+
+  <!-- Customer Nav -->
+  <div class="nav-section" id="nav-customer" style="display:none;">
+    <div class="nav-label">My Account</div>
+    <div class="nav-item" onclick="showPage('cust-dashboard', this)">
+      <span class="icon">▦</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('cust-order', this)">
+      <span class="icon">+</span> New Order
+    </div>
+    <div class="nav-item" onclick="showPage('cust-track', this)">
+      <span class="icon">◎</span> Track Orders
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div style="font-size:9px; color: var(--smoke); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:8px;">SJF Algorithm</div>
+    <div style="font-size:11px; color: var(--ember);">⟳ Queue Active</div>
+    <div style="font-size:10px; color: var(--smoke); margin-top:4px;">14 orders in queue</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="page-title" id="topbar-title">Admin Dashboard</div>
+    <div style="display:flex; align-items:center; gap:16px;">
+      <div style="font-size:11px; color: var(--smoke);">
+        <span style="color: var(--ember);">●</span> &nbsp;Thu, 3 Apr 2025 &nbsp;|&nbsp; 09:41 WIB
+      </div>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="width:30px; height:30px; background: var(--ember); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:15px; color: var(--ink);">A</div>
+        <div>
+          <div style="font-size:11px; color: var(--cream); font-weight:600;">Admin</div>
+          <div style="font-size:9px; color: var(--smoke);">admin@invs.id</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PAGE: Admin Dashboard -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="page active" id="page-admin-dashboard">
+    <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:14px; margin-bottom:24px;">
+      <div class="stat-card">
+        <div class="stat-val">47</div>
+        <div class="stat-label">Total Orders</div>
+        <div class="stat-sub">↑ 8 this week</div>
+      </div>
+      <div class="stat-card" style="--before-color: #4ade80;">
+        <style>.stat-card:nth-child(2)::before { background: #4ade80; }</style>
+        <div class="stat-val">5</div>
+        <div class="stat-label">In Production</div>
+        <div class="stat-sub" style="color:#4ade80;">Running now</div>
+      </div>
+      <div class="stat-card">
+        <style>.stat-card:nth-child(3)::before { background: #60a5fa; }</style>
+        <div class="stat-val">14</div>
+        <div class="stat-label">Queued (SJF)</div>
+        <div class="stat-sub" style="color:#60a5fa;">Avg 2.4 days</div>
+      </div>
+      <div class="stat-card">
+        <style>.stat-card:nth-child(4)::before { background: #c084fc; }</style>
+        <div class="stat-val">28</div>
+        <div class="stat-label">Completed</div>
+        <div class="stat-sub" style="color:#c084fc;">This month</div>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 380px; gap:16px;">
+
+      <!-- Recent Orders -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent Orders</div>
+          <button class="btn btn-ghost" onclick="showPage('admin-orders', null)" style="padding:5px 12px; font-size:10px;">View All →</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Customer</th>
+              <th>Items</th>
+              <th>Est. Duration</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="color: var(--ember);">#ORD-031</td>
+              <td>Rafi Maulana</td>
+              <td>3 pcs</td>
+              <td>1 day</td>
+              <td><span class="badge badge-production">In Production</span></td>
+            </tr>
+            <tr>
+              <td style="color: var(--ember);">#ORD-032</td>
+              <td>Siti Rahma</td>
+              <td>8 pcs</td>
+              <td>2 days</td>
+              <td><span class="badge badge-production">In Production</span></td>
+            </tr>
+            <tr>
+              <td style="color: var(--ember);">#ORD-033</td>
+              <td>Dimas Arya</td>
+              <td>15 pcs</td>
+              <td>2 days</td>
+              <td><span class="badge badge-confirmed">Confirmed</span></td>
+            </tr>
+            <tr>
+              <td style="color: var(--ember);">#ORD-034</td>
+              <td>Nadia Putri</td>
+              <td>60 pcs</td>
+              <td>5 days</td>
+              <td><span class="badge badge-pending">Pending</span></td>
+            </tr>
+            <tr>
+              <td style="color: var(--ember);">#ORD-035</td>
+              <td>Bagas Prakoso</td>
+              <td>2 pcs</td>
+              <td>1 day</td>
+              <td><span class="badge badge-pending">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SJF Queue Summary -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">SJF Queue Preview</div>
+          <span style="font-size:9px; color: var(--smoke); letter-spacing:0.1em;">SHORTEST FIRST</span>
+        </div>
+        <div style="padding: 14px; display:flex; flex-direction:column; gap:10px;">
+          <div class="queue-card in-prod">
+            <span class="queue-num">1</span>
+            <div style="font-size:10px; color:#4ade80; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px;">● In Production</div>
+            <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:13px;">Rafi Maulana</div>
+            <div style="font-size:11px; color: var(--smoke);">3 pcs · 1 day</div>
+            <div class="prog-track">
+              <div class="prog-fill" style="width:65%; background:#4ade80;"></div>
+            </div>
+          </div>
+          <div class="queue-card in-prod">
+            <span class="queue-num">2</span>
+            <div style="font-size:10px; color:#4ade80; text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px;">● In Production</div>
+            <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:13px;">Siti Rahma</div>
+            <div style="font-size:11px; color: var(--smoke);">8 pcs · 2 days</div>
+            <div class="prog-track">
+              <div class="prog-fill" style="width:30%; background:#4ade80;"></div>
+            </div>
+          </div>
+          <div class="queue-card">
+            <span class="queue-num">3</span>
+            <div style="font-size:10px; color: var(--smoke); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px;">Queued</div>
+            <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:13px;">Bagas Prakoso</div>
+            <div style="font-size:11px; color: var(--smoke);">2 pcs · 1 day</div>
+          </div>
+          <div class="queue-card">
+            <span class="queue-num">4</span>
+            <div style="font-size:10px; color: var(--smoke); text-transform:uppercase; letter-spacing:0.12em; margin-bottom:4px;">Queued</div>
+            <div style="font-family:'Syne',sans-serif; font-weight:700; font-size:13px;">Dimas Arya</div>
+            <div style="font-size:11px; color: var(--smoke);">15 pcs · 2 days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PAGE: Admin Orders -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="page" id="page-admin-orders">
+    <!-- Filter bar -->
+    <div style="display:flex; gap:10px; margin-bottom:18px; align-items:center;">
+      <input class="form-input" placeholder="Search order ID / customer name..." style="max-width:300px;">
+      <select class="form-input" style="width:160px;">
+        <option>All Statuses</option>
+        <option>Pending</option>
+        <option>Confirmed</option>
+        <option>In Production</option>
+        <option>Done</option>
+        <option>Picked Up</option>
+      </select>
+      <div style="margin-left:auto; display:flex; gap:8px;">
+        <button class="btn btn-ghost">↓ Export CSV</button>
+        <button class="btn btn-primary">+ New Order</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">All Orders <span style="font-size:10px; color: var(--smoke); font-weight:400; margin-left:8px;">47 total</span></div>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Queue #</th>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Design File</th>
+            <th>Qty</th>
+            <th>Est. Duration</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span style="font-family:'Bebas Neue'; font-size:18px; color: var(--ember);">01</span></td>
+            <td style="color: var(--ember);">#ORD-031</td>
+            <td>Rafi Maulana</td>
+            <td><span style="color:#60a5fa; text-decoration:underline; cursor:pointer;">design_rafi.png</span></td>
+            <td>3 pcs</td>
+            <td>1 day</td>
+            <td>3 Apr</td>
+            <td>3 Apr</td>
+            <td><span class="badge badge-production">In Production</span></td>
+            <td style="display:flex; gap:6px; padding: 8px 16px;">
+              <button class="btn btn-ghost" style="padding:4px 10px; font-size:9px;">Edit</button>
+              <button class="btn" style="padding:4px 10px; font-size:9px; background:rgba(34,197,94,0.12); color:#4ade80; border:1px solid rgba(34,197,94,0.25);">→ Done</button>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="font-family:'Bebas Neue'; font-size:18px; color: var(--ember);">02</span></td>
+            <td style="color: var(--ember);">#ORD-032</td>
+            <td>Siti Rahma</td>
+            <td><span style="color:#60a5fa; text-decoration:underline; cursor:pointer;">kaos_siti_v2.pdf</span></td>
+            <td>8 pcs</td>
+            <td>2 days</td>
+            <td>3 Apr</td>
+            <td>4 Apr</td>
+            <td><span class="badge badge-production">In Production</span></td>
+            <td style="display:flex; gap:6px; padding: 8px 16px;">
+              <button class="btn btn-ghost" style="padding:4px 10px; font-size:9px;">Edit</button>
+              <button class="btn" style="padding:4px 10px; font-size:9px; background:rgba(34,197,94,0.12); color:#4ade80; border:1px solid rgba(34,197,94,0.25);">→ Done</button>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="font-family:'Bebas Neue'; font-size:18px; color: var(--smoke);">03</span></td>
+            <td style="color: var(--ember);">#ORD-035</td>
+            <td>Bagas Prakoso</td>
+            <td><span style="color:#60a5fa; text-decoration:underline; cursor:pointer;">design_b.png</span></td>
+            <td>2 pcs</td>
+            <td>1 day</td>
+            <td>5 Apr</td>
+            <td>5 Apr</td>
+            <td><span class="badge badge-confirmed">Confirmed</span></td>
+            <td style="display:flex; gap:6px; padding: 8px 16px;">
+              <button class="btn btn-ghost" style="padding:4px 10px; font-size:9px;">Edit</button>
+              <button class="btn" style="padding:4px 10px; font-size:9px; background:rgba(232,160,32,0.12); color:var(--ember); border:1px solid rgba(232,160,32,0.25);">→ Produce</button>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="font-family:'Bebas Neue'; font-size:18px; color: var(--smoke);">04</span></td>
+            <td style="color: var(--ember);">#ORD-033</td>
+            <td>Dimas Arya</td>
+            <td><span style="color:#60a5fa; text-decoration:underline; cursor:pointer;">dimas_uniform.png</span></td>
+            <td>15 pcs</td>
+            <td>2 days</td>
+            <td>6 Apr</td>
+            <td>7 Apr</td>
+            <td><span class="badge badge-confirmed">Confirmed</span></td>
+            <td style="display:flex; gap:6px; padding: 8px 16px;">
+              <button class="btn btn-ghost" style="padding:4px 10px; font-size:9px;">Edit</button>
+              <button class="btn" style="padding:4px 10px; font-size:9px; background:rgba(232,160,32,0.12); color:var(--ember); border:1px solid rgba(232,160,32,0.25);">→ Produce</button>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="font-family:'Bebas Neue'; font-size:18px; color: var(--smoke);">05</span></td>
+            <td style="color: var(--ember);">#ORD-034</td>
+            <td>Nadia Putri</td>
+            <td><span style="color: var(--smoke);">Awaiting upload</span></td>
+            <td>60 pcs</td>
+            <td>5 days</td>
+            <td>8 Apr</td>
+            <td>12 Apr</td>
+            <td><span class="badge badge-pending">Pending</span></td>
+            <td style="display:flex; gap:6px; padding: 8px 16px;">
+              <button class="btn btn-ghost" style="padding:4px 10px; font-size:9px;">Edit</button>
+              <button class="btn" style="padding:4px 10px; font-size:9px; background:rgba(59,130,246,0.12); color:#60a5fa; border:1px solid rgba(59,130,246,0.25);">→ Confirm</button>
+            </td>
+          </tr>
+          <tr>
+            <td><span style="font-family:'Bebas Neue'; font-size:18px; color: var(--smoke); opacity:0.4;">—</span></td>
+            <td style="color: var(--ember);">#ORD-028</td>
+            <td>Ayu Lestari</td>
+            <td><span style="color:#60a5fa; text-decoration:underline; cursor:pointer;">ayu_kaos.png</span></td>
+            <td>25 pcs</td>
+            <td>3 days</td>
+            <td>28 Mar</td>
+            <td>30 Mar</td>
+            <td><span class="badge badge-done">Done</span></td>
+            <td style="display:flex; gap:6px; padding: 8px 16px;">
+              <button class="btn btn-ghost" style="padding:4px 10px; font-size:9px;">View</button>
+              <button class="btn" style="padding:4px 10px; font-size:9px; background:rgba(168,85,247,0.12); color:#c084fc; border:1px solid rgba(168,85,247,0.25);">→ Picked Up</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination -->
+      <div style="padding: 14px 20px; display:flex; align-items:center; justify-content:space-between; border-top: 1px solid var(--ghost);">
+        <div style="font-size:11px; color: var(--smoke);">Showing 1–6 of 47 orders</div>
+        <div style="display:flex; gap:4px;">
+          <button class="btn btn-ghost" style="padding:5px 12px; font-size:11px;">← Prev</button>
+          <button class="btn btn-primary" style="padding:5px 12px; font-size:11px;">1</button>
+          <button class="btn btn-ghost" style="padding:5px 12px; font-size:11px;">2</button>
+          <button class="btn btn-ghost" style="padding:5px 12px; font-size:11px;">3</button>
+          <button class="btn btn-ghost" style="padding:5px 12px; font-size:11px;">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PAGE: Admin Schedule -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="page" id="page-admin-schedule">
+    <div class="alert">
+      ⟳ &nbsp;SJF algorithm recalculated — queue reordered at 09:38 WIB. 2 jobs inserted. All start/end dates updated automatically.
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 300px; gap:16px;">
+
+      <!-- Gantt Chart -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Production Timeline</div>
+          <div style="display:flex; gap:14px; font-size:10px; color: var(--smoke);">
+            <span><span style="color:#4ade80;">●</span> In Production</span>
+            <span><span style="color: var(--ember);">●</span> Queued</span>
+            <span><span style="color: var(--smoke);">●</span> Done</span>
+          </div>
+        </div>
+        <div style="padding: 18px 20px;">
+
+          <!-- Date headers -->
+          <div style="display:grid; grid-template-columns: 160px repeat(10, 1fr); gap:0; margin-bottom:12px;">
+            <div></div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">3 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">4 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">5 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">6 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">7 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">8 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">9 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">10 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">11 Apr</div>
+            <div style="font-size:9px; color: var(--smoke); letter-spacing:0.1em; text-align:center; border-left:1px solid var(--ghost); padding:3px;">12 Apr</div>
+          </div>
+
+          <!-- Gantt Rows -->
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <!-- Row template: name col + 10-col grid -->
+            <div style="display:grid; grid-template-columns: 160px repeat(10, 1fr); gap:0; align-items:center;">
+              <div style="font-size:11px; color: var(--cream); padding-right:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">#031 Rafi M.</div>
+              <div style="grid-column: 1 / 2; display:none;"></div>
+              <!-- spans col 1 = 1 day, from col 1 -->
+              <div style="grid-column: 2 / 3;">
+                <div class="gantt-bar" style="background:#22863a; color:#4ade80;">3 pcs · 1d</div>
+              </div>
+              <div style="grid-column: 3 / 12; background: rgba(255,255,255,0.02); height:28px;"></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 160px repeat(10, 1fr); gap:0; align-items:center;">
+              <div style="font-size:11px; color: var(--cream); padding-right:12px;">#032 Siti R.</div>
+              <div style="grid-column: 2 / 4;">
+                <div class="gantt-bar" style="background:#1a5c2a; color:#4ade80;">8 pcs · 2d</div>
+              </div>
+              <div style="grid-column: 4 / 12; background: rgba(255,255,255,0.02); height:28px;"></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 160px repeat(10, 1fr); gap:0; align-items:center;">
+              <div style="font-size:11px; color: var(--cream); padding-right:12px;">#035 Bagas P.</div>
+              <div style="grid-column: 2 / 3; background: rgba(255,255,255,0.02); height:28px;"></div>
+              <div style="grid-column: 3 / 4;">
+                <div class="gantt-bar" style="background:#7a4010; color:var(--ember);">2 pcs · 1d</div>
+              </div>
+              <div style="grid-column: 4 / 12; background: rgba(255,255,255,0.02); height:28px;"></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 160px repeat(10, 1fr); gap:0; align-items:center;">
+              <div style="font-size:11px; color: var(--cream); padding-right:12px;">#033 Dimas A.</div>
+              <div style="grid-column: 2 / 4; background: rgba(255,255,255,0.02); height:28px;"></div>
+              <div style="grid-column: 4 / 6;">
+                <div class="gantt-bar" style="background:#7a4010; color:var(--ember);">15 pcs · 2d</div>
+              </div>
+              <div style="grid-column: 6 / 12; background: rgba(255,255,255,0.02); height:28px;"></div>
+            </div>
+            <div style="display:grid; grid-template-columns: 160px repeat(10, 1fr); gap:0; align-items:center;">
+              <div style="font-size:11px; color: var(--cream); padding-right:12px;">#034 Nadia P.</div>
+              <div style="grid-column: 2 / 6; background: rgba(255,255,255,0.02); height:28px;"></div>
+              <div style="grid-column: 6 / 11;">
+                <div class="gantt-bar" style="background:#5c3a00; color:#c89828;">60 pcs · 5d</div>
+              </div>
+              <div style="grid-column: 11 / 12; background: rgba(255,255,255,0.02); height:28px;"></div>
+            </div>
+          </div>
+
+          <!-- Today marker line (visual only) -->
+          <div style="margin-top:8px; font-size:9px; color: var(--ember); letter-spacing:0.12em; padding-left:160px;">
+            ▲ TODAY (Col 1 = Apr 3)
+          </div>
+        </div>
+      </div>
+
+      <!-- SJF Details -->
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">Algorithm Info</div>
+          </div>
+          <div style="padding:16px;">
+            <div style="font-size:11px; color: var(--smoke); line-height:1.7; margin-bottom:14px;">
+              Shortest Job First (SJF) sorts pending orders by <span style="color: var(--ember);">est_duration</span> ascending. Ties broken by <span style="color: var(--ember);">created_at</span>.
+            </div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; justify-content:space-between; font-size:11px; padding:6px 10px; background: var(--ash);">
+                <span style="color: var(--smoke);">1–5 pcs</span>
+                <span style="color: var(--ember);">1 day</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; padding:6px 10px; background: var(--ash);">
+                <span style="color: var(--smoke);">6–20 pcs</span>
+                <span style="color: var(--ember);">2 days</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; padding:6px 10px; background: var(--ash);">
+                <span style="color: var(--smoke);">21–50 pcs</span>
+                <span style="color: var(--ember);">3 days</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; padding:6px 10px; background: var(--ash);">
+                <span style="color: var(--smoke);">51–100 pcs</span>
+                <span style="color: var(--ember);">5 days</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:11px; padding:6px 10px; background: var(--ash);">
+                <span style="color: var(--smoke);">100+ pcs</span>
+                <span style="color: var(--ember);">7 days</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Queue Stats</div></div>
+          <div style="padding:16px; display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:11px; color: var(--smoke);">Shortest wait</span>
+              <span style="font-size:11px; color: var(--ember); font-weight:600;">1 day</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:11px; color: var(--smoke);">Longest wait</span>
+              <span style="font-size:11px; color: var(--cream);">12 days</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:11px; color: var(--smoke);">Avg wait time</span>
+              <span style="font-size:11px; color: var(--cream);">4.2 days</span>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+              <span style="font-size:11px; color: var(--smoke);">Capacity load</span>
+              <span style="font-size:11px; color: #4ade80;">Moderate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PAGE: Admin Reports -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="page" id="page-admin-reports">
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Orders by Status</div></div>
+        <div style="padding:20px; display:flex; flex-direction:column; gap:12px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+              <span style="font-size:11px; color: var(--smoke);">Completed (Picked Up)</span>
+              <span style="font-size:11px; color: var(--cream);">19 · 40%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:40%; background:#c084fc;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+              <span style="font-size:11px; color: var(--smoke);">Done (Awaiting Pickup)</span>
+              <span style="font-size:11px; color: var(--cream);">9 · 19%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:19%; background:#4ade80;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+              <span style="font-size:11px; color: var(--smoke);">In Production</span>
+              <span style="font-size:11px; color: var(--cream);">5 · 11%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:11%; background:var(--ember);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+              <span style="font-size:11px; color: var(--smoke);">Confirmed</span>
+              <span style="font-size:11px; color: var(--cream);">6 · 13%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:13%; background:#60a5fa;"></div></div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+              <span style="font-size:11px; color: var(--smoke);">Pending</span>
+              <span style="font-size:11px; color: var(--cream);">8 · 17%</span>
+            </div>
+            <div class="prog-track"><div class="prog-fill" style="width:17%; background:var(--smoke);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Top Customers (This Month)</div></div>
+        <table class="data-table">
+          <thead>
+            <tr><th>#</th><th>Customer</th><th>Orders</th><th>Total Items</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:var(--ember); font-family:'Bebas Neue'; font-size:16px;">1</td><td>Ayu Lestari</td><td>6</td><td>142 pcs</td></tr>
+            <tr><td style="color:var(--ember); font-family:'Bebas Neue'; font-size:16px;">2</td><td>Nadia Putri</td><td>4</td><td>98 pcs</td></tr>
+            <tr><td style="color:var(--smoke); font-family:'Bebas Neue'; font-size:16px;">3</td><td>Dimas Arya</td><td>3</td><td>61 pcs</td></tr>
+            <tr><td style="color:var(--smoke); font-family:'Bebas Neue'; font-size:16px;">4</td><td>Rafi Maulana</td><td>3</td><td>20 pcs</td></tr>
+            <tr><td style="color:var(--smoke); font-family:'Bebas Neue'; font-size:16px;">5</td><td>Siti Rahma</td><td>2</td><td>18 pcs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PAGE: Customer Dashboard -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="page" id="page-cust-dashboard">
+    <div style="margin-bottom:22px;">
+      <div style="font-family:'Syne',sans-serif; font-weight:800; font-size:22px; color: var(--cream);">Hey, Rafi. 👋</div>
+      <div style="font-size:12px; color: var(--smoke); margin-top:3px;">Here's what's happening with your orders.</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:22px;">
+      <div class="stat-card">
+        <div class="stat-val">3</div>
+        <div class="stat-label">Active Orders</div>
+        <div class="stat-sub">↑ 1 new this week</div>
+      </div>
+      <div class="stat-card">
+        <style>.cust-stat-2::before { background: #4ade80; }</style>
+        <div class="stat-val">1</div>
+        <div class="stat-label">In Production</div>
+        <div class="stat-sub" style="color:#4ade80;">Est. done today</div>
+      </div>
+      <div class="stat-card">
+        <style>.cust-stat-3::before { background: #c084fc; }</style>
+        <div class="stat-val">8</div>
+        <div class="stat-label">All-Time Orders</div>
+        <div class="stat-sub" style="color:#c084fc;">Since Jan 2025</div>
+      </div>
+    </div>
+
+    <!-- Active order highlight -->
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-header">
+        <div class="panel-title">Order #ORD-031 — In Production Now</div>
+        <span class="badge badge-production">In Production</span>
+      </div>
+      <div style="padding:18px 20px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 200px; gap:16px; align-items:center;">
+          <div>
+            <div class="form-label">Design File</div>
+            <div style="font-size:12px; color:#60a5fa; text-decoration:underline; cursor:pointer;">design_rafi.png</div>
+          </div>
+          <div>
+            <div class="form-label">Quantity</div>
+            <div style="font-size:12px;">3 pcs</div>
+          </div>
+          <div>
+            <div class="form-label">Est. Completion</div>
+            <div style="font-size:12px; color: var(--ember);">Today, Apr 3</div>
+          </div>
+          <div>
+            <div class="form-label">Progress</div>
+            <div style="font-size:11px; color: var(--smoke); margin-bottom:4px;">~65% complete</div>
+            <div class="prog-track">
+              <div class="prog-fill" style="width:65%; background:#4ade80;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">My Orders</div>
+        <button class="btn btn-primary" style="padding:5px 14px; font-size:10px;" onclick="showPage('cust-order', null)">+ New Order</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Order ID</th><th>Qty</th><th>Queue Pos.</th><th>Start</th><th>Est. Done</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color: var(--ember);">#ORD-031</td>
+            <td>3 pcs</td>
+            <td><span style="font-family:'Bebas Neue'; font-size:16px; color: var(--ember);">Q1</span></td>
+            <td>3 Apr</td>
+            <td style="color: var(--ember);">3 Apr</td>
+            <td><span class="badge badge-production">In Production</span></td>
+          </tr>
+          <tr>
+            <td style="color: var(--ember);">#ORD-024</td>
+            <td>12 pcs</td>
+            <td><span style="font-family:'Bebas Neue'; font-size:16px; color: var(--smoke);">—</span></td>
+            <td>10 Mar</td>
+            <td>12 Mar</td>
+            <td><span class="badge badge-done">Done</span></td>
+          </tr>
+          <tr>
+            <td style="color: var(--ember);">#ORD-019</td>
+            <td>5 pcs</td>
+            <td><span style="font-family:'Bebas Neue'; font-size:16px; color: var(--smoke);">—</span></td>
+            <td>20 Feb</td>
+            <td>20 Feb</td>
+            <td><span class="badge badge-pickedup">Picked Up</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PAGE: Customer New Order -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="page" id="page-cust-order">
+    <div style="max-width: 640px;">
+      <div style="margin-bottom:22px;">
+        <div style="font-family:'Syne',sans-serif; font-weight:800; font-size:18px; color: var(--cream);">Submit New Order</div>
+        <div style="font-size:11px; color: var(--smoke); margin-top:4px;">Your order will be auto-scheduled using the SJF algorithm.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Order Details</div></div>
+        <div style="padding:22px;">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input class="form-input" type="text" placeholder="e.g. Rafi Maulana" value="Rafi Maulana">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone / WhatsApp</label>
+            <input class="form-input" type="text" placeholder="08xxxxxxxxxx" value="081234567890">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Product Type</label>
+            <select class="form-input">
+              <option>T-Shirt (DTF Print)</option>
+              <option>T-Shirt (Screen Print)</option>
+              <option>Hoodie</option>
+              <option>Polo Shirt</option>
+              <option>Tote Bag</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Quantity (pcs)</label>
+            <input class="form-input" type="number" placeholder="e.g. 12" id="qty-input" oninput="calcDuration(this.value)">
+          </div>
+
+          <!-- Duration estimate box -->
+          <div id="duration-box" style="display:none; padding:12px 14px; background: rgba(232,160,32,0.08); border:1px solid rgba(232,160,32,0.25); margin-bottom:18px;">
+            <div style="font-size:9px; letter-spacing:0.15em; text-transform:uppercase; color: var(--smoke); margin-bottom:4px;">Estimated Duration (SJF)</div>
+            <div id="duration-val" style="font-family:'Bebas Neue'; font-size:28px; color: var(--ember); line-height:1;"></div>
+            <div id="duration-note" style="font-size:10px; color: var(--smoke); margin-top:3px;"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Special Notes</label>
+            <textarea class="form-input" rows="3" placeholder="Color preferences, size breakdown, etc."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Upload Design File</label>
+            <div class="file-drop" onclick="document.getElementById('file-upload').click()">
+              <div style="font-size:22px; margin-bottom:8px; color: var(--smoke);">↑</div>
+              <div style="font-size:12px; color: var(--smoke);">Click to upload or drag & drop</div>
+              <div style="font-size:10px; color: var(--ghost); margin-top:4px;">PNG, PDF, AI — max 20MB</div>
+              <input type="file" id="file-upload" style="display:none;">
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:8px;">
+            <button class="btn btn-ghost" onclick="showPage('cust-dashboard', null)">Cancel</button>
+            <button class="btn btn-primary">Submit Order →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- PAGE: Customer Track Orders -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="page" id="page-cust-track">
+    <div style="max-width:700px;">
+      <div style="margin-bottom:18px;">
+        <div style="font-family:'Syne',sans-serif; font-weight:800; font-size:18px; color: var(--cream);">Track My Orders</div>
+      </div>
+
+      <!-- Order tracker card -->
+      <div class="panel" style="margin-bottom:16px;">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">#ORD-031</div>
+            <div style="font-size:10px; color: var(--smoke); margin-top:2px;">3 pcs T-Shirt · Submitted Apr 3, 2025</div>
+          </div>
+          <span class="badge badge-production">In Production</span>
+        </div>
+        <div style="padding:22px 24px;">
+          <!-- Status flow -->
+          <div style="display:flex; align-items:center; gap:0;">
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; background: var(--ember); display:flex; align-items:center; justify-content:center; font-size:13px; margin:0 auto 6px;">✓</div>
+              <div style="font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--ember);">Pending</div>
+            </div>
+            <div style="flex:1; height:2px; background: var(--ember);"></div>
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; background: var(--ember); display:flex; align-items:center; justify-content:center; font-size:13px; margin:0 auto 6px;">✓</div>
+              <div style="font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--ember);">Confirmed</div>
+            </div>
+            <div style="flex:1; height:2px; background: #4ade80;"></div>
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; background: #4ade80; display:flex; align-items:center; justify-content:center; font-size:13px; color: var(--ink); margin:0 auto 6px;">⟳</div>
+              <div style="font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: #4ade80;">In Production</div>
+            </div>
+            <div style="flex:1; height:2px; background: var(--ghost);"></div>
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; border:2px solid var(--ghost); display:flex; align-items:center; justify-content:center; font-size:11px; color: var(--smoke); margin:0 auto 6px;">○</div>
+              <div style="font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--smoke);">Done</div>
+            </div>
+            <div style="flex:1; height:2px; background: var(--ghost);"></div>
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; border:2px solid var(--ghost); display:flex; align-items:center; justify-content:center; font-size:11px; color: var(--smoke); margin:0 auto 6px;">○</div>
+              <div style="font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color: var(--smoke);">Picked Up</div>
+            </div>
+          </div>
+
+          <div style="margin-top:18px; padding:12px 14px; background: var(--ash); border-left: 3px solid #4ade80;">
+            <div style="font-size:11px; color: #4ade80; margin-bottom:3px;">● Currently in production</div>
+            <div style="font-size:12px; color: var(--cream);">Your order is being printed. Expected completion: <strong>today, Apr 3</strong>.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Another order -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">#ORD-024</div>
+            <div style="font-size:10px; color: var(--smoke); margin-top:2px;">12 pcs T-Shirt · Submitted Mar 8, 2025</div>
+          </div>
+          <span class="badge badge-done">Done — Ready for Pickup</span>
+        </div>
+        <div style="padding:22px 24px;">
+          <div style="display:flex; align-items:center; gap:0;">
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; background: var(--ember); display:flex; align-items:center; justify-content:center; font-size:13px; margin:0 auto 6px;">✓</div>
+              <div style="font-size:9px; text-transform:uppercase; color: var(--ember);">Pending</div>
+            </div>
+            <div style="flex:1; height:2px; background: var(--ember);"></div>
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; background: var(--ember); display:flex; align-items:center; justify-content:center; font-size:13px; margin:0 auto 6px;">✓</div>
+              <div style="font-size:9px; text-transform:uppercase; color: var(--ember);">Confirmed</div>
+            </div>
+            <div style="flex:1; height:2px; background: var(--ember);"></div>
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; background: var(--ember); display:flex; align-items:center; justify-content:center; font-size:13px; margin:0 auto 6px;">✓</div>
+              <div style="font-size:9px; text-transform:uppercase; color: var(--ember);">In Production</div>
+            </div>
+            <div style="flex:1; height:2px; background: #4ade80;"></div>
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; background: #4ade80; display:flex; align-items:center; justify-content:center; font-size:13px; color: var(--ink); margin:0 auto 6px;">✓</div>
+              <div style="font-size:9px; text-transform:uppercase; color: #4ade80;">Done</div>
+            </div>
+            <div style="flex:1; height:2px; background: var(--ghost);"></div>
+            <div style="text-align:center; flex:1;">
+              <div style="width:28px; height:28px; border-radius:50%; border:2px solid var(--ghost); display:flex; align-items:center; justify-content:center; font-size:11px; color: var(--smoke); margin:0 auto 6px;">○</div>
+              <div style="font-size:9px; text-transform:uppercase; color: var(--smoke);">Picked Up</div>
+            </div>
+          </div>
+          <div style="margin-top:18px; padding:12px 14px; background: var(--ash); border-left: 3px solid #4ade80;">
+            <div style="font-size:12px; color: var(--cream);">Your order is <strong style="color:#4ade80;">ready for pickup</strong> at our studio. Please bring your order ID.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- ═══════════════════════════════════════════════ -->
+<!-- LOGIN PAGE (modal overlay) -->
+<!-- ═══════════════════════════════════════════════ -->
+<div id="login-overlay" style="display:none; position:fixed; inset:0; background:rgba(20,18,16,0.96); z-index:200; display:flex; align-items:center; justify-content:center;">
+  <div style="width:380px; background: var(--coal); border:1px solid var(--ghost);">
+    <div style="padding:28px 28px 20px; border-bottom:1px solid var(--ghost);">
+      <div style="font-family:'Bebas Neue'; font-size:30px; color: var(--ember); letter-spacing:0.08em;">INVS STUDIO</div>
+      <div style="font-size:10px; color: var(--smoke); letter-spacing:0.18em; text-transform:uppercase; margin-top:2px;">Production System</div>
+    </div>
+    <div style="padding:24px 28px;">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" placeholder="you@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••">
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px;">
+        <span style="font-size:10px; color: var(--smoke);">Forgot password?</span>
+        <span style="font-size:10px; color: var(--smoke);">Register →</span>
+      </div>
+      <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:20px;" onclick="document.getElementById('login-overlay').style.display='none'">Sign In →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Page navigation
+  const pageMap = {
+    'admin-dashboard': { id: 'admin-dashboard', title: 'Admin Dashboard' },
+    'admin-orders':    { id: 'admin-orders',    title: 'Orders Management' },
+    'admin-schedule':  { id: 'admin-schedule',  title: 'Production Schedule' },
+    'admin-reports':   { id: 'admin-reports',   title: 'Analytics & Reports' },
+    'cust-dashboard':  { id: 'cust-dashboard',  title: 'My Dashboard' },
+    'cust-order':      { id: 'cust-order',      title: 'New Order' },
+    'cust-track':      { id: 'cust-track',      title: 'Track Orders' },
+  };
+
+  function showPage(key, navEl) {
+    // Hide all pages
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // Show target
+    const page = document.getElementById('page-' + key);
+    if (page) page.classList.add('active');
+
+    // Update topbar title
+    if (pageMap[key]) {
+      document.getElementById('topbar-title').textContent = pageMap[key].title;
+    }
+
+    // Update nav active
+    if (navEl) {
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      navEl.classList.add('active');
+    }
+  }
+
+  // Role toggle
+  function setRole(role, btn) {
+    // Toggle buttons
+    document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    const adminNav = document.getElementById('nav-admin');
+    const custNav  = document.getElementById('nav-customer');
+
+    if (role === 'admin') {
+      adminNav.style.display = 'block';
+      custNav.style.display  = 'none';
+      showPage('admin-dashboard', adminNav.querySelector('.nav-item'));
+    } else {
+      adminNav.style.display = 'none';
+      custNav.style.display  = 'block';
+      showPage('cust-dashboard', custNav.querySelector('.nav-item'));
+    }
+  }
+
+  // Duration calculator
+  function calcDuration(qty) {
+    qty = parseInt(qty);
+    const box = document.getElementById('duration-box');
+    const val  = document.getElementById('duration-val');
+    const note = document.getElementById('duration-note');
+
+    if (!qty || qty <= 0) { box.style.display = 'none'; return; }
+
+    let days, label;
+    if (qty <= 5)        { days = 1; label = '1–5 pcs'; }
+    else if (qty <= 20)  { days = 2; label = '6–20 pcs'; }
+    else if (qty <= 50)  { days = 3; label = '21–50 pcs'; }
+    else if (qty <= 100) { days = 5; label = '51–100 pcs'; }
+    else                 { days = 7; label = '100+ pcs'; }
+
+    val.textContent  = days + (days === 1 ? ' day' : ' days');
+    note.textContent = `Range: ${label} → ${days} day${days>1?'s':''}. Actual queue position assigned by SJF.`;
+    box.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
