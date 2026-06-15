@@ -3,27 +3,27 @@
 }
 
 body {
-	background-color: #080808;
-	color: #e8e8e0;
+	background-color: #f8f7f5;
+	color: #1a1a1a;
 	font-family: "DM Sans", sans-serif;
 }
 
-/* Chrome/White gradient text — mirrors the logo's metallic lettering */
+/* Dark gradient text — for light theme */
 .gold-text,
 .white-text {
 	background: linear-gradient(
 		135deg,
-		#ffffff 0%,
-		#c0c0c0 35%,
-		#e8e8e8 60%,
-		#ffffff 100%
+		#1a1a1a 0%,
+		#3a3a3a 35%,
+		#2a2a2a 60%,
+		#111111 100%
 	);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
 }
 
-/* Grain overlay — adds depth matching the logo's textured background */
+/* Grain overlay — subtle paper texture */
 body::before {
 	content: "";
 	position: fixed;
@@ -31,35 +31,35 @@ body::before {
 	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
 	pointer-events: none;
 	z-index: 9999;
-	opacity: 0.5;
+	opacity: 0.2;
 }
 
-/* Cracked web-line background texture — inspired by logo's spiderweb motif */
+/* Cracked web-line background texture — light version */
 body::after {
 	content: "";
 	position: fixed;
 	inset: 0;
-	background-image: url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cg stroke='%23ffffff' stroke-width='0.4' opacity='0.04' fill='none'%3E%3Cpath d='M400 100 L420 300 L500 350 L600 200 L650 400 L700 300'/%3E%3Cpath d='M400 100 L380 280 L300 320 L200 180 L150 380 L100 280'/%3E%3Cpath d='M420 300 L500 350 L480 480 L600 500 L550 650'/%3E%3Cpath d='M380 280 L300 320 L320 460 L200 490 L250 640'/%3E%3Cpath d='M480 480 L400 520 L320 460'/%3E%3Cpath d='M400 520 L410 700 L380 750'/%3E%3Cpath d='M600 200 L700 180 L750 50'/%3E%3Cpath d='M200 180 L100 160 L50 40'/%3E%3Cpath d='M650 400 L750 420 L780 600'/%3E%3Cpath d='M150 380 L50 400 L20 580'/%3E%3Cpath d='M500 350 L550 280 L620 300'/%3E%3Cpath d='M300 320 L250 260 L180 280'/%3E%3C/g%3E%3C/svg%3E");
+	background-image: url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cg stroke='%23000000' stroke-width='0.4' opacity='0.03' fill='none'%3E%3Cpath d='M400 100 L420 300 L500 350 L600 200 L650 400 L700 300'/%3E%3Cpath d='M400 100 L380 280 L300 320 L200 180 L150 380 L100 280'/%3E%3Cpath d='M420 300 L500 350 L480 480 L600 500 L550 650'/%3E%3Cpath d='M380 280 L300 320 L320 460 L200 490 L250 640'/%3E%3Cpath d='M480 480 L400 520 L320 460'/%3E%3Cpath d='M400 520 L410 700 L380 750'/%3E%3Cpath d='M600 200 L700 180 L750 50'/%3E%3Cpath d='M200 180 L100 160 L50 40'/%3E%3Cpath d='M650 400 L750 420 L780 600'/%3E%3Cpath d='M150 380 L50 400 L20 580'/%3E%3Cpath d='M500 350 L550 280 L620 300'/%3E%3Cpath d='M300 320 L250 260 L180 280'/%3E%3C/g%3E%3C/svg%3E");
 	background-size: cover;
 	pointer-events: none;
 	z-index: 1;
 	opacity: 1;
 }
 
-/* White border utilities */
+/* Dark border utilities */
 .border-gold {
-	border-color: rgba(255, 255, 255, 0.2);
+	border-color: rgba(0, 0, 0, 0.15);
 }
 
 .border-gold-bright {
-	border-color: rgba(255, 255, 255, 0.6);
+	border-color: rgba(0, 0, 0, 0.4);
 }
 
 /* Nav */
 nav {
-	background: rgba(5, 5, 5, 0.92);
+	background: rgba(248, 247, 245, 0.95);
 	backdrop-filter: blur(24px);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 /* Hero */
@@ -67,33 +67,33 @@ nav {
 	background:
 		radial-gradient(
 			ellipse 80% 60% at 50% -10%,
-			rgba(255, 255, 255, 0.07) 0%,
+			rgba(0, 0, 0, 0.04) 0%,
 			transparent 60%
 		),
 		radial-gradient(
 			ellipse 40% 40% at 80% 80%,
-			rgba(255, 255, 255, 0.03) 0%,
+			rgba(0, 0, 0, 0.02) 0%,
 			transparent 50%
 		),
-		#080808;
+		#f8f7f5;
 }
 
-/* Decorative line — clean white shimmer */
+/* Decorative line — clean dark shimmer */
 .deco-line {
 	width: 60px;
 	height: 1px;
 	background: linear-gradient(
 		90deg,
 		transparent,
-		rgba(255, 255, 255, 0.6),
+		rgba(0, 0, 0, 0.4),
 		transparent
 	);
 }
 
 /* Product card */
 .product-card {
-	background: #101010;
-	border: 1px solid rgba(255, 255, 255, 0.1);
+	background: #ffffff;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 	transition: all 0.4s ease;
 	overflow: hidden;
 	position: relative;
@@ -105,7 +105,7 @@ nav {
 	inset: 0;
 	background: linear-gradient(
 		135deg,
-		rgba(255, 255, 255, 0.04) 0%,
+		rgba(0, 0, 0, 0.02) 0%,
 		transparent 60%
 	);
 	opacity: 0;
@@ -117,18 +117,18 @@ nav {
 }
 
 .product-card:hover {
-	border-color: rgba(255, 255, 255, 0.4);
+	border-color: rgba(0, 0, 0, 0.3);
 	transform: translateY(-4px);
 	box-shadow:
-		0 20px 60px rgba(0, 0, 0, 0.8),
-		0 0 0 1px rgba(255, 255, 255, 0.08),
-		0 0 20px rgba(255, 255, 255, 0.03);
+		0 20px 60px rgba(0, 0, 0, 0.12),
+		0 0 0 1px rgba(0, 0, 0, 0.06),
+		0 0 20px rgba(0, 0, 0, 0.04);
 }
 
 /* Product image placeholder */
 .product-img {
 	height: 280px;
-	background: #131313;
+	background: #f0eeeb;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -143,7 +143,7 @@ nav {
 	left: 0;
 	right: 0;
 	height: 60px;
-	background: linear-gradient(to top, #101010, transparent);
+	background: linear-gradient(to top, #ffffff, transparent);
 }
 
 /* Steps */
@@ -154,8 +154,8 @@ nav {
 	line-height: 1;
 	background: linear-gradient(
 		135deg,
-		rgba(255, 255, 255, 0.25),
-		rgba(200, 200, 200, 0.08)
+		rgba(0, 0, 0, 0.2),
+		rgba(0, 0, 0, 0.06)
 	);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -164,25 +164,25 @@ nav {
 
 /* Form panel */
 .form-panel {
-	background: #101010;
-	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: #ffffff;
+	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .form-panel-header {
 	background: linear-gradient(
 		135deg,
-		rgba(255, 255, 255, 0.05),
-		rgba(255, 255, 255, 0.02)
+		rgba(0, 0, 0, 0.03),
+		rgba(0, 0, 0, 0.01)
 	);
-	border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 	padding: 18px 24px;
 }
 
 .form-input {
 	width: 100%;
-	background: #0a0a0a;
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	color: #e8e8e0;
+	background: #fafaf9;
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	color: #1a1a1a;
 	padding: 10px 14px;
 	font-family: "DM Sans", sans-serif;
 	font-size: 14px;
@@ -194,12 +194,12 @@ nav {
 }
 
 .form-input:focus {
-	border-color: rgba(255, 255, 255, 0.5);
-	box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+	border-color: rgba(0, 0, 0, 0.4);
+	box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
 .form-input option {
-	background: #111;
+	background: #ffffff;
 }
 
 .form-label {
@@ -209,7 +209,7 @@ nav {
 	font-weight: 600;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.5);
+	color: rgba(0, 0, 0, 0.5);
 	margin-bottom: 7px;
 }
 
@@ -217,17 +217,17 @@ nav {
 	margin-bottom: 20px;
 }
 
-/* Buttons — chrome white on black */
+/* Buttons — dark on light */
 .btn-gold {
 	background: linear-gradient(
 		135deg,
-		#e8e8e8 0%,
-		#a0a0a0 40%,
-		#d0d0d0 70%,
-		#ffffff 100%
+		#1a1a1a 0%,
+		#3a3a3a 40%,
+		#2a2a2a 70%,
+		#111111 100%
 	);
 	background-size: 200% 200%;
-	color: #080808;
+	color: #f8f7f5;
 	font-family: "Syne", sans-serif;
 	font-weight: 700;
 	font-size: 13px;
@@ -245,21 +245,21 @@ nav {
 .btn-gold:hover {
 	background-position: right center;
 	box-shadow:
-		0 8px 30px rgba(255, 255, 255, 0.18),
-		0 0 0 1px rgba(255, 255, 255, 0.2);
+		0 8px 30px rgba(0, 0, 0, 0.2),
+		0 0 0 1px rgba(0, 0, 0, 0.1);
 	transform: translateY(-1px);
 }
 
 .btn-outline-gold {
 	background: transparent;
-	color: rgba(255, 255, 255, 0.85);
+	color: rgba(0, 0, 0, 0.75);
 	font-family: "Syne", sans-serif;
 	font-weight: 600;
 	font-size: 13px;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	padding: 13px 28px;
-	border: 1px solid rgba(255, 255, 255, 0.35);
+	border: 1px solid rgba(0, 0, 0, 0.3);
 	cursor: pointer;
 	transition: all 0.3s;
 	display: inline-flex;
@@ -267,9 +267,9 @@ nav {
 }
 
 .btn-outline-gold:hover {
-	border-color: rgba(255, 255, 255, 0.8);
-	background: rgba(255, 255, 255, 0.06);
-	color: #ffffff;
+	border-color: rgba(0, 0, 0, 0.7);
+	background: rgba(0, 0, 0, 0.05);
+	color: #1a1a1a;
 }
 
 /* Table */
@@ -279,7 +279,7 @@ nav {
 	font-weight: 700;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.4);
+	color: rgba(0, 0, 0, 0.4);
 	padding-bottom: 10px;
 }
 
@@ -290,8 +290,8 @@ nav {
 
 /* Estimation box */
 .est-box {
-	background: rgba(255, 255, 255, 0.04);
-	border: 1px solid rgba(255, 255, 255, 0.12);
+	background: rgba(0, 0, 0, 0.03);
+	border: 1px solid rgba(0, 0, 0, 0.1);
 	border-radius: 4px;
 	padding: 16px;
 	margin-bottom: 20px;
@@ -308,8 +308,8 @@ nav {
 .testimoni-shot {
 	position: relative;
 	overflow: hidden;
-	border: 1px solid rgba(255, 255, 255, 0.08);
-	background: #111;
+	border: 1px solid rgba(0, 0, 0, 0.08);
+	background: #f0eeeb;
 	cursor: pointer;
 	transition:
 		border-color 0.4s ease,
@@ -319,11 +319,11 @@ nav {
 }
 
 .testimoni-shot:hover {
-	border-color: rgba(255, 255, 255, 0.4);
+	border-color: rgba(0, 0, 0, 0.3);
 	box-shadow:
-		0 10px 40px rgba(0, 0, 0, 0.7),
-		0 0 0 1px rgba(255, 255, 255, 0.08),
-		0 0 20px rgba(255, 255, 255, 0.05);
+		0 10px 40px rgba(0, 0, 0, 0.12),
+		0 0 0 1px rgba(0, 0, 0, 0.06),
+		0 0 20px rgba(0, 0, 0, 0.04);
 	transform: translateY(-4px);
 	z-index: 10;
 }
@@ -346,19 +346,19 @@ nav {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: rgba(255, 255, 255, 0.85);
+	color: rgba(255, 255, 255, 0.9);
 	opacity: 0;
 	transition:
 		opacity 0.4s ease,
 		transform 0.4s ease;
-	background: rgba(5, 5, 5, 0.2);
+	background: rgba(0, 0, 0, 0.25);
 }
 
 .testimoni-shot:hover .testimoni-shot__overlay {
 	opacity: 1;
 }
 
-/* White corner accents */
+/* Dark corner accents */
 .testimoni-shot::before,
 .testimoni-shot::after {
 	content: "";
@@ -375,16 +375,16 @@ nav {
 .testimoni-shot::before {
 	top: 12px;
 	left: 12px;
-	border-top: 1px solid rgba(255, 255, 255, 0.6);
-	border-left: 1px solid rgba(255, 255, 255, 0.6);
+	border-top: 1px solid rgba(0, 0, 0, 0.5);
+	border-left: 1px solid rgba(0, 0, 0, 0.5);
 	transform: translate(-4px, -4px);
 }
 
 .testimoni-shot::after {
 	bottom: 12px;
 	right: 12px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-	border-right: 1px solid rgba(255, 255, 255, 0.6);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.5);
+	border-right: 1px solid rgba(0, 0, 0, 0.5);
 	transform: translate(4px, 4px);
 }
 
@@ -406,14 +406,14 @@ nav {
 	}
 }
 
-/* Section divider — white shimmer */
+/* Section divider — dark shimmer */
 .section-divider {
 	width: 100%;
 	height: 1px;
 	background: linear-gradient(
 		90deg,
 		transparent,
-		rgba(255, 255, 255, 0.18),
+		rgba(0, 0, 0, 0.15),
 		transparent
 	);
 }
@@ -471,13 +471,13 @@ nav {
 /* File input */
 input[type="file"].form-input {
 	padding: 8px 14px;
-	color: #888;
+	color: #555;
 }
 
 input[type="file"].form-input::file-selector-button {
-	background: rgba(255, 255, 255, 0.08);
-	color: rgba(255, 255, 255, 0.7);
-	border: 1px solid rgba(255, 255, 255, 0.2);
+	background: rgba(0, 0, 0, 0.06);
+	color: rgba(0, 0, 0, 0.6);
+	border: 1px solid rgba(0, 0, 0, 0.18);
 	padding: 4px 12px;
 	font-size: 11px;
 	font-family: "Syne", sans-serif;
@@ -535,8 +535,8 @@ input[type="file"].form-input::file-selector-button {
 .gallery-item {
 	position: relative;
 	overflow: hidden;
-	background: #111;
-	border: 1px solid rgba(255, 255, 255, 0.07);
+	background: #e8e6e3;
+	border: 1px solid rgba(0, 0, 0, 0.07);
 	cursor: pointer;
 }
 
@@ -567,7 +567,7 @@ input[type="file"].form-input::file-selector-button {
 .gallery-overlay {
 	position: absolute;
 	inset: 0;
-	background: linear-gradient(to top, rgba(5, 5, 5, 0.8) 0%, transparent 50%);
+	background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, transparent 50%);
 	display: flex;
 	align-items: flex-end;
 	padding: 18px;
@@ -585,10 +585,10 @@ input[type="file"].form-input::file-selector-button {
 	font-weight: 700;
 	letter-spacing: 0.2em;
 	text-transform: uppercase;
-	color: rgba(255, 255, 255, 0.8);
+	color: rgba(255, 255, 255, 0.9);
 }
 
-/* White corner accent on hover */
+/* Dark corner accent on hover */
 .gallery-item::before,
 .gallery-item::after {
 	content: "";
@@ -603,15 +603,15 @@ input[type="file"].form-input::file-selector-button {
 .gallery-item::before {
 	top: 8px;
 	left: 8px;
-	border-top: 1px solid rgba(255, 255, 255, 0.6);
-	border-left: 1px solid rgba(255, 255, 255, 0.6);
+	border-top: 1px solid rgba(255, 255, 255, 0.7);
+	border-left: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .gallery-item::after {
 	bottom: 8px;
 	right: 8px;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-	border-right: 1px solid rgba(255, 255, 255, 0.6);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+	border-right: 1px solid rgba(255, 255, 255, 0.7);
 }
 
 .gallery-item:hover::before,
@@ -625,7 +625,7 @@ input[type="file"].form-input::file-selector-button {
 	position: fixed;
 	inset: 0;
 	z-index: 200;
-	background: rgba(0, 0, 0, 0.97);
+	background: rgba(10, 10, 10, 0.96);
 	backdrop-filter: blur(12px);
 	align-items: center;
 	justify-content: center;
@@ -648,7 +648,7 @@ input[type="file"].form-input::file-selector-button {
 	position: absolute;
 	top: 20px;
 	right: 24px;
-	background: rgba(255, 255, 255, 0.06);
+	background: rgba(255, 255, 255, 0.08);
 	border: 1px solid rgba(255, 255, 255, 0.2);
 	color: rgba(255, 255, 255, 0.8);
 	width: 44px;
@@ -661,7 +661,7 @@ input[type="file"].form-input::file-selector-button {
 }
 
 .gallery-lightbox__close:hover {
-	background: rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.15);
 	border-color: rgba(255, 255, 255, 0.5);
 	color: #fff;
 }
@@ -670,7 +670,7 @@ input[type="file"].form-input::file-selector-button {
 	position: absolute;
 	top: 50%;
 	transform: translateY(-50%);
-	background: rgba(255, 255, 255, 0.05);
+	background: rgba(255, 255, 255, 0.06);
 	border: 1px solid rgba(255, 255, 255, 0.15);
 	color: rgba(255, 255, 255, 0.8);
 	width: 48px;
@@ -683,7 +683,7 @@ input[type="file"].form-input::file-selector-button {
 }
 
 .gallery-lightbox__nav:hover {
-	background: rgba(255, 255, 255, 0.12);
+	background: rgba(255, 255, 255, 0.14);
 	border-color: rgba(255, 255, 255, 0.45);
 	color: #fff;
 }

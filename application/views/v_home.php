@@ -35,7 +35,7 @@
 						font-family: &quot;Syne&quot;, sans-serif;
 						font-weight: 800;
 						letter-spacing: 0.2em;
-						color: #ffffff;
+						color: #1a1a1a;
 					">INVS</span>
 		</div>
 		<div class="hidden md:flex items-center gap-8">
@@ -45,47 +45,47 @@
 				style="
 						font-family: &quot;Syne&quot;, sans-serif;
 						letter-spacing: 0.15em;
-						color: rgba(255,255,255,0.55);
+						color: rgba(0,0,0,0.5);
 						transition: color 0.2s;
 					"
-				onmouseover="this.style.color='#fff'"
-				onmouseout="this.style.color='rgba(255,255,255,0.55)'">Katalog</a> -->
+				onmouseover="this.style.color='#1a1a1a'"
+				onmouseout="this.style.color='rgba(0,0,0,0.5)'">Katalog</a> -->
 			<a
 				href="#process"
 				class="text-xs font-title uppercase tracking-widest text-smoke transition-colors"
 				style="
 						font-family: &quot;Syne&quot;, sans-serif;
 						letter-spacing: 0.15em;
-						color: rgba(255,255,255,0.55);
+						color: rgba(0,0,0,0.5);
 						transition: color 0.2s;
 					"
-				onmouseover="this.style.color='#fff'"
-				onmouseout="this.style.color='rgba(255,255,255,0.55)'">Proses</a>
+				onmouseover="this.style.color='#1a1a1a'"
+				onmouseout="this.style.color='rgba(0,0,0,0.5)'">Proses</a>
 			<a
 				href="#gallery"
 				class="text-xs font-title uppercase tracking-widest text-smoke transition-colors"
 				style="
 						font-family: &quot;Syne&quot;, sans-serif;
 						letter-spacing: 0.15em;
-						color: rgba(255,255,255,0.55);
+						color: rgba(0,0,0,0.5);
 						transition: color 0.2s;
 					"
-				onmouseover="this.style.color='#fff'"
-				onmouseout="this.style.color='rgba(255,255,255,0.55)'">Galeri</a>
+				onmouseover="this.style.color='#1a1a1a'"
+				onmouseout="this.style.color='rgba(0,0,0,0.5)'">Galeri</a>
 			<a
 				href="#order"
 				class="text-xs font-title uppercase tracking-widest text-smoke transition-colors"
 				style="
 						font-family: &quot;Syne&quot;, sans-serif;
 						letter-spacing: 0.15em;
-						color: rgba(255,255,255,0.55);
+						color: rgba(0,0,0,0.5);
 						transition: color 0.2s;
 					"
-				onmouseover="this.style.color='#fff'"
-				onmouseout="this.style.color='rgba(255,255,255,0.55)'">Order</a>
+				onmouseover="this.style.color='#1a1a1a'"
+				onmouseout="this.style.color='rgba(0,0,0,0.5)'">Order</a>
 		</div>
 		<a href="#order" class="btn-gold text-xs py-3 px-6 hidden md:flex">Pesan Sekarang</a>
-		<button class="md:hidden" style="color:rgba(255,255,255,0.7)" onclick="toggleMobileMenu()">
+		<button class="md:hidden" style="color:rgba(0,0,0,0.5)" onclick="toggleMobileMenu()">
 			<svg
 				width="22"
 				height="22"
@@ -101,10 +101,11 @@
 	<!-- Mobile menu -->
 	<div
 		id="mobile-menu"
-		class="fixed inset-0 z-40 bg-onyx hidden flex-col items-center justify-center gap-8">
+		class="fixed inset-0 z-40 hidden flex-col items-center justify-center gap-8"
+		style="background:#f8f7f5">
 		<button
 			class="absolute top-5 right-6"
-			style="color:rgba(255,255,255,0.7)"
+			style="color:rgba(0,0,0,0.5)"
 			onclick="toggleMobileMenu()">
 			<svg
 				width="24"
@@ -123,7 +124,7 @@
 			style="
 					font-family: &quot;Cormorant Garamond&quot;, serif;
 					font-size: 2rem;
-					color: #ffffff;
+					color: #1a1a1a;
 					">Katalog</a>
 		<a
 			href="#process"
@@ -132,7 +133,7 @@
 			style="
 					font-family: &quot;Cormorant Garamond&quot;, serif;
 					font-size: 2rem;
-					color: #ffffff;
+					color: #1a1a1a;
 					">Proses</a>
 		<a
 			href="#gallery"
@@ -141,7 +142,7 @@
 			style="
 					font-family: &quot;Cormorant Garamond&quot;, serif;
 					font-size: 2rem;
-					color: #ffffff;
+					color: #1a1a1a;
 					">Galeri</a>
 		<a
 			href="#order"
@@ -150,7 +151,7 @@
 			style="
 					font-family: &quot;Cormorant Garamond&quot;, serif;
 					font-size: 2rem;
-					color: #ffffff;
+					color: #1a1a1a;
 					">Order</a>
 		<a href="#order" onclick="toggleMobileMenu()" class="btn-gold mt-4">Pesan Sekarang →</a>
 	</div>
@@ -175,7 +176,7 @@
 				style="
 						font-family: &quot;Syne&quot;, sans-serif;
 						letter-spacing: 0.3em;
-						color: rgba(255,255,255,0.45);
+						color: rgba(0,0,0,0.4);
 					">
 				Premium Custom Apparel · Est. 2019
 			</p>
@@ -187,7 +188,7 @@
 						font-size: clamp(3rem, 8vw, 6.5rem);
 						font-weight: 300;
 						line-height: 1.05;
-						color: #e8e8e0;
+						color: #1a1a1a;
 					">
 					<img src="<?php echo base_url(); ?>assets\gambar\website\logo banner.png.png" alt="">
 </div>
@@ -236,7 +237,7 @@
 				</div>
 				<div
 					class="text-center border-x"
-					style="border-color: rgba(255,255,255,0.1)">
+					style="border-color: rgba(0,0,0,0.1)">
 					<div
 						class="white-text text-3xl font-display font-semibold"
 						style="
@@ -281,7 +282,7 @@
 						height: 40px;
 						background: linear-gradient(
 							to bottom,
-							rgba(255,255,255,0.4),
+							rgba(0,0,0,0.3),
 							transparent
 						);
 					"></div>
@@ -789,7 +790,7 @@
 		<div class="max-w-5xl mx-auto">
 			<div class="text-center mb-16">
 				<p
-					class="text-xs uppercase tracking-widest mb-4" style="color:rgba(255,255,255,0.4);letter-spacing:0.3em;"
+					class="text-xs uppercase tracking-widest mb-4" style="color:rgba(0,0,0,0.4);letter-spacing:0.3em;"
 					style="
 							font-family: &quot;Syne&quot;, sans-serif;
 							letter-spacing: 0.3em;
@@ -815,9 +816,9 @@
 					style="
 							background: linear-gradient(
 								90deg,
-								rgba(255,255,255,0.08),
-								rgba(255,255,255,0.25),
-								rgba(255,255,255,0.08)
+								rgba(0,0,0,0.06),
+								rgba(0,0,0,0.18),
+								rgba(0,0,0,0.06)
 							);
 							width: 75%;
 							left: 12%;
@@ -827,12 +828,12 @@
 					<div class="step-num">01</div>
 					<div
 						class="w-10 h-10 flex items-center justify-center mx-auto mb-4 -mt-2"
-						style="border:1px solid rgba(255,255,255,0.3)">
+						style="border:1px solid rgba(0,0,0,0.2)">
 						<svg
 							width="18"
 							height="18"
 							fill="none"
-							stroke="rgba(255,255,255,0.7)"
+							stroke="rgba(0,0,0,0.5)"
 							stroke-width="1.5"
 							viewBox="0 0 24 24">
 							<path
@@ -840,7 +841,7 @@
 						</svg>
 					</div>
 					<h4
-						class="text-white text-sm font-bold mb-2"
+						class="text-sm font-bold mb-2" style="color:#1a1a1a"
 						style="font-family: &quot;Syne&quot;, sans-serif">
 						Isi Form
 					</h4>
@@ -853,19 +854,19 @@
 					<div class="step-num">02</div>
 					<div
 						class="w-10 h-10 flex items-center justify-center mx-auto mb-4 -mt-2"
-						style="border:1px solid rgba(255,255,255,0.3)">
+						style="border:1px solid rgba(0,0,0,0.2)">
 						<svg
 							width="18"
 							height="18"
 							fill="none"
-							stroke="rgba(255,255,255,0.7)"
+							stroke="rgba(0,0,0,0.5)"
 							stroke-width="1.5"
 							viewBox="0 0 24 24">
 							<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
 						</svg>
 					</div>
 					<h4
-						class="text-white text-sm font-bold mb-2"
+						class="text-sm font-bold mb-2" style="color:#1a1a1a"
 						style="font-family: &quot;Syne&quot;, sans-serif">
 						Konfirmasi
 					</h4>
@@ -878,12 +879,12 @@
 					<div class="step-num">03</div>
 					<div
 						class="w-10 h-10 flex items-center justify-center mx-auto mb-4 -mt-2"
-						style="border:1px solid rgba(255,255,255,0.3)">
+						style="border:1px solid rgba(0,0,0,0.2)">
 						<svg
 							width="18"
 							height="18"
 							fill="none"
-							stroke="rgba(255,255,255,0.7)"
+							stroke="rgba(0,0,0,0.5)"
 							stroke-width="1.5"
 							viewBox="0 0 24 24">
 							<path
@@ -891,7 +892,7 @@
 						</svg>
 					</div>
 					<h4
-						class="text-white text-sm font-bold mb-2"
+						class="text-sm font-bold mb-2" style="color:#1a1a1a"
 						style="font-family: &quot;Syne&quot;, sans-serif">
 						Pembayaran
 					</h4>
@@ -904,7 +905,7 @@
 					<div class="step-num">04</div>
 					<div
 						class="w-10 h-10 flex items-center justify-center mx-auto mb-4 -mt-2"
-						style="border:1px solid rgba(255,255,255,0.3)">
+						style="border:1px solid rgba(0,0,0,0.2)">
 						<svg
 							width="18"
 							height="18"
@@ -917,7 +918,7 @@
 						</svg>
 					</div>
 					<h4
-						class="text-white text-sm font-bold mb-2"
+						class="text-sm font-bold mb-2" style="color:#1a1a1a"
 						style="font-family: &quot;Syne&quot;, sans-serif">
 						Terima Order
 					</h4>
@@ -1122,7 +1123,7 @@
 					style="
 							font-family: &quot;Syne&quot;, sans-serif;
 							letter-spacing: 0.3em;
-							color:rgba(255,255,255,0.4);
+							color:rgba(0,0,0,0.4);
 						">
 					Hasil Kerja
 				</p>
@@ -1227,7 +1228,7 @@
 					style="
 							font-family: &quot;Syne&quot;, sans-serif;
 							letter-spacing: 0.3em;
-							color:rgba(255,255,255,0.4);
+							color:rgba(0,0,0,0.4);
 						">
 					Mulai Order
 				</p>
@@ -1252,7 +1253,7 @@
 						<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
 							<polygon
 								points="8,1 15,4.5 15,11.5 8,15 1,11.5 1,4.5"
-								stroke="rgba(255,255,255,0.5)"
+								stroke="rgba(0,0,0,0.4)"
 								stroke-width="1"
 								fill="none" />
 						</svg>
@@ -1262,7 +1263,7 @@
 										font-family: &quot;Syne&quot;, sans-serif;
 										font-weight: 700;
 										font-size: 13px;
-										color: #e8e8e0;
+										color: #1a1a1a;
 										letter-spacing: 0.05em;
 									">
 								Detail Pemesanan
@@ -1311,12 +1312,13 @@
 					<!-- Product Info -->
 					<div class="mb-6">
 						<div
-							class="text-xs uppercase tracking-widest text-white opacity-40 mb-4"
+							class="text-xs uppercase tracking-widest mb-4"
 							style="
 									font-family: &quot;Syne&quot;, sans-serif;
 									font-size: 9px;
 									letter-spacing: 0.2em;
-									border-bottom: 1px solid rgba(204, 204, 204, 0.1);
+									color: rgba(0,0,0,0.4);
+									border-bottom: 1px solid rgba(0,0,0,0.08);
 									padding-bottom: 8px;
 								">
 							Detail Produk
@@ -1360,8 +1362,8 @@
 									font-family: &quot;Syne&quot;, sans-serif;
 									font-size: 9px;
 									letter-spacing: 0.2em;
-									color:rgba(255,255,255,0.4);
-									border-bottom: 1px solid rgba(255,255,255,0.08);
+									color:rgba(0,0,0,0.4);
+									border-bottom: 1px solid rgba(0,0,0,0.08);
 									padding-bottom: 8px;
 								">
 							Detail Item
@@ -1382,7 +1384,7 @@
 												font-weight: 700;
 												letter-spacing: 0.12em;
 												text-transform: uppercase;
-												color: rgba(255,255,255,0.4);
+												color: rgba(0,0,0,0.4);
 											">
 										Ukuran
 									</th>
@@ -1395,7 +1397,7 @@
 												font-weight: 700;
 												letter-spacing: 0.12em;
 												text-transform: uppercase;
-												color: rgba(255,255,255,0.4);
+												color: rgba(0,0,0,0.4);
 											">
 										Qty
 									</th>
@@ -1439,9 +1441,9 @@
 							onclick="addRow()"
 							style="
 									margin-top: 12px;
-									background: rgba(255,255,255,0.04);
-									border: 1px dashed rgba(255,255,255,0.2);
-									color: rgba(255,255,255,0.7);
+									background: rgba(0,0,0,0.03);
+									border: 1px dashed rgba(0,0,0,0.2);
+									color: rgba(0,0,0,0.5);
 									font-family: &quot;Syne&quot;, sans-serif;
 									font-size: 11px;
 									font-weight: 600;
@@ -1452,8 +1454,8 @@
 									width: 100%;
 									transition: all 0.2s;
 								"
-							onmouseover="this.style.background = 'rgba(212,160,23,0.12)'"
-							onmouseout="this.style.background = 'rgba(212,160,23,0.07)'">
+							onmouseover="this.style.background = 'rgba(0,0,0,0.07)'"
+							onmouseout="this.style.background = 'rgba(0,0,0,0.03)'">
 							+ Tambah Ukuran
 						</button>
 					</div>
@@ -1489,12 +1491,13 @@
 					<!-- Additional -->
 					<div class="mb-2">
 						<div
-							class="text-xs uppercase tracking-widest text-white opacity-40 mb-4"
+							class="text-xs uppercase tracking-widest mb-4"
 							style="
 									font-family: &quot;Syne&quot;, sans-serif;
 									font-size: 9px;
 									letter-spacing: 0.2em;
-									border-bottom: 1px solid rgba(212, 160, 23, 0.1);
+									color: rgba(0,0,0,0.4);
+									border-bottom: 1px solid rgba(0,0,0,0.08);
 									padding-bottom: 8px;
 								">
 							Tambahan
@@ -1529,7 +1532,7 @@
 								gap: 12px;
 								justify-content: flex-end;
 								padding-top: 8px;
-								border-top: 1px solid rgba(255,255,255,0.08);
+								border-top: 1px solid rgba(0,0,0,0.08);
 								margin-top: 20px;
 							">
 						<button
@@ -1562,7 +1565,7 @@
 						width="14"
 						height="14"
 						fill="none"
-						stroke="rgba(255,255,255,0.4)"
+						stroke="rgba(0,0,0,0.35)"
 						stroke-width="1.5"
 						viewBox="0 0 24 24">
 						<path
@@ -1570,13 +1573,13 @@
 					</svg>
 					<span class="text-smoke text-xs">+62 812-3456-7890</span>
 				</div>
-				<div class="hidden sm:block opacity-20" style="color:#fff">|</div>
+				<div class="hidden sm:block opacity-20" style="color:#000">|</div>
 				<div class="flex items-center gap-2 justify-center">
 					<svg
 						width="14"
 						height="14"
 						fill="none"
-						stroke="rgba(255,255,255,0.4)"
+						stroke="rgba(0,0,0,0.35)"
 						stroke-width="1.5"
 						viewBox="0 0 24 24">
 						<path
@@ -1584,13 +1587,13 @@
 					</svg>
 					<span class="text-smoke text-xs">invsstudiocustom@gmail.com</span>
 				</div>
-				<div class="hidden sm:block opacity-20" style="color:#fff">|</div>
+				<div class="hidden sm:block opacity-20" style="color:#000">|</div>
 				<div class="flex items-center gap-2 justify-center">
 					<svg
 						width="14"
 						height="14"
 						fill="none"
-						stroke="rgba(255,255,255,0.4)"
+						stroke="rgba(0,0,0,0.35)"
 						stroke-width="1.5"
 						viewBox="0 0 24 24">
 						<path
@@ -1606,8 +1609,8 @@
 	<!-- ===================== FOOTER ===================== -->
 	<footer
 		style="
-				background: #080808;
-				border-top: 1px solid rgba(255,255,255,0.07);
+				background: #f0eeeb;
+				border-top: 1px solid rgba(0,0,0,0.08);
 				padding: 40px 24px 24px;
 			">
 		<div class="max-w-6xl mx-auto">
@@ -1627,7 +1630,7 @@
 								font-family: &quot;Syne&quot;, sans-serif;
 								font-weight: 800;
 								letter-spacing: 0.25em;
-								color: #ffffff;
+								color: #1a1a1a;
 								font-size: 14px;
 							">INVS</span>
 				</div>
@@ -1635,7 +1638,7 @@
 				<div class="flex gap-4">
 					<a
 						href="#"
-						class="text-smoke transition-colors" style="color:rgba(255,255,255,0.4)" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+						class="text-smoke transition-colors" style="color:rgba(0,0,0,0.4)" onmouseover="this.style.color='#1a1a1a'" onmouseout="this.style.color='rgba(0,0,0,0.4)'">
 						<svg
 							width="16"
 							height="16"
@@ -1647,7 +1650,7 @@
 					</a>
 					<a
 						href="#"
-						class="text-smoke transition-colors" style="color:rgba(255,255,255,0.4)" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+						class="text-smoke transition-colors" style="color:rgba(0,0,0,0.4)" onmouseover="this.style.color='#1a1a1a'" onmouseout="this.style.color='rgba(0,0,0,0.4)'">
 						<svg
 							width="16"
 							height="16"
@@ -1659,7 +1662,7 @@
 					</a>
 					<a
 						href="#"
-						class="text-smoke transition-colors" style="color:rgba(255,255,255,0.4)" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+						class="text-smoke transition-colors" style="color:rgba(0,0,0,0.4)" onmouseover="this.style.color='#1a1a1a'" onmouseout="this.style.color='rgba(0,0,0,0.4)'">
 						<svg
 							width="16"
 							height="16"
@@ -1690,14 +1693,14 @@
 				position: fixed;
 				inset: 0;
 				z-index: 100;
-				background: rgba(0, 0, 0, 0.85);
+				background: rgba(248, 247, 245, 0.85);
 				backdrop-filter: blur(8px);
 			"
 		class="flex items-center justify-center px-6">
 		<div
 			style="
-					background: #111;
-					border: 1px solid rgba(255,255,255,0.15);
+					background: #ffffff;
+					border: 1px solid rgba(0,0,0,0.12);
 					max-width: 400px;
 					width: 100%;
 					padding: 40px;
@@ -1712,12 +1715,12 @@
 					class="mx-auto">
 					<polygon
 						points="24,3 44,14 44,34 24,45 4,34 4,14"
-						stroke="rgba(255,255,255,0.7)"
+						stroke="rgba(0,0,0,0.3)"
 						stroke-width="1.5"
-						fill="rgba(255,255,255,0.04)" />
+						fill="rgba(0,0,0,0.04)" />
 					<path
 						d="M16 24 L21 29 L32 18"
-						stroke="rgba(255,255,255,0.9)"
+						stroke="rgba(0,0,0,0.7)"
 						stroke-width="2"
 						stroke-linecap="round"
 						stroke-linejoin="round" />
@@ -1750,14 +1753,14 @@
 				position: fixed;
 				inset: 0;
 				z-index: 100;
-				background: rgba(0, 0, 0, 0.85);
+				background: rgba(248, 247, 245, 0.85);
 				backdrop-filter: blur(8px);
 			"
 		class="flex items-center justify-center px-6">
 		<div
 			style="
-					background: #111;
-					border: 1px solid rgba(248, 113, 113, 0.3);
+					background: #ffffff;
+					border: 1px solid rgba(248, 113, 113, 0.4);
 					max-width: 400px;
 					width: 100%;
 					padding: 40px;
